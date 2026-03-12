@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Allan\\Projetos\\Programação\\Todo-Gacha\\Todo-Gacha.csproj": {}
+    "C:\\Users\\Allan\\Documents\\Projetos\\Todo-Gacha\\Todo-Gacha.csproj": {}
   },
   "projects": {
-    "D:\\Allan\\Projetos\\Programação\\Todo-Gacha\\Todo-Gacha.csproj": {
+    "C:\\Users\\Allan\\Documents\\Projetos\\Todo-Gacha\\Todo-Gacha.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Allan\\Projetos\\Programação\\Todo-Gacha\\Todo-Gacha.csproj",
+        "projectUniqueName": "C:\\Users\\Allan\\Documents\\Projetos\\Todo-Gacha\\Todo-Gacha.csproj",
         "projectName": "Todo-Gacha",
-        "projectPath": "D:\\Allan\\Projetos\\Programação\\Todo-Gacha\\Todo-Gacha.csproj",
-        "packagesPath": "C:\\Users\\Vital\\.nuget\\packages\\",
-        "outputPath": "D:\\Allan\\Projetos\\Programação\\Todo-Gacha\\obj\\",
+        "projectPath": "C:\\Users\\Allan\\Documents\\Projetos\\Todo-Gacha\\Todo-Gacha.csproj",
+        "packagesPath": "C:\\Users\\Allan\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Allan\\Documents\\Projetos\\Todo-Gacha\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Vital\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\Allan\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net10.0"
@@ -44,6 +44,10 @@
         "net10.0": {
           "targetAlias": "net10.0",
           "dependencies": {
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[10.0.4, )"
+            },
             "Microsoft.EntityFrameworkCore.Design": {
               "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
               "suppressParent": "All",
