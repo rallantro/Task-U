@@ -11,12 +11,12 @@ using System.Diagnostics;
 using Todo_Gacha.Core.Entities;
 
 Gacha gacha = new Gacha();
-
+BannerService banner = new BannerService();
 TarefaService service = new TarefaService();
 using var context = new AppDbContext();
 
 
-
+banner.AtualizarBanner(context);
 service.AtualizarTarefas();
 
 bool MenuShow = true;
@@ -56,7 +56,7 @@ while (MenuShow)
         break;
 
         case "4":
-            gacha.Pull();
+            gacha.Pull(banner);
             Console.ReadLine();
         break;
 

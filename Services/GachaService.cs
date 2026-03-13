@@ -30,11 +30,10 @@ namespace Todo_Gacha.Models
             luckEvent = true;
         }
 
-        public void Pull(){
+        public void Pull(BannerService banner){
             using var context = new AppDbContext();  
             int number = random.Next(1, 1001);
             var user = context.Users.Find(1);
-            var banner = new BannerService();
 
             if (user.Crystals < 10) {
                 Console.WriteLine("Crystals insuficientes! Vá estudar para ganhar mais.");
@@ -105,6 +104,17 @@ namespace Todo_Gacha.Models
                 Console.WriteLine("...");                
                 Thread.Sleep(500);
                 Console.WriteLine("COMUM! C");
+                Thread.Sleep(500);
+                Console.WriteLine("...");
+                var ganhou = new ItemInventario();
+                var reward = banner.commumPull(context);
+                ganhou.ItemId = reward.Id;
+                ganhou.UserId = 1;
+                context.InventarioItens.Add(ganhou);
+                Console.WriteLine($"Parabéns você ganhou {reward.Name}!!");
+                Console.WriteLine("-");
+                Console.WriteLine(reward.Desc);
+                context.SaveChanges();
             }  
             Console.ForegroundColor = ConsoleColor.White;
             Console.WriteLine();

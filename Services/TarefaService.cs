@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Todo_Gacha.Core;
 using Todo_Gacha.Data;
 using Todo_Gacha.Models;
 
@@ -63,6 +64,28 @@ namespace Todo_Gacha.Services
             else
             {
                 Console.WriteLine($"Pity para lendário: {user.PityLeg}");
+            }
+            Console.WriteLine("--");
+            Console.WriteLine("Seus Itens:");
+
+            var itens = context.InventarioItens.ToList();
+
+            foreach (var item in itens)
+            {
+                var ItemOg = context.Itens.Find(item.ItemId);
+                if (ItemOg.Rarity == 1) {
+                    Console.ForegroundColor = ConsoleColor.White; 
+                } else if (ItemOg.Rarity == 2){
+                    Console.ForegroundColor = ConsoleColor.Blue;
+                } else if (ItemOg.Rarity == 3)
+                {
+                    Console.ForegroundColor = ConsoleColor.Magenta;
+                } else if (ItemOg.Rarity == 4)
+                {
+                   Console.ForegroundColor = ConsoleColor.Yellow; 
+                }
+                Console.WriteLine("--");
+                Console.WriteLine($"{ItemOg.Name}, {ItemOg.Desc}");
             }
         }
 
