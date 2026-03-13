@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Todo_Gacha.Data;
 
@@ -10,9 +11,11 @@ using Todo_Gacha.Data;
 namespace Todo_Gacha.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260312205740_Inicial")]
+    partial class Inicial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.4");
@@ -77,9 +80,6 @@ namespace Todo_Gacha.Migrations
 
                     b.Property<int>("Rarity")
                         .HasColumnType("INTEGER");
-
-                    b.Property<string>("SummonQuote")
-                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 

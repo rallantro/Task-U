@@ -6,13 +6,13 @@ using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
 using Todo_Gacha.Data;
+using Todo_Gacha.Core;
+using Todo_Gacha.Services;
 
 namespace Todo_Gacha.Models
 {
     public class Gacha
     {
-        private AppDbContext context;
-
         public Gacha()
         {
         }
@@ -34,6 +34,7 @@ namespace Todo_Gacha.Models
             using var context = new AppDbContext();  
             int number = random.Next(1, 1001);
             var user = context.Users.Find(1);
+            var banner = new BannerService();
 
             if (user.Crystals < 10) {
                 Console.WriteLine("Crystals insuficientes! Vá estudar para ganhar mais.");
@@ -75,6 +76,20 @@ namespace Todo_Gacha.Models
                 Console.WriteLine("...");
                 Thread.Sleep(500);
                 Console.WriteLine("PULL ÉPICO! SR");  
+                Thread.Sleep(500);
+                Console.WriteLine("...");
+                var ganhou = new PersonagemInventario();
+                var reward = banner.EpicPull(context);
+                ganhou.PersonagemId = reward.Id;
+                ganhou.UserId = 1;
+                context.InventarioPersonagens.Add(ganhou);
+                Console.WriteLine(reward.SummonQuote);
+                Console.WriteLine("...");
+                Thread.Sleep(1500);
+                Console.WriteLine($"Parabéns você ganhou o {reward.Name}!!");
+                Console.WriteLine("-");
+                Console.WriteLine(reward.Desc);
+                context.SaveChanges();
                 pityEpic = 0;
             }
             else if(number <= 250)
@@ -92,6 +107,7 @@ namespace Todo_Gacha.Models
                 Console.WriteLine("COMUM! C");
             }  
             Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine();
             Console.WriteLine($"Faltam só mais {10 - pityEpic} giros para um épico garantido! Faltam só mais {100-pityLeg} para um Lendário Garantido!");     
         
             user.PityEpic = pityEpic;

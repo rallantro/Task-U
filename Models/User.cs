@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Todo_Gacha.Core;
 
 namespace Todo_Gacha.Models
 {
@@ -13,5 +14,10 @@ namespace Todo_Gacha.Models
         public int PityEpic { get; set; }
 
         public DateTime lastLogin {get; set;}
+        public int? PersonagemAtivoId { get; set; }
+
+        public PersonagemBase PersonagemAtivo {get; set;}
+        public int? ItemAtivoId { get; set; }
+        public Item ItemAtivo {get; set;}
     }
 }

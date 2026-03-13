@@ -138,3 +138,4 @@ D:\Allan\Projetos\Programação\Todo-Gacha\bin\Debug\net10.0\runtimes\win-x64\na
 D:\Allan\Projetos\Programação\Todo-Gacha\bin\Debug\net10.0\runtimes\win-x86\native\e_sqlite3.dll
 D:\Allan\Projetos\Programação\Todo-Gacha\obj\Debug\net10.0\Todo-Gacha.csproj.AssemblyReference.cache
 D:\Allan\Projetos\Programação\Todo-Gacha\obj\Debug\net10.0\Todo-Gacha.csproj.Up2Date
+D:\Allan\Projetos\Programação\Todo-Gacha\obj\Debug\net10.0\Todo-Gacha.sourcelink.json
