@@ -25,6 +25,8 @@ namespace Todo_Gacha.Data
             modelBuilder.Entity<Moon>();
             modelBuilder.Entity<Barbaro>();
             modelBuilder.Entity<Apostador>();
+            modelBuilder.Entity<Grafiteiro>();
+            modelBuilder.Entity<Voodo>();
 
             base.OnModelCreating(modelBuilder);
         }

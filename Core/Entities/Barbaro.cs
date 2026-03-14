@@ -12,21 +12,19 @@ namespace Todo_Gacha.Core
         private static readonly Random random = new Random();
         public int BaseAtk {get; private set;}
 
-        public int HpMax {get; set;}
-
         public override int Damage()
         {
-            var dano = Atk + BaseAtk;
+            var dano = AtkTotal() + BaseAtk;
             Console.WriteLine($"{Name} causou {dano} de dano!");
-            return Atk + BaseAtk;
+            return AtkTotal() + BaseAtk;
         }
 
         public override void Habilidade()
         {
             
-            if (Hp > 4)
+            if (HpAtual > 4)
             {
-                Hp -= 4;
+                HpAtual -= 4;
                 BaseAtk += 5; 
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine($"> [HABILIDADE:] A fúria de {Name} aumenta! +{BaseAtk} de ATK neste turno pelo custo de {4} pontos de vida");
@@ -34,9 +32,9 @@ namespace Todo_Gacha.Core
             }           
         }
 
-        public override void Passiva(User user)
+        public override void Passiva()
         {
-            BaseAtk = (HpMax - Hp) * Mod/2;
+            BaseAtk = (HpMax - HpAtual) * ModTotal()/2;
             if (BaseAtk > 0)
             {
                 Console.ForegroundColor = ConsoleColor.Red;

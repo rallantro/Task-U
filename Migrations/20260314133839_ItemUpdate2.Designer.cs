@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Todo_Gacha.Data;
 
@@ -10,9 +11,11 @@ using Todo_Gacha.Data;
 namespace Todo_Gacha.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260314133839_ItemUpdate2")]
+    partial class ItemUpdate2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.4");
@@ -38,7 +41,7 @@ namespace Todo_Gacha.Migrations
                     b.Property<int>("HabilidadeChance")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("HpMax")
+                    b.Property<int>("Hp")
                         .HasColumnType("INTEGER");
 
                     b.Property<int?>("ItemDropId")
@@ -118,7 +121,7 @@ namespace Todo_Gacha.Migrations
                         .HasMaxLength(21)
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("HpMax")
+                    b.Property<int>("Hp")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("Mod")
@@ -279,7 +282,8 @@ namespace Todo_Gacha.Migrations
 
                     b.HasIndex("ItemAtivoId");
 
-                    b.HasIndex("PersonagemAtivoId");
+                    b.HasIndex("PersonagemAtivoId")
+                        .IsUnique();
 
                     b.ToTable("Users");
                 });
@@ -291,6 +295,9 @@ namespace Todo_Gacha.Migrations
                     b.Property<int>("BaseAtk")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("BonusDMG")
+                        .HasColumnType("INTEGER");
+
                     b.Property<bool>("Win")
                         .HasColumnType("INTEGER");
 
@@ -298,6 +305,9 @@ namespace Todo_Gacha.Migrations
                         {
                             t.Property("BaseAtk")
                                 .HasColumnName("Apostador_BaseAtk");
+
+                            t.Property("BonusDMG")
+                                .HasColumnName("Apostador_BonusDMG");
                         });
 
                     b.HasDiscriminator().HasValue("Apostador");
@@ -308,6 +318,9 @@ namespace Todo_Gacha.Migrations
                     b.HasBaseType("Todo_Gacha.Core.PersonagemBase");
 
                     b.Property<int>("BaseAtk")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("HpMax")
                         .HasColumnType("INTEGER");
 
                     b.HasDiscriminator().HasValue("Barbaro");
@@ -347,12 +360,17 @@ namespace Todo_Gacha.Migrations
                         .HasForeignKey("ItemAtivoId");
 
                     b.HasOne("Todo_Gacha.Core.PersonagemBase", "PersonagemAtivo")
-                        .WithMany()
-                        .HasForeignKey("PersonagemAtivoId");
+                        .WithOne("user")
+                        .HasForeignKey("Todo_Gacha.Models.User", "PersonagemAtivoId");
 
                     b.Navigation("ItemAtivo");
 
                     b.Navigation("PersonagemAtivo");
+                });
+
+            modelBuilder.Entity("Todo_Gacha.Core.PersonagemBase", b =>
+                {
+                    b.Navigation("user");
                 });
 #pragma warning restore 612, 618
         }

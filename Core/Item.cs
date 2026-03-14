@@ -26,21 +26,12 @@ namespace Todo_Gacha.Core
         }
 
         public void Uso(PersonagemBase Usuario, AppDbContext context){
-            if (Type == (int)ItemType.Modificador)
-            {
-                if(Atr == (int)Atributo.Atk)
-                {
-                    Usuario.Atk += Mod;
-                } else if (Atr == (int)Atributo.Mod)
-                {
-                    Usuario.Mod += Mod;
-                }
-            }
             if (Type == (int)ItemType.Consumivel)
             {
                 if(Atr == (int)Atributo.Hp)
                 {
-                    Usuario.Hp += Mod;
+                    Console.WriteLine($"{Usuario.Name} recuperou {Mod} pontos de vida!");
+                    Usuario.HpAtual = Math.Min(Usuario.HpAtual + Mod, Usuario.HpMax);;
                     var itemInv = context.InventarioItens.Where(x => x.ItemId == this.Id).FirstOrDefault();
                     context.InventarioItens.Remove(itemInv);
                     context.SaveChanges();

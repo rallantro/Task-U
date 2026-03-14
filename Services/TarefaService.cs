@@ -65,8 +65,6 @@ namespace Todo_Gacha.Services
             {
                 Console.WriteLine($"Pity para lendário: {user.PityLeg}");
             }
-            Console.WriteLine("--");
-            Console.WriteLine("Seus Personagens:");
         }
 
         public void verTarefas()

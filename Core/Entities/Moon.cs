@@ -17,7 +17,7 @@ namespace Todo_Gacha.Core
 
         public override int Damage()
         {
-            var dano = Atk + BonusDMG;
+            var dano = AtkTotal() + BonusDMG;
             Console.WriteLine($"> A legião ataca e casua {dano} pontos de dano!");
             return dano;
         }
@@ -29,7 +29,7 @@ namespace Todo_Gacha.Core
             CountDown++;
         }
 
-        public override void Passiva(User user)
+        public override void Passiva()
         {
             if(CountDown < 7)
             {
@@ -40,8 +40,8 @@ namespace Todo_Gacha.Core
 
             if (CountDown == 7)
             {
-                BonusDMG = (Atk  + (Mod * 3)) * 2;
-                Hp += Damage()/2;
+                BonusDMG = (AtkTotal()  + (ModTotal() * 3)) * 2;
+                HpAtual += Damage()/2;
                 CountDown = 0;
                 Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.WriteLine("> [PASSIVA] É LUA CHEIA! Shion e Shun se fundem em poder absoluto!");
@@ -50,9 +50,9 @@ namespace Todo_Gacha.Core
             }
             else if (MoonState == true)
             {
-                BonusDMG = (Atk + Mod) * 2;
-                int perda = Hp/4;
-                Hp -= perda;
+                BonusDMG = (AtkTotal() + ModTotal()) * 2;
+                int perda = HpAtual/4;
+                HpAtual -= perda;
                 Console.ForegroundColor = ConsoleColor.Magenta;
                 Console.WriteLine("> [PASSIVA] Lua Crescente: A legião assume um sorriso sádico. Shun proporciona o dano aumentado!");
                 Console.ForegroundColor = ConsoleColor.Red;
@@ -63,8 +63,8 @@ namespace Todo_Gacha.Core
             {
                 BonusDMG = 0;
                 int curaRan = random.Next(3, 6);
-                int cura = (Atk * 2 + Mod) / curaRan;
-                Hp += cura;
+                int cura = (AtkTotal() * 2 + ModTotal()) / curaRan;
+                HpAtual += cura;
                 Console.ForegroundColor = ConsoleColor.Blue;
                 Console.WriteLine("> [PASSIVA] Lua Minguante: Shion assume o controle. Recuperando energias...");
                 Console.ForegroundColor = ConsoleColor.White;

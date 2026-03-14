@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations.Schema;
 using Todo_Gacha.Services;
 using Todo_Gacha.Models;
 using Todo_Gacha.Data;
@@ -12,22 +13,24 @@ namespace Todo_Gacha.Core
     {
         private static readonly Random random = new Random();
         public int BaseAtk {get; private set;}
+        
+        [NotMapped]
         public int BonusDMG {get; private set;}
         public bool Win {get; set;}
 
         public override int Damage()
         {
-            int dano = Atk + BaseAtk + BonusDMG;
+            int dano = AtkTotal() + BaseAtk + BonusDMG;
             Console.WriteLine($"{Name} causou {dano} de dano!");
             return dano;
         }
 
         public override void Habilidade()
         {
-            int cura = random.Next(1, Mod);
-            if (random.Next(0, 100) < 30 && Hp > Mod) 
+            int cura = random.Next(1, ModTotal());
+            if (random.Next(0, 100) < 30 && HpAtual > ModTotal()) 
             {
-                this.Hp -= cura; 
+                this.HpAtual -= cura; 
                 Win = false;
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine($"> [LET IT RIDE!] {Name} Teve azar!");
@@ -36,7 +39,7 @@ namespace Todo_Gacha.Core
             }
             else
             {
-                this.Hp += cura;
+                this.HpAtual += cura;
                 Win = true;
                 Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.WriteLine($"> [LET IT RIDE!] {Name} Teve sorte!");
@@ -45,7 +48,7 @@ namespace Todo_Gacha.Core
             }
             if (Win == true)
             {
-                BonusDMG += Atk;
+                BonusDMG += AtkTotal();
                 Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.WriteLine($"> [LET IT RIDE!] {Name} Tem um bônus de {BonusDMG} em cada ataque!");
                 Console.ForegroundColor = ConsoleColor.White;
@@ -59,7 +62,7 @@ namespace Todo_Gacha.Core
             }
         }
 
-        public override void Passiva(User user)
+        public override void Passiva( )
         {
             
             if (user.PityEpic > 5)
@@ -68,7 +71,7 @@ namespace Todo_Gacha.Core
                 Console.WriteLine($"> [PASSIVA] O azar de hoje é o dano de amanhã! {Name} sente a sorte mudando.");
                 Console.WriteLine($"> [PASSIVA] O ataque de {Name} foi dobrado!");
                 Console.ResetColor();
-                BaseAtk = Atk + BonusDMG;
+                BaseAtk = AtkTotal() + BonusDMG;
             } else
             {
                 BaseAtk = 0;

@@ -16,14 +16,14 @@ namespace Todo_Gacha.Core
 
         public override int Damage()
         {
-            int dano = Atk;
+            int dano = AtkTotal();
             if (!Paint && QuantDmg > 0)
             {
-                dano = (Atk + BonusDMG) * QuantDmg;
+                dano = (AtkTotal() + BonusDMG) * QuantDmg;
                 QuantDmg = 0;
                 BonusDMG = 0;
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine($"> KABOOOOOOM! {Name} deu TONELADAS de dano!");
+                Console.WriteLine($"> KABOOOOOOM! {Name} deu TONELADAS de dano! ({dano})");
                 Console.ResetColor();
             }
             else
@@ -50,15 +50,25 @@ namespace Todo_Gacha.Core
             Paint = !Paint;  
         }
 
-        public override void Passiva(User user)
+        public override void Passiva()
         {
             if (Paint)
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine($"> [PASSIVA] COLOCANDO TINTA! Camada {QuantDmg+1} (+{BonusDMG+Mod} de dano na explosão)!");
-                Console.ResetColor();
-                BonusDMG += Mod;
-                QuantDmg +=1;
+                if (QuantDmg > 5)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine($"> [PASSIVA] A TINTA NÃO VAI AGUENTAR MAIS... EXPLOSÃO NO PRÓXIMO ATAQUE!");
+                    Console.ResetColor();
+                    Paint = false;
+                }
+                else
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine($"> [PASSIVA] COLOCANDO TINTA! Camada {QuantDmg+1} (+{BonusDMG+ModTotal()} de dano na explosão)!");
+                    Console.ResetColor();
+                    BonusDMG += ModTotal();
+                    QuantDmg +=1; 
+                }
             }
             else
             {

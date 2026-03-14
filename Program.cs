@@ -3,6 +3,7 @@ using System.Reflection.Metadata;
 using System.Security.Cryptography.X509Certificates;
 using System.Xml;
 using Microsoft.VisualBasic;
+using Microsoft.EntityFrameworkCore;
 using Todo_Gacha.Models;
 using Todo_Gacha.Core;
 using Todo_Gacha.Services;
@@ -16,7 +17,7 @@ CombatService combat = new CombatService();
 InventarioServices inventario = new InventarioServices();
 using var context = new AppDbContext();
 
-var user = context.Users.Find(1);
+var user = context.Users.Include(u => u.PersonagemAtivo).Include(u => u.ItemAtivo).FirstOrDefault(u => u.Id == 1);
 banner.AtualizarBanner(context);
 service.AtualizarTarefas();
 
@@ -45,8 +46,20 @@ while (MenuShow)
     {
         case "1" :
             service.verStatus();
-            inventario.VerPersonagens(context);
-            Console.ReadLine();
+            Console.WriteLine("--");
+            Console.WriteLine("Deseja ver seu inventário?");
+            Console.WriteLine("1 - Ver Personagens | 2 - Ver Itens | Digite qualquer coisa para voltar");
+            var escolha = Console.ReadLine();
+            if (escolha == "1")
+            {
+                Console.Clear();
+                inventario.VerPersonagens(context, user);
+            }
+            else if (escolha == "2")
+            {
+                Console.Clear();
+                inventario.VerItens(context, user);
+            }
         break;
 
         case "2":
@@ -73,9 +86,11 @@ while (MenuShow)
             Console.WriteLine($"O banner será atualizado no dia: {user.LastBannerUpdate.AddDays(7)}");
             Console.WriteLine("--");
             Console.WriteLine($"Quantos desejos deseja fazer? (1 desejo = 10 Crystals) - {user.Crystals} Crystals Restantes");
-            var num = int.Parse(Console.ReadLine());
+            Console.WriteLine("Digite qualquer coisa que não seja um número para voltar ao menu...");
+            var num = 0;
+            var sucesso = int.TryParse(Console.ReadLine(), out num);
             var x = 0;
-            if (user.Crystals < num * 10)
+            if (sucesso && user.Crystals < num * 10)
             {
                 Console.WriteLine("Você não possui Crystals suficientes!");
                 Console.WriteLine("--");
@@ -83,7 +98,11 @@ while (MenuShow)
                 Console.ReadKey();
                 break;
             }
-            while (x < num)
+            else if (!sucesso)
+            {
+                break;
+            }
+            while (sucesso && x < num)
             {
               gacha.Pull(banner);
               x++;  
@@ -95,7 +114,7 @@ while (MenuShow)
         break;
 
         case "5":
-            combat.Combate(context.Inimigos.Find(1), context.Personagens.Find(3));
+            combat.Combate(context.Inimigos.Find(1), user.PersonagemAtivo, context);
             context.Entry(user).Reload();
         break;
 
