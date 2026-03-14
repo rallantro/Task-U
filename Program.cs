@@ -15,9 +15,11 @@ BannerService banner = new BannerService();
 TarefaService service = new TarefaService();
 CombatService combat = new CombatService();
 InventarioServices inventario = new InventarioServices();
+AdventureService adventure = new AdventureService();
 using var context = new AppDbContext();
 
 var user = context.Users.Include(u => u.PersonagemAtivo).Include(u => u.ItemAtivo).FirstOrDefault(u => u.Id == 1);
+//adventure.AtualizarInimigo(context);
 banner.AtualizarBanner(context);
 service.AtualizarTarefas();
 
@@ -114,6 +116,7 @@ while (MenuShow)
         break;
 
         case "5":
+            //var inimigo = context.Inimigos.Find(user.InimigoId);
             combat.Combate(context.Inimigos.Find(1), user.PersonagemAtivo, context);
             context.Entry(user).Reload();
         break;

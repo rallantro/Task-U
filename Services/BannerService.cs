@@ -47,6 +47,12 @@ namespace Todo_Gacha.Services
             reward = context.Itens.Where(x => x.Rarity == 1).OrderBy(x => EF.Functions.Random()).FirstOrDefault();
             return reward;
         }
+        public Item raroPull(AppDbContext context)
+        {
+            Item reward;
+            reward = context.Itens.Where(x => x.Rarity == 2).OrderBy(x => EF.Functions.Random()).FirstOrDefault();
+            return reward;
+        }
         public PersonagemBase EpicPull(AppDbContext context)
         {
             var chance = random.Next(1, 101);

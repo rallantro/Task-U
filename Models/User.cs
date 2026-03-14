@@ -20,5 +20,8 @@ namespace Todo_Gacha.Models
         public PersonagemBase PersonagemAtivo {get; set;}
         public int? ItemAtivoId { get; set; }
         public Item ItemAtivo {get; set;}
+
+        public int? InimigoId {get; set;}
+        public bool? DerrotouInimigo {get; set;}
     }
 }

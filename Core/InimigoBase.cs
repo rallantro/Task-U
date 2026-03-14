@@ -21,6 +21,7 @@ namespace Todo_Gacha.Core
         public int CrystalDrop { get; set; }
         public int? ItemDropId { get; set; }
         public string? DeathQuote { get; set; }
+        public int Rarity {get; set;}
 
         [NotMapped]
          public int HpAtual {get; set;}

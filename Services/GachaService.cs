@@ -103,6 +103,16 @@ namespace Todo_Gacha.Models
                 Console.WriteLine("...");
                 Thread.Sleep(500);
                 Console.WriteLine("PULL RARO! R");  
+                Thread.Sleep(500);
+                Console.WriteLine("...");
+                var ganhou = new ItemInventario();
+                var reward = banner.raroPull(context);
+                ganhou.ItemId = reward.Id;
+                ganhou.UserId = 1;
+                context.InventarioItens.Add(ganhou);
+                Console.WriteLine($"Parabéns você ganhou {reward.Name}!!");
+                Console.WriteLine(reward.Desc);
+                context.SaveChanges();
             }
             else
             {

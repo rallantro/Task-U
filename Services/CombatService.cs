@@ -177,6 +177,9 @@ namespace Todo_Gacha.Services
                     context.InventarioItens.Add(reward);
                     Console.WriteLine($"Você recebeu {item.Name}!");
                 }
+                user.DerrotouInimigo = true;
+                var adventure = new AdventureService();
+                adventure.AtualizarInimigo(context);
                 Console.WriteLine("\nPressione qualquer tecla para voltar ao menu...");
                 Console.ReadKey();
                 Console.ForegroundColor = ConsoleColor.White;
