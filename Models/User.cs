@@ -14,6 +14,7 @@ namespace Todo_Gacha.Models
         public int PityEpic { get; set; }
 
         public DateTime lastLogin {get; set;}
+        public DateTime LastBannerUpdate {get; set;}
         public int? PersonagemAtivoId { get; set; }
 
         public PersonagemBase PersonagemAtivo {get; set;}

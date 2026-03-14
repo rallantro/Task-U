@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Todo_Gacha.Data;
 
@@ -10,9 +11,11 @@ using Todo_Gacha.Data;
 namespace Todo_Gacha.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260313202215_InimigosUpdate")]
+    partial class InimigosUpdate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.4");
@@ -113,11 +116,6 @@ namespace Todo_Gacha.Migrations
                     b.Property<string>("Desc")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasMaxLength(21)
-                        .HasColumnType("TEXT");
-
                     b.Property<int>("Hp")
                         .HasColumnType("INTEGER");
 
@@ -136,10 +134,6 @@ namespace Todo_Gacha.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Personagens");
-
-                    b.HasDiscriminator<string>("Discriminator").HasValue("PersonagemBase");
-
-                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("Todo_Gacha.Core.PersonagemInventario", b =>
@@ -282,57 +276,6 @@ namespace Todo_Gacha.Migrations
                     b.HasIndex("PersonagemAtivoId");
 
                     b.ToTable("Users");
-                });
-
-            modelBuilder.Entity("Todo_Gacha.Core.Apostador", b =>
-                {
-                    b.HasBaseType("Todo_Gacha.Core.PersonagemBase");
-
-                    b.Property<int>("BaseAtk")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("BonusDMG")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("Win")
-                        .HasColumnType("INTEGER");
-
-                    b.ToTable("Personagens", t =>
-                        {
-                            t.Property("BaseAtk")
-                                .HasColumnName("Apostador_BaseAtk");
-
-                            t.Property("BonusDMG")
-                                .HasColumnName("Apostador_BonusDMG");
-                        });
-
-                    b.HasDiscriminator().HasValue("Apostador");
-                });
-
-            modelBuilder.Entity("Todo_Gacha.Core.Barbaro", b =>
-                {
-                    b.HasBaseType("Todo_Gacha.Core.PersonagemBase");
-
-                    b.Property<int>("BaseAtk")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("HpMax")
-                        .HasColumnType("INTEGER");
-
-                    b.HasDiscriminator().HasValue("Barbaro");
-                });
-
-            modelBuilder.Entity("Todo_Gacha.Core.Moon", b =>
-                {
-                    b.HasBaseType("Todo_Gacha.Core.PersonagemBase");
-
-                    b.Property<int>("BonusDMG")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("MoonState")
-                        .HasColumnType("INTEGER");
-
-                    b.HasDiscriminator().HasValue("Moon");
                 });
 
             modelBuilder.Entity("Todo_Gacha.Models.User", b =>

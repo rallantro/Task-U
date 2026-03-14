@@ -66,27 +66,7 @@ namespace Todo_Gacha.Services
                 Console.WriteLine($"Pity para lendário: {user.PityLeg}");
             }
             Console.WriteLine("--");
-            Console.WriteLine("Seus Itens:");
-
-            var itens = context.InventarioItens.ToList();
-
-            foreach (var item in itens)
-            {
-                var ItemOg = context.Itens.Find(item.ItemId);
-                if (ItemOg.Rarity == 1) {
-                    Console.ForegroundColor = ConsoleColor.White; 
-                } else if (ItemOg.Rarity == 2){
-                    Console.ForegroundColor = ConsoleColor.Blue;
-                } else if (ItemOg.Rarity == 3)
-                {
-                    Console.ForegroundColor = ConsoleColor.Magenta;
-                } else if (ItemOg.Rarity == 4)
-                {
-                   Console.ForegroundColor = ConsoleColor.Yellow; 
-                }
-                Console.WriteLine("--");
-                Console.WriteLine($"{ItemOg.Name}, {ItemOg.Desc}");
-            }
+            Console.WriteLine("Seus Personagens:");
         }
 
         public void verTarefas()
@@ -100,13 +80,13 @@ namespace Todo_Gacha.Services
                     Console.ForegroundColor = ConsoleColor.White;
                 }
                 Console.WriteLine("--");
-                Console.WriteLine($"ID: {tarefa.Id} Nome:{tarefa.Name} Descrição: {tarefa.Desc} Dificuldade: {tarefa.Dif}");
+                Console.WriteLine($"ID: {tarefa.Id} Nome:{tarefa.Name} | Descrição: {tarefa.Desc} | Dificuldade: {tarefa.Dif}");
             }
             foreach (Tarefa tarefa in context.Tarefas.Where(x => x.IsDone == true).ToList())
             {
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine("-- Concluídas --");
-                Console.WriteLine($"ID: {tarefa.Id} Nome:{tarefa.Name} Descrição: {tarefa.Desc} Dificuldade: {tarefa.Dif}");
+                Console.WriteLine($"ID: {tarefa.Id} Nome:{tarefa.Name} | Descrição: {tarefa.Desc} | Dificuldade: {tarefa.Dif}");
             }
             Console.ForegroundColor = ConsoleColor.White;
         }

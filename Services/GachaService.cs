@@ -35,11 +35,6 @@ namespace Todo_Gacha.Models
             int number = random.Next(1, 1001);
             var user = context.Users.Find(1);
 
-            if (user.Crystals < 10) {
-                Console.WriteLine("Crystals insuficientes! Vá estudar para ganhar mais.");
-                return;
-            }
-
             user.Crystals -=10;
 
             int pityLeg = user.PityLeg;
@@ -56,6 +51,7 @@ namespace Todo_Gacha.Models
                 luckEvent = false;
             }
 
+
             Console.WriteLine("...");
             Thread.Sleep(1500);
 
@@ -65,7 +61,18 @@ namespace Todo_Gacha.Models
                 Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.WriteLine("...");
                 Thread.Sleep(500);
-                Console.WriteLine("PULL LEGENDÁRIO! SSR");  
+                Console.WriteLine("PULL LEGENDÁRIO! SSR"); 
+                Thread.Sleep(500);
+                Console.WriteLine("...");
+                var ganhou = new PersonagemInventario();
+                var reward = banner.LegendPull(context);
+                ganhou.PersonagemId = reward.Id;
+                ganhou.UserId = 1;
+                context.InventarioPersonagens.Add(ganhou);
+                Console.WriteLine($"-- {reward.Name.ToUpper()} --");
+                Console.WriteLine("-");
+                Console.WriteLine(reward.Desc);
+                context.SaveChanges(); 
                 pityLeg = 0;
                 pityEpic = 0;
             }
@@ -85,8 +92,7 @@ namespace Todo_Gacha.Models
                 Console.WriteLine(reward.SummonQuote);
                 Console.WriteLine("...");
                 Thread.Sleep(1500);
-                Console.WriteLine($"Parabéns você ganhou o {reward.Name}!!");
-                Console.WriteLine("-");
+                Console.WriteLine($"-- {reward.Name.ToUpper()} --");
                 Console.WriteLine(reward.Desc);
                 context.SaveChanges();
                 pityEpic = 0;
@@ -112,7 +118,6 @@ namespace Todo_Gacha.Models
                 ganhou.UserId = 1;
                 context.InventarioItens.Add(ganhou);
                 Console.WriteLine($"Parabéns você ganhou {reward.Name}!!");
-                Console.WriteLine("-");
                 Console.WriteLine(reward.Desc);
                 context.SaveChanges();
             }  

@@ -1,8 +1,8 @@
 using System.Reflection.Metadata;
 using Microsoft.EntityFrameworkCore;
 using Todo_Gacha.Models;
-using Todo_Gacha.Core
-;
+using Todo_Gacha.Core;
+
 namespace Todo_Gacha.Data
 {
     public class AppDbContext : DbContext
@@ -14,8 +14,20 @@ namespace Todo_Gacha.Data
 
         public DbSet<PersonagemBase> Personagens { get; set; }
         public DbSet<PersonagemInventario> InventarioPersonagens  { get; set; }
+        public DbSet<Banner> banners  { get; set; }
         public DbSet<Item> Itens  { get; set; }
         public DbSet<ItemInventario> InventarioItens  { get; set; }
+
+        public DbSet<InimigoBase> Inimigos { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Moon>();
+            modelBuilder.Entity<Barbaro>();
+            modelBuilder.Entity<Apostador>();
+
+            base.OnModelCreating(modelBuilder);
+        }
         
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
