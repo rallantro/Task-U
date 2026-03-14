@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Todo-Gacha")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+73d4c3e8e12a5a907e464d99483d387975861397")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d08ec541f4907741eef6349960ad1ce326c4fd04")]
 [assembly: System.Reflection.AssemblyProductAttribute("Todo-Gacha")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Todo-Gacha")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
