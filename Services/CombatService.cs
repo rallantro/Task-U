@@ -12,10 +12,9 @@ namespace Todo_Gacha.Services
 {
     public class CombatService
     {
-        public void Combate(InimigoBase inimigo, PersonagemBase personagem, AppDbContext context)
+        public void Combate(InimigoBase inimigo, List<PersonagemBase> equipe, AppDbContext context)
         {
             var user = context.Users.Find(1);
-            personagem.user = user;
             var x = 1;
             var inventario = new InventarioServices();
 
@@ -24,132 +23,149 @@ namespace Todo_Gacha.Services
             Console.WriteLine("--");
             Console.WriteLine(inimigo.Desc);
             Thread.Sleep(1500);
-            personagem.HpAtual = personagem.HpMax;
             inimigo.HpAtual = inimigo.HpMax;
+            foreach (var personagem in equipe)
+            {
+                personagem.user = user;
+                personagem.HpAtual = personagem.HpMax;
+            }
+            
 
-            while (personagem.HpAtual > 0 && inimigo.HpAtual > 0)
+            while (equipe.Any(x => x.HpAtual > 0) && inimigo.HpAtual > 0)
             {
                 Console.Clear();
-                personagem.Passiva();
-                Cabecalho(personagem, inimigo, x);
-                //Turno do Player
-                bool Atacou = false;
-                bool UsouHabilidade = false;
-                bool UsouItem = false;
-                bool MenuShow = true;
-                Console.ForegroundColor = ConsoleColor.White;
-                
-
-
-                while (MenuShow)
+                foreach (var personagem in equipe)
                 {
-                    Console.Clear();
-                    Cabecalho(personagem, inimigo, x);
-                    Console.WriteLine($"---- // ----");
-                    Console.WriteLine($"O que você deseja fazer?");
-                    if (Atacou)
+                    if (personagem.HpAtual <= 0)
                     {
-                        Console.ForegroundColor = ConsoleColor.DarkGray;
-                        Console.WriteLine("1 - Ataque Básico");
-                        Console.ForegroundColor = ConsoleColor.White;
+                        continue;
                     }
-                    else
+                    Cabecalho(equipe, inimigo, x);
+                    personagem.Passiva();
+                    Thread.Sleep(1000);
+                    //Turno do Player
+                    bool Atacou = false;
+                    bool UsouHabilidade = false;
+                    bool UsouItem = false;
+                    bool MenuShow = true;
+                    Console.ForegroundColor = ConsoleColor.White;
+                    
+
+
+                    while (MenuShow)
                     {
-                        Console.WriteLine("1 - Ataque Básico");
-                    }
-                    if (UsouHabilidade)
-                    {
-                        Console.ForegroundColor = ConsoleColor.DarkGray;
-                        Console.WriteLine("2 - Habilidade Especial");
-                        Console.ForegroundColor = ConsoleColor.White;
-                    }
-                    else
-                    {
-                        Console.WriteLine("2 - Habilidade Especial");
-                    }
-                    if (UsouItem)
-                    {
-                        Console.ForegroundColor = ConsoleColor.DarkGray;
-                        Console.WriteLine("3 - Item");
-                        Console.ForegroundColor = ConsoleColor.White;
-                    }
-                    else
-                    {
-                        Console.WriteLine("3 - Item");
-                    }
-                    Console.WriteLine("4 - Encerrar Turno");
-                    Console.WriteLine($"---- // ----");
-                    switch (Console.ReadLine())
-                    {
-                        case "1" :
-                            if (!Atacou)
-                            {
-                                int dano = personagem.Damage();
-                                inimigo.HpAtual -= dano;
-                                Atacou = true;  
-                            }
-                            Thread.Sleep(1000);                    
-                        break;
-                        case "2":
-                            if (!UsouHabilidade)
-                            {
-                                personagem.Habilidade();
-                                UsouHabilidade = true;
-                            }
-                            Thread.Sleep(1000);
-                        break;
-                        case "3":
-                            Console.Clear();
-                            Cabecalho(personagem, inimigo, x);
-                            var consumiveis = new List<Item>();
-                            inventario.MostrarItens(context, true, consumiveis, 1); 
-                            if (consumiveis.Count == 0) 
-                            {
-                                Console.WriteLine("Você não tem itens consumíveis!");
-                                break;
-                            } 
-                            Console.WriteLine("--");
-                            Console.WriteLine($"Qual item deseja usar?");
-                        
-                            var num = 0;
-                            var sucesso = int.TryParse(Console.ReadLine(), out num);
-                            if (sucesso && num > 0 && num <= consumiveis.Count())
-                            {
-                                var itemEscolhido = consumiveis[num - 1];
-                                Console.WriteLine("--");
-                                Console.WriteLine($"{personagem.Name} usou {itemEscolhido.Name}!");
-                                itemEscolhido.Uso(personagem, context);
-                                UsouItem = true;
+                        Console.Clear();
+                        Cabecalho(equipe, inimigo, x);
+                        Console.WriteLine($"\n --- TURNO DE {personagem.Name} ---");
+                        Console.WriteLine($"---- // ----");
+                        Console.WriteLine($"O que você deseja fazer?");
+                        if (Atacou)
+                        {
+                            Console.ForegroundColor = ConsoleColor.DarkGray;
+                            Console.WriteLine("1 - Ataque Básico");
+                            Console.ForegroundColor = ConsoleColor.White;
+                        }
+                        else
+                        {
+                            Console.WriteLine("1 - Ataque Básico");
+                        }
+                        if (UsouHabilidade)
+                        {
+                            Console.ForegroundColor = ConsoleColor.DarkGray;
+                            Console.WriteLine("2 - Habilidade Especial");
+                            Console.ForegroundColor = ConsoleColor.White;
+                        }
+                        else
+                        {
+                            Console.WriteLine("2 - Habilidade Especial");
+                        }
+                        if (UsouItem)
+                        {
+                            Console.ForegroundColor = ConsoleColor.DarkGray;
+                            Console.WriteLine("3 - Item");
+                            Console.ForegroundColor = ConsoleColor.White;
+                        }
+                        else
+                        {
+                            Console.WriteLine("3 - Item");
+                        }
+                        Console.WriteLine("4 - Encerrar Turno");
+                        Console.WriteLine($"---- // ----");
+                        switch (Console.ReadLine())
+                        {
+                            case "1" :
+                                if (!Atacou)
+                                {
+                                    int dano = personagem.Damage();
+                                    inimigo.HpAtual -= dano;
+                                    Atacou = true;  
+                                }
+                                Thread.Sleep(1000);                    
+                            break;
+                            case "2":
+                                if (!UsouHabilidade)
+                                {
+                                    personagem.Habilidade();
+                                    UsouHabilidade = true;
+                                }
                                 Thread.Sleep(1000);
-                            }
-                            else
-                            {
-                                Console.WriteLine("Opção Inválida!");
-                            }
-                                                                                    
-                        break;
-                        case "4":
-                            Console.WriteLine("Seu turno acabou.");
-                            Thread.Sleep(1000);
-                            MenuShow = false;
-                        break;
-                        
+                            break;
+                            case "3":
+                                Console.Clear();
+                                Cabecalho(equipe, inimigo, x);
+                                var consumiveis = new List<Item>();
+                                inventario.MostrarItens(context, true, consumiveis, 1); 
+                                if (consumiveis.Count == 0) 
+                                {
+                                    Console.WriteLine("Você não tem itens consumíveis!");
+                                    break;
+                                } 
+                                Console.WriteLine("--");
+                                Console.WriteLine($"Qual item deseja usar?");
+                            
+                                var num = 0;
+                                var sucesso = int.TryParse(Console.ReadLine(), out num);
+                                if (sucesso && num > 0 && num <= consumiveis.Count())
+                                {
+                                    var itemEscolhido = consumiveis[num - 1];
+                                    Console.WriteLine("--");
+                                    Console.WriteLine($"{personagem.Name} usou {itemEscolhido.Name}!");
+                                    itemEscolhido.Uso(personagem, context);
+                                    UsouItem = true;
+                                    Thread.Sleep(1000);
+                                }
+                                else
+                                {
+                                    Console.WriteLine("Opção Inválida!");
+                                }
+                                                                                        
+                            break;
+                            case "4":
+                                Console.WriteLine("Seu turno acabou.");
+                                Thread.Sleep(1000);
+                                MenuShow = false;
+                            break;
+                            
+                        }
                     }
-                }
+                
+                    }
 
                 if(inimigo.HpAtual > 0)
                 {
                     // Turno do Inimigo 
                     inimigo.Passiva(user); 
                     int danoInimigo = inimigo.Damage();
-                    personagem.HpAtual -= danoInimigo;
+                    var vivos = equipe.Where(p => p.HpAtual > 0).ToList();
+                    Random rand = new Random();
+                    var alvo = vivos[rand.Next(equipe.Count)];
+                    alvo.HpAtual -= danoInimigo;
                     Console.WriteLine($"{inimigo.Name} atacou e causou {danoInimigo} de dano!");
-
                     Console.WriteLine("\nPressione qualquer tecla para o próximo turno...");
                     Console.ReadKey();
                     x++;
                 }
-                
+
             }
 
             if (inimigo.HpAtual <= 0)
@@ -186,13 +202,19 @@ namespace Todo_Gacha.Services
                 context.SaveChanges();
             }
         }
-        private void Cabecalho(PersonagemBase personagem, InimigoBase inimigo, int turno)
+        private void Cabecalho(List<PersonagemBase> equipe, InimigoBase inimigo, int turno)
         {
-            Console.WriteLine($"\n================== TURNO {turno} ==================");
-            personagem.HpAtual = Math.Min(personagem.HpAtual, personagem.HpMax);
+            Console.WriteLine($"================== TURNO {turno} ==================");
+            foreach (var personagem in equipe)
+            {
+                if (personagem.HpAtual <= 0) Console.ForegroundColor = ConsoleColor.DarkRed;
+                personagem.HpAtual = Math.Min(personagem.HpAtual, personagem.HpMax);
+                Console.WriteLine($" {personagem.Name} | HP: {personagem.HpAtual}");   
+            }
             inimigo.HpAtual = Math.Min(inimigo.HpAtual, inimigo.HpMax);
-            Console.WriteLine($"{personagem.Name}: {personagem.HpAtual}");
+            Console.WriteLine("---------------------------------------------------");
             Console.WriteLine($" INIMIGO: {inimigo.Name.ToUpper()} | HP: {inimigo.HpAtual}/{inimigo.HpMax}");
+            Console.WriteLine("===================================================");
         }
     } 
 }

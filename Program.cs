@@ -117,7 +117,10 @@ while (MenuShow)
 
         case "5":
             //var inimigo = context.Inimigos.Find(user.InimigoId);
-            combat.Combate(context.Inimigos.Find(1), user.Slot1_PersonagemAtivo, context);
+            var equipe = new List<PersonagemBase>();
+            equipe.Add(user.Slot1_PersonagemAtivo);
+            equipe.Add(user.Slot2_PersonagemAtivo);
+            combat.Combate(context.Inimigos.Find(1), equipe, context);
             context.Entry(user).Reload();
         break;
 
