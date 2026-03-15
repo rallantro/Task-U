@@ -188,11 +188,11 @@ namespace Todo_Gacha.Services
         }
         private void Cabecalho(PersonagemBase personagem, InimigoBase inimigo, int turno)
         {
-            Console.WriteLine($"---- TURNO {turno} ----");
+            Console.WriteLine($"\n================== TURNO {turno} ==================");
             personagem.HpAtual = Math.Min(personagem.HpAtual, personagem.HpMax);
             inimigo.HpAtual = Math.Min(inimigo.HpAtual, inimigo.HpMax);
             Console.WriteLine($"{personagem.Name}: {personagem.HpAtual}");
-            Console.WriteLine($"{inimigo.Name}: {inimigo.HpAtual}");
+            Console.WriteLine($" INIMIGO: {inimigo.Name.ToUpper()} | HP: {inimigo.HpAtual}/{inimigo.HpMax}");
         }
     } 
 }

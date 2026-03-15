@@ -23,19 +23,37 @@ namespace Todo_Gacha.Services
             {
                 case "1":
                     MostrarPersonagens(context, true, listaPersonagens);
-                break; 
+                    break;
 
                 case "2":
                     MostrarPersonagens(context, false, listaPersonagens);
-                    if (user.PersonagemAtivo == null) {
+                    if (user.Slot1_PersonagemAtivo == null && user.Slot2_PersonagemAtivo == null)
+                    {
                         Console.WriteLine("Qual personagem deseja equipar? (Você não tem nenhum personagem ativo!)");
                     }
                     else
                     {
-                        Console.WriteLine($"Qual personagem deseja equipar? (Personagem ativo no momento: {user.PersonagemAtivo.Name})");
+                        var PersonagensAtivos = new List<string>();
+                        if (user.Slot1_PersonagemAtivo != null)
+                        {
+                            PersonagensAtivos.Add(user.Slot1_PersonagemAtivo.Name);  
+                        }
+                        
+                        if (user.Slot2_PersonagemAtivo != null)
+                        {
+                            PersonagensAtivos.Add(user.Slot2_PersonagemAtivo.Name);   
+                        }
+                        string result = String.Join(", ", PersonagensAtivos);
+                        Console.WriteLine($"Qual personagem deseja equipar? (Ativo no momento: {result})");
                     }
                     var escolha = Console.ReadLine();
-                    var personagemEscolhido = listaPersonagens[int.Parse(escolha) - 1];
+                    var escolhaInt = 0;
+                    if(!int.TryParse(escolha, out escolhaInt) || escolhaInt < 0 || escolhaInt > listaPersonagens.Count())
+                    {
+                        Console.WriteLine("Comando inválido!");
+                        return;
+                    }
+                    var personagemEscolhido = listaPersonagens[escolhaInt - 1];
                     Console.Clear();
                     Console.WriteLine("Personagem Selecionado:");
                     Console.WriteLine($"[{personagemEscolhido.Name}]");
@@ -43,24 +61,50 @@ namespace Todo_Gacha.Services
                     Console.WriteLine($"[{personagemEscolhido.Desc}]");
                     Console.WriteLine($"--");
                     Console.WriteLine("Confirma essa escolha?");
-                    Console.WriteLine("1 - Equipar | Pressione qualquer coisa para voltar");
-                    if (Console.ReadLine() == "1")
+                    Console.WriteLine("1 - Equipar no Slot 1| 2 - Equipar no Slot 2 | Pressione qualquer coisa para voltar");
+                    escolha = Console.ReadLine();
+                    if (escolha == "1")
                     {
-                        user.PersonagemAtivo = personagemEscolhido;
-                        user.PersonagemAtivoId = personagemEscolhido.Id;
-                        context.SaveChanges();
-                    } else
+                        if (personagemEscolhido.Id == user.Slot2_PersonagemAtivoId) {
+                            Console.WriteLine("Este personagem já está no Slot 2!");
+                            Console.ReadKey();
+                            return;
+                        }
+                        else
+                        {
+                            user.Slot1_PersonagemAtivo = personagemEscolhido;
+                            user.Slot1_PersonagemAtivoId = personagemEscolhido.Id;
+                            context.SaveChanges(); 
+                        }
+                        
+                    }
+                    if (escolha == "2")
+                    {
+                        if (personagemEscolhido.Id == user.Slot1_PersonagemAtivoId) {
+                            Console.WriteLine("Este personagem já está no Slot 1!");
+                            Console.ReadKey();
+                            return;
+                        }
+                        else
+                        {
+                            user.Slot2_PersonagemAtivo = personagemEscolhido;
+                            user.Slot2_PersonagemAtivoId = personagemEscolhido.Id;
+                            context.SaveChanges();  
+                        }
+                        
+                    }
+                    else
                     {
                         return;
                     }
-                    
-                break;
-                
+
+                    break;
+
                 default:
-                break;
+                    break;
             }
 
-            
+
         }
 
         public void MostrarPersonagens(AppDbContext context, bool ShowDesc, List<PersonagemBase> listaPersonagens)
@@ -70,27 +114,29 @@ namespace Todo_Gacha.Services
             int contador = 1;
 
             foreach (var personagem in personagemInventarios)
-                {
+            {
                 var PersonagemOg = context.Personagens.Find(personagem.Key);
                 listaPersonagens.Add(PersonagemOg);
                 var quantidade = personagem.Count();
-                if (PersonagemOg.Rarity == 3) {
-                Console.ForegroundColor = ConsoleColor.Magenta;
-                } else if (PersonagemOg.Rarity == 4)
+                if (PersonagemOg.Rarity == 3)
                 {
-                Console.ForegroundColor = ConsoleColor.Yellow; 
+                    Console.ForegroundColor = ConsoleColor.Magenta;
+                }
+                else if (PersonagemOg.Rarity == 4)
+                {
+                    Console.ForegroundColor = ConsoleColor.Yellow;
                 }
                 Console.WriteLine("--");
                 Console.WriteLine($"{contador} - [{PersonagemOg.Name}] x {quantidade}");
                 Console.ResetColor();
                 if (ShowDesc)
                 {
-                  Console.WriteLine($"Descrição: {PersonagemOg.Desc}");  
+                    Console.WriteLine($"Descrição: {PersonagemOg.Desc}");
                 }
                 contador++;
             }
 
-            
+
         }
 
         public void VerItens(AppDbContext context, User user)
@@ -108,11 +154,12 @@ namespace Todo_Gacha.Services
                     MostrarItens(context, true, listaItens, 1);
                     Console.WriteLine("Pressione qualquer tecla para voltar");
                     Console.ReadKey();
-                break; 
+                    break;
 
                 case "2":
                     MostrarItens(context, false, listaItens, 2);
-                    if (user.ItemAtivo == null) {
+                    if (user.ItemAtivo == null)
+                    {
                         Console.WriteLine("Qual item deseja equipar? (Você não tem nenhum item equipado!)");
                     }
                     else
@@ -120,6 +167,12 @@ namespace Todo_Gacha.Services
                         Console.WriteLine($"Qual item deseja equipar? (Item ativo no momento: {user.ItemAtivo.Name})");
                     }
                     var escolha = Console.ReadLine();
+                    var escolhaInt = 0;
+                    if(!int.TryParse(escolha, out escolhaInt) || escolhaInt < 0 || escolhaInt > listaItens.Count())
+                    {
+                        Console.WriteLine("Comando inválido!");
+                        return;
+                    }
                     var itemEscolhido = listaItens[int.Parse(escolha) - 1];
                     Console.Clear();
                     Console.WriteLine("Item Selecionado:");
@@ -134,18 +187,19 @@ namespace Todo_Gacha.Services
                         user.ItemAtivo = itemEscolhido;
                         user.ItemAtivoId = itemEscolhido.Id;
                         context.SaveChanges();
-                    } else
+                    }
+                    else
                     {
                         return;
                     }
-                    
-                break;
-                
+
+                    break;
+
                 default:
-                break;
+                    break;
             }
 
-           
+
         }
 
         public void MostrarItens(AppDbContext context, bool ShowDesc, List<Item> listaItens, int TypeItem)
@@ -162,35 +216,40 @@ namespace Todo_Gacha.Services
                 Console.WriteLine("Itens Equipáveis:");
             }
 
-             foreach (var item in itens)
+            foreach (var item in itens)
             {
                 var ItemOg = context.Itens.Find(item.Key);
                 if (ItemOg.Type == TypeItem)
                 {
                     listaItens.Add(ItemOg);
                     var quantidade = item.Count();
-                    if (ItemOg.Rarity == 1) {
-                        Console.ForegroundColor = ConsoleColor.White; 
-                    } else if (ItemOg.Rarity == 2){
+                    if (ItemOg.Rarity == 1)
+                    {
+                        Console.ForegroundColor = ConsoleColor.White;
+                    }
+                    else if (ItemOg.Rarity == 2)
+                    {
                         Console.ForegroundColor = ConsoleColor.Blue;
-                    } else if (ItemOg.Rarity == 3)
+                    }
+                    else if (ItemOg.Rarity == 3)
                     {
                         Console.ForegroundColor = ConsoleColor.Magenta;
-                    } else if (ItemOg.Rarity == 4)
+                    }
+                    else if (ItemOg.Rarity == 4)
                     {
-                    Console.ForegroundColor = ConsoleColor.Yellow; 
+                        Console.ForegroundColor = ConsoleColor.Yellow;
                     }
                     Console.WriteLine("--");
                     Console.WriteLine($"{contador} - [{ItemOg.Name}] x {quantidade}");
                     Console.ResetColor();
                     if (ShowDesc)
                     {
-                    Console.WriteLine($"Descrição: {ItemOg.Desc}");  
+                        Console.WriteLine($"Descrição: {ItemOg.Desc}");
                     }
                     contador++;
                 }
             }
-            
+
         }
     }
 }
