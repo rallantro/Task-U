@@ -28,6 +28,7 @@ namespace Todo_Gacha.Services
             {
                 personagem.user = user;
                 personagem.HpAtual = personagem.HpMax;
+                personagem.aliado = equipe.Where(x => x.Id != personagem.Id).FirstOrDefault();
             }
             
 
@@ -159,8 +160,7 @@ namespace Todo_Gacha.Services
                     var vivos = equipe.Where(p => p.HpAtual > 0).ToList();
                     Random rand = new Random();
                     var alvo = vivos[rand.Next(equipe.Count)];
-                    alvo.HpAtual -= danoInimigo;
-                    Console.WriteLine($"{inimigo.Name} atacou e causou {danoInimigo} de dano!");
+                    alvo.tomarDano(inimigo.Name, danoInimigo);
                     Console.WriteLine("\nPressione qualquer tecla para o próximo turno...");
                     Console.ReadKey();
                     x++;

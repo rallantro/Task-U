@@ -2,6 +2,7 @@ using System.Reflection.Metadata;
 using Microsoft.EntityFrameworkCore;
 using Todo_Gacha.Models;
 using Todo_Gacha.Core;
+using Todo_Gacha.Core.Entities;
 
 namespace Todo_Gacha.Data
 {
@@ -27,6 +28,7 @@ namespace Todo_Gacha.Data
             modelBuilder.Entity<Apostador>();
             modelBuilder.Entity<Grafiteiro>();
             modelBuilder.Entity<Voodo>();
+            modelBuilder.Entity<Vampire>();
             modelBuilder.Entity<Aranha>();
 
             base.OnModelCreating(modelBuilder);

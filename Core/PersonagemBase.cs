@@ -20,10 +20,15 @@ namespace Todo_Gacha.Core
 
         [NotMapped]
         public int HpAtual {get; set;}
+        [NotMapped]
+        public int Shield {get; set;}
         public int Mod {get; set;}
 
         [NotMapped]
         public User user {get; set;}
+
+        [NotMapped]
+        public PersonagemBase aliado {get; set;}
 
         public string SummonQuote { get; set; }
 
@@ -34,6 +39,13 @@ namespace Todo_Gacha.Core
         public virtual int Damage()
         {
             return AtkTotal();
+        }
+
+        public virtual void tomarDano(string inimigo, int dano)
+        {
+            int danoTotal = Math.Max(0, dano - Shield);
+            HpAtual -= danoTotal;
+            Console.WriteLine($"{inimigo} atacou {Name} e causou {danoTotal} de dano!");
         }
 
         public virtual void Habilidade()
