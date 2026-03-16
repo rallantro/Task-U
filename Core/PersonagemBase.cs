@@ -22,6 +22,9 @@ namespace Todo_Gacha.Core
         public int HpAtual {get; set;}
         [NotMapped]
         public int Shield {get; set;}
+        [NotMapped]
+        public int BuffAtk {get; set;}
+        [NotMapped]
         public int Mod {get; set;}
 
         [NotMapped]
@@ -34,7 +37,7 @@ namespace Todo_Gacha.Core
 
         public int ModTotal() => (user?.ItemAtivo?.Atr == 3) ? Mod + user.ItemAtivo.Mod : Mod;
 
-        public int AtkTotal() => (user?.ItemAtivo?.Atr == 2) ? Atk + user.ItemAtivo.Mod : Atk;
+        public int AtkTotal() => (user?.ItemAtivo?.Atr == 2) ? Atk + BuffAtk + user.ItemAtivo.Mod : Atk + BuffAtk;
 
         public virtual int Damage()
         {
