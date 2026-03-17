@@ -7,13 +7,15 @@ using Todo_Gacha.Models;
 using Todo_Gacha.Data;
 using System.Security.Cryptography.X509Certificates;
 
+#nullable enable
+
 namespace Todo_Gacha.Core
 {
     public class Item
     {
         public int Id { get; set; }
-        public string Name {get; set;}
-        public string Desc {get; set;}
+        public required string Name {get; set;}
+        public required string Desc {get; set;}
         public int Rarity {get; set;}
         public enum ItemType { Consumivel = 1, Modificador = 2 }
         public enum Atributo { Hp = 1, Atk = 2, Mod = 3 }
@@ -33,7 +35,7 @@ namespace Todo_Gacha.Core
                     Console.WriteLine($"{Usuario.Name} recuperou {Mod} pontos de vida!");
                     Usuario.HpAtual = Math.Min(Usuario.HpAtual + Mod, Usuario.HpMax);;
                     var itemInv = context.InventarioItens.Where(x => x.ItemId == this.Id).FirstOrDefault();
-                    context.InventarioItens.Remove(itemInv);
+                    if(itemInv != null) context.InventarioItens.Remove(itemInv);
                     context.SaveChanges();
                 }
             }

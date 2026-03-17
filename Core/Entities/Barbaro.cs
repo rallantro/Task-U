@@ -11,6 +11,7 @@ namespace Todo_Gacha.Core
     {
         private static readonly Random random = new Random();
         public int BaseAtk {get; private set;}
+        private bool shildou {get; set;}
 
         public override int Damage()
         {
@@ -34,12 +35,21 @@ namespace Todo_Gacha.Core
 
         public override void Passiva()
         {
-            BaseAtk = (HpMax - HpAtual) * ModTotal()/2;
+            BaseAtk = (HpMax - HpAtual) * ModTotal()/4;
             if (BaseAtk > 0)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine($"> [PASSIVA] A fúria de {Name} aumenta! (+{BaseAtk} de ATK)");
                 Console.ResetColor();
+            }
+            if (shildou == false && HpAtual <= HpMax/8)
+            {
+                Shield += HpMax / 5;
+                shildou = true;
+            }
+            if (shildou && Shield == 0)
+            {
+                shildou = false;
             }
         }
         

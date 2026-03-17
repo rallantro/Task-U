@@ -1,3 +1,4 @@
+#nullable disable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +13,7 @@ namespace Todo_Gacha.Services
 {
     public class CombatService
     {
+        private readonly Random rand = new Random();
         public void Combate(InimigoBase inimigo, List<PersonagemBase> equipe, AppDbContext context)
         {
             var user = context.Users.Find(1);
@@ -22,28 +24,41 @@ namespace Todo_Gacha.Services
             Console.WriteLine($"Seu inimigo será {inimigo.Name}");
             Console.WriteLine("--");
             Console.WriteLine(inimigo.Desc);
-            Thread.Sleep(1500);
+            Console.ReadKey();
             inimigo.HpAtual = inimigo.HpMax;
             foreach (var personagem in equipe)
             {
                 personagem.user = user;
                 personagem.HpAtual = personagem.HpMax;
-                personagem.aliado = equipe.Where(x => x.Id != personagem.Id).FirstOrDefault();
+                personagem.chanceAlvo = 50;
+                var aliado = equipe.FirstOrDefault(x => x.Id != personagem.Id);
+                personagem.aliado = aliado;
+
             }
             
 
             while (equipe.Any(x => x.HpAtual > 0) && inimigo.HpAtual > 0)
             {
+                foreach (var personagem in equipe)
+                {
+                    personagem.BuffAtk = 0;
+                }
                 Console.Clear();
                 foreach (var personagem in equipe)
                 {
+                    
+                    if (inimigo.HpAtual <= 0)
+                    {
+                        break;
+                    }
                     if (personagem.HpAtual <= 0)
                     {
                         continue;
                     }
+                    Console.Clear();
                     Cabecalho(equipe, inimigo, x);
                     personagem.Passiva();
-                    Thread.Sleep(1000);
+                    Console.ReadKey();
                     //Turno do Player
                     bool Atacou = false;
                     bool UsouHabilidade = false;
@@ -98,10 +113,10 @@ namespace Todo_Gacha.Services
                                 if (!Atacou)
                                 {
                                     int dano = personagem.Damage();
-                                    inimigo.HpAtual -= dano;
+                                    inimigo.tomarDano(personagem.Name, dano);
                                     Atacou = true;  
                                 }
-                                Thread.Sleep(1000);                    
+                                Console.ReadKey();                   
                             break;
                             case "2":
                                 if (!UsouHabilidade)
@@ -109,7 +124,7 @@ namespace Todo_Gacha.Services
                                     personagem.Habilidade();
                                     UsouHabilidade = true;
                                 }
-                                Thread.Sleep(1000);
+                                Console.ReadKey();
                             break;
                             case "3":
                                 Console.Clear();
@@ -133,7 +148,7 @@ namespace Todo_Gacha.Services
                                     Console.WriteLine($"{personagem.Name} usou {itemEscolhido.Name}!");
                                     itemEscolhido.Uso(personagem, context);
                                     UsouItem = true;
-                                    Thread.Sleep(1000);
+                                    Console.ReadKey();
                                 }
                                 else
                                 {
@@ -143,7 +158,7 @@ namespace Todo_Gacha.Services
                             break;
                             case "4":
                                 Console.WriteLine("Seu turno acabou.");
-                                Thread.Sleep(1000);
+                                Console.ReadKey();
                                 MenuShow = false;
                             break;
                             
@@ -152,14 +167,38 @@ namespace Todo_Gacha.Services
                 
                     }
 
-                if(inimigo.HpAtual > 0)
+                if(inimigo.HpAtual > 0 && equipe.Any(x => x.HpAtual > 0))
                 {
-                    // Turno do Inimigo 
+                    Console.Clear();
+                    Cabecalho(equipe, inimigo, x);
+                    inimigo.BuffAtk = 0;
                     inimigo.Passiva(user); 
-                    int danoInimigo = inimigo.Damage();
                     var vivos = equipe.Where(p => p.HpAtual > 0).ToList();
-                    Random rand = new Random();
-                    var alvo = vivos[rand.Next(equipe.Count)];
+                    if(vivos.Count() == 0)
+                    {
+                        continue;
+                    }
+                    inimigo.alvos = vivos;
+                    inimigo.Habilidade();
+                    int danoInimigo = inimigo.Damage();
+                    
+                    int chanceTotal = 0;
+                    foreach (var personagem in vivos)
+                    {
+                        chanceTotal += personagem.chanceAlvo;
+                    }
+                    int chance = rand.Next(0, chanceTotal);
+                    PersonagemBase alvo = vivos.FirstOrDefault();
+                    foreach (var personagem in vivos)
+                    {
+                        if (chance < personagem.chanceAlvo)
+                        {
+                            alvo = personagem;
+                            break;
+                            
+                        }
+                        chance -= personagem.chanceAlvo;
+                    }
                     alvo.tomarDano(inimigo.Name, danoInimigo);
                     Console.WriteLine("\nPressione qualquer tecla para o próximo turno...");
                     Console.ReadKey();
@@ -210,6 +249,7 @@ namespace Todo_Gacha.Services
                 if (personagem.HpAtual <= 0) Console.ForegroundColor = ConsoleColor.DarkRed;
                 personagem.HpAtual = Math.Min(personagem.HpAtual, personagem.HpMax);
                 Console.WriteLine($" {personagem.Name} | HP: {personagem.HpAtual}");   
+                Console.ResetColor();
             }
             inimigo.HpAtual = Math.Min(inimigo.HpAtual, inimigo.HpMax);
             Console.WriteLine("---------------------------------------------------");

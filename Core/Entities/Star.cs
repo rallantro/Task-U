@@ -8,7 +8,6 @@ namespace Todo_Gacha.Core.Entities
     public class Star : PersonagemBase
     {
         private bool podeOrar = false;
-        private bool curou;
         private int orarCD;
         private int curaBonus;
         public override int Damage()

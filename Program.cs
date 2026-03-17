@@ -1,4 +1,4 @@
-﻿// See https://aka.ms/new-console-template for more information
+﻿#nullable disable
 using System.Reflection.Metadata;
 using System.Security.Cryptography.X509Certificates;
 using System.Xml;
@@ -22,8 +22,10 @@ var user = context.Users.Include(u => u.Slot1_PersonagemAtivo).Include(u => u.Sl
 //adventure.AtualizarInimigo(context);
 banner.AtualizarBanner(context);
 service.AtualizarTarefas();
+adventure.AtualizarInimigo(context);
 
 CreateService create = new CreateService();
+
 
 
 bool MenuShow = true;
@@ -72,8 +74,17 @@ while (MenuShow)
         case "3":
             Console.WriteLine("--");
             Console.WriteLine("Digite o ID da Tarefa Realizada:");
-            service.ConcluirTarefa(int.Parse(Console.ReadLine()), gacha);
-            Console.ReadLine();
+            var EscolhaId = 0;
+            if(int.TryParse(Console.ReadLine(), out EscolhaId))
+            {
+                service.ConcluirTarefa(EscolhaId, gacha);
+            }
+            else
+            {
+                Console.WriteLine("Comando Inválido!");
+            }
+            
+            Console.ReadKey();
         break;
 
         case "4":
@@ -118,9 +129,15 @@ while (MenuShow)
         case "5":
             //var inimigo = context.Inimigos.Find(user.InimigoId);
             var equipe = new List<PersonagemBase>();
-            equipe.Add(user.Slot1_PersonagemAtivo);
-            equipe.Add(user.Slot2_PersonagemAtivo);
-            combat.Combate(context.Inimigos.Find(1), equipe, context);
+            if (user.Slot1_PersonagemAtivo == null && user.Slot2_PersonagemAtivo == null)
+            {
+                Console.WriteLine("Você não possui personagens equipados!");
+                Console.ReadKey();
+                break;
+            }
+            if(user.Slot1_PersonagemAtivo != null) equipe.Add(user.Slot1_PersonagemAtivo);
+            if(user.Slot2_PersonagemAtivo != null) equipe.Add(user.Slot2_PersonagemAtivo);
+            combat.Combate(context.Inimigos.Find(2), equipe, context);
             context.Entry(user).Reload();
         break;
 
@@ -130,7 +147,7 @@ while (MenuShow)
 
         default:
             Console.WriteLine("Por favor digite apenas uma das opções acima!");
-            Console.ReadLine();
+            Console.ReadKey();
         break;
     }
 }

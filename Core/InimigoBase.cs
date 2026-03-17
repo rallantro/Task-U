@@ -24,11 +24,38 @@ namespace Todo_Gacha.Core
         public int Rarity {get; set;}
 
         [NotMapped]
-         public int HpAtual {get; set;}
+        public Random rand = new Random();
+
+        [NotMapped]
+        public int HpAtual {get; set;}
+        [NotMapped]
+        public int Shield {get; set;}
+        [NotMapped]
+        public int BuffAtk{get; set;}
+        
+        [NotMapped]
+        public List<PersonagemBase> alvos {get; set;}
+
+
+        public virtual void tomarDano(string inimigo, int dano)
+        {
+            int danoTotal = Math.Max(0, dano - Shield);
+            int danoShield = Math.Min(Shield, dano);
+            Shield -= danoShield;
+            HpAtual -= danoTotal;
+            if (danoShield > 0 && danoTotal == 0)
+            {
+                Console.WriteLine($"{Name} bloqueou completamente o ataque de {inimigo} com seu escudo!");
+            }
+            else
+            {
+                Console.WriteLine($"{inimigo} atacou {Name} e causou {danoTotal} de dano!");
+            }
+        }
 
         public virtual int Damage()
         {
-            return Atk;
+            return Atk + BuffAtk;
         }
 
         public virtual void Habilidade()

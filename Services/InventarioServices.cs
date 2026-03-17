@@ -23,6 +23,8 @@ namespace Todo_Gacha.Services
             {
                 case "1":
                     MostrarPersonagens(context, true, listaPersonagens);
+                    Console.WriteLine("Pressione qualquer tecla para voltar");
+                    Console.ReadKey();
                     break;
 
                 case "2":

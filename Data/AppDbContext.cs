@@ -29,6 +29,10 @@ namespace Todo_Gacha.Data
             modelBuilder.Entity<Grafiteiro>();
             modelBuilder.Entity<Voodo>();
             modelBuilder.Entity<Vampire>();
+            modelBuilder.Entity<Star>();
+            modelBuilder.Entity<Domina>();
+            modelBuilder.Entity<TechGoblin>();
+            modelBuilder.Entity<Gargula>();
             modelBuilder.Entity<Aranha>();
 
             base.OnModelCreating(modelBuilder);
