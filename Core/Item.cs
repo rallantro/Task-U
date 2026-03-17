@@ -38,6 +38,14 @@ namespace Todo_Gacha.Core
                     if(itemInv != null) context.InventarioItens.Remove(itemInv);
                     context.SaveChanges();
                 }
+                if(Atr == (int)Atributo.Mod)
+                {
+                    Console.WriteLine($"{Usuario.Name} recebeu + {Mod} temporário!");
+                    Usuario.BuffMod += Mod;
+                    var itemInv = context.InventarioItens.Where(x => x.ItemId == this.Id).FirstOrDefault();
+                    if(itemInv != null) context.InventarioItens.Remove(itemInv);
+                    context.SaveChanges();   
+                }
             }
         }
     }

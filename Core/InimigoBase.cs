@@ -12,8 +12,8 @@ namespace Todo_Gacha.Core
     public class InimigoBase
     {
         public int Id { get; set; }
-        public string Name {get; set;}
-        public string Desc {get; set;}
+        public required string Name {get; set;}
+        public required string Desc {get; set;}
         public int Atk {get; set;}
         public int HpMax {get; set;}
         public int Mod {get; set;}
@@ -30,11 +30,18 @@ namespace Todo_Gacha.Core
         public int HpAtual {get; set;}
         [NotMapped]
         public int Shield {get; set;}
+
         [NotMapped]
         public int BuffAtk{get; set;}
+
+        [NotMapped]
+        public int TurnoStun {get; set;} = 0;
+
+        [NotMapped]
+        public int TurnoSilence {get; set;} = 0;
         
         [NotMapped]
-        public List<PersonagemBase> alvos {get; set;}
+        public List<PersonagemBase> ?alvos {get; set;}
 
 
         public virtual void tomarDano(string inimigo, int dano)

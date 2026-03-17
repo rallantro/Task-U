@@ -43,11 +43,21 @@ namespace Todo_Gacha.Services
                 foreach (var personagem in equipe)
                 {
                     personagem.BuffAtk = 0;
+                    personagem.BuffMod = 0;
                     personagem.inimigoAlvo = inimigo;
                 }
                 Console.Clear();
                 foreach (var personagem in equipe)
                 {
+                    if (personagem.TurnoStun > 0)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine($"{personagem.Name} está atordoado e não pode agir!");
+                        Console.ResetColor();
+                        Console.ReadKey();
+                        personagem.TurnoStun--; 
+                        return;
+                    }
                     
                     if (inimigo.HpAtual <= 0)
                     {
@@ -121,7 +131,14 @@ namespace Todo_Gacha.Services
                                 Console.ReadKey();                   
                             break;
                             case "2":
-                                if (!UsouHabilidade)
+                                if (personagem.TurnoSilence > 0)
+                                {
+                                    Console.ForegroundColor = ConsoleColor.Red;
+                                    Console.WriteLine($"{personagem.Name} está silenciado e não pode usar habilidades!");
+                                    Console.ResetColor();
+                                    Console.ReadKey();
+                                }
+                                else if (!UsouHabilidade)
                                 {
                                     personagem.Habilidade();
                                     UsouHabilidade = true;
@@ -132,7 +149,8 @@ namespace Todo_Gacha.Services
                                 Console.Clear();
                                 Cabecalho(equipe, inimigo, x);
                                 var consumiveis = new List<Item>();
-                                inventario.MostrarItens(context, true, consumiveis, 1); 
+                                int contador = 1;
+                                inventario.MostrarItens(context, true, consumiveis, 1, ref contador); 
                                 if (consumiveis.Count == 0) 
                                 {
                                     Console.WriteLine("Você não tem itens consumíveis!");
@@ -162,6 +180,7 @@ namespace Todo_Gacha.Services
                                 Console.WriteLine("Seu turno acabou.");
                                 Console.ReadKey();
                                 MenuShow = false;
+                                personagem.TurnoSilence --;
                             break;
                             
                         }
@@ -173,6 +192,15 @@ namespace Todo_Gacha.Services
                 {
                     Console.Clear();
                     Cabecalho(equipe, inimigo, x);
+                    if (inimigo.TurnoStun > 0)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine($"{inimigo.Name} está atordoado e não pode agir!");
+                        Console.ResetColor();
+                        Console.ReadKey();
+                        inimigo.TurnoStun--; 
+                        return;
+                    }
                     inimigo.Passiva(user); 
                     var vivos = equipe.Where(p => p.HpAtual > 0).ToList();
                     if(vivos.Count() == 0)
@@ -180,7 +208,18 @@ namespace Todo_Gacha.Services
                         continue;
                     }
                     inimigo.alvos = vivos;
-                    inimigo.Habilidade();
+                    if (inimigo.TurnoSilence > 0)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine($"{inimigo.Name} está silenciado e não pode usar habilidades!");
+                        Console.ResetColor();
+                        Console.ReadKey();
+                    }
+                    else
+                    {
+                        inimigo.Habilidade();
+                    }
+                    
                     int danoInimigo = inimigo.Damage();
                     
                     int chanceTotal = 0;

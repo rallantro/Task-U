@@ -152,14 +152,16 @@ namespace Todo_Gacha.Services
             switch (Console.ReadLine())
             {
                 case "1":
-                    MostrarItens(context, true, listaItens, 2);
-                    MostrarItens(context, true, listaItens, 1);
+                    int contadorGlobal = 1;
+                    MostrarItens(context, true, listaItens, 2, ref contadorGlobal);
+                    MostrarItens(context, true, listaItens, 1, ref contadorGlobal);
                     Console.WriteLine("Pressione qualquer tecla para voltar");
                     Console.ReadKey();
                     break;
 
                 case "2":
-                    MostrarItens(context, false, listaItens, 2);
+                    int contador = 1;
+                    MostrarItens(context, false, listaItens, 2, ref contador);
                     var itensAtivos = new List<String>();
                     if (user.Slot1_ItemAtivo == null && user.Slot2_ItemAtivo == null)
                     {
@@ -222,17 +224,17 @@ namespace Todo_Gacha.Services
 
         }
 
-        public void MostrarItens(AppDbContext context, bool ShowDesc, List<Item> listaItens, int TypeItem)
+        public void MostrarItens(AppDbContext context, bool ShowDesc, List<Item> listaItens, int TypeItem, ref int contador)
         {
             var itens = context.InventarioItens.GroupBy(x => x.ItemId).ToList();
-
-            int contador = 1;
             if (TypeItem == 1)
             {
+                Console.WriteLine("--//--");
                 Console.WriteLine("Itens Consumíveis:");
             }
             else
             {
+                Console.WriteLine("--//--");
                 Console.WriteLine("Itens Equipáveis:");
             }
 

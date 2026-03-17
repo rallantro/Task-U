@@ -35,6 +35,12 @@ namespace Todo_Gacha.Core
 
         [NotMapped]
         public int BuffMod {get; set;}
+
+        [NotMapped]
+        public int TurnoStun {get; set;} = 0;
+
+        [NotMapped]
+        public int TurnoSilence {get; set;} = 0;
         public int Mod {get; set;}
 
         [NotMapped]
