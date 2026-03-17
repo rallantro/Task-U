@@ -42,6 +42,19 @@ namespace Todo_Gacha.Services
             };
             context.Inimigos.Add(QFada);
             context.SaveChanges();
+
+            var Bukubus = new SlimeA
+            {
+                Name = "Bukubus",
+                Desc = "Bukubus é um slime que transborda uma alegria efervescente e uma energia indomável, sendo a personificação viva de uma maré agitada. Seu corpo é inteiramente composto por uma substância aquosa translúcida de um azul cristalino, revelando uma musculatura levemente definida sob sua superfície fluida. Seus cabelos são mechas de água viva que parecem flutuar no ar, finalizados com uma pequena bolha saltitante no topo. Ele veste uma bermuda tática urbana em tons de azul-marinho e roxo, caída, mostrando parte de sua roupa de baixo e tiras de compressão que reforçam seu estilo streetwear futurista. Com um sorriso radiante e olhos que brilham como o reflexo do sol no oceano, ele se lança ao combate tratando cada confronto como uma grande e divertida brincadeira na arrebentação. {Environment.NewLine} [Habilidade: Disparo Hidro-Cinético] Bukubus molda a água ao seu redor em esferas de alta pressão e as dispara contra os inimigos. O dano é potencializado pelo seu estado de Fluxo atual e, ao atingir o alvo, as bolhas grudam em suas armas, reduzindo drasticamente a força ofensiva do adversário. {Environment.NewLine} [Passiva: Efervescência de Maré] Ao atingir sua plenitude vital, o corpo de Bukubus transborda, criando uma barreira superficial de bolhas que explode em um contra-ataque aquático assim que é rompida. Durante o combate, cada golpe recebido ou cura absorvida agita suas correntes internas, acumulando Fluxo; quando esse fluxo atinge o ápice, Bukubus torna-se capaz de absorver impactos massivos e devolvê-los como uma onda de choque devastadora.",
+                HpMax = 65,
+                Rarity = 4,
+                Atk = 10,
+                Mod = 4,
+                SummonQuote = "Splash! O slime da maré chegou para animar a festa!"
+            };
+            context.Personagens.Add(Bukubus);
+            context.SaveChanges();
             
         }
     }

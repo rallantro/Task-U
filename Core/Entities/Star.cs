@@ -32,7 +32,7 @@ namespace Todo_Gacha.Core.Entities
                 {
                     orarCD = 0;
                 }
-                aliado.HpAtual += aliado.HpMax * Mod / 10 + curaBonus;   
+                aliado.curar(Name, aliado.HpMax * Mod / 10 + curaBonus);   
                 orarCD += Math.Min(4, orarCD +1);
             }
             else

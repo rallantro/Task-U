@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Todo_Gacha.Data;
 
@@ -10,9 +11,11 @@ using Todo_Gacha.Data;
 namespace Todo_Gacha.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260317145358_Techs")]
+    partial class Techs
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.4");
@@ -288,6 +291,9 @@ namespace Todo_Gacha.Migrations
                     b.Property<int?>("InimigoId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int?>("ItemAtivoId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<DateTime>("LastBannerUpdate")
                         .HasColumnType("TEXT");
 
@@ -297,13 +303,7 @@ namespace Todo_Gacha.Migrations
                     b.Property<int>("PityLeg")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("Slot1_ItemAtivoId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<int?>("Slot1_PersonagemAtivoId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int?>("Slot2_ItemAtivoId")
                         .HasColumnType("INTEGER");
 
                     b.Property<int?>("Slot2_PersonagemAtivoId")
@@ -314,11 +314,9 @@ namespace Todo_Gacha.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Slot1_ItemAtivoId");
+                    b.HasIndex("ItemAtivoId");
 
                     b.HasIndex("Slot1_PersonagemAtivoId");
-
-                    b.HasIndex("Slot2_ItemAtivoId");
 
                     b.HasIndex("Slot2_PersonagemAtivoId");
 
@@ -330,20 +328,6 @@ namespace Todo_Gacha.Migrations
                     b.HasBaseType("Todo_Gacha.Core.InimigoBase");
 
                     b.HasDiscriminator().HasValue("Aranha");
-                });
-
-            modelBuilder.Entity("Todo_Gacha.Core.Fada", b =>
-                {
-                    b.HasBaseType("Todo_Gacha.Core.InimigoBase");
-
-                    b.HasDiscriminator().HasValue("Fada");
-                });
-
-            modelBuilder.Entity("Todo_Gacha.Core.FadaRa", b =>
-                {
-                    b.HasBaseType("Todo_Gacha.Core.InimigoBase");
-
-                    b.HasDiscriminator().HasValue("FadaRa");
                 });
 
             modelBuilder.Entity("Todo_Gacha.Core.Gargula", b =>
@@ -396,13 +380,6 @@ namespace Todo_Gacha.Migrations
                     b.HasDiscriminator().HasValue("Domina");
                 });
 
-            modelBuilder.Entity("Todo_Gacha.Core.Entities.SlimeA", b =>
-                {
-                    b.HasBaseType("Todo_Gacha.Core.PersonagemBase");
-
-                    b.HasDiscriminator().HasValue("SlimeA");
-                });
-
             modelBuilder.Entity("Todo_Gacha.Core.Entities.Star", b =>
                 {
                     b.HasBaseType("Todo_Gacha.Core.PersonagemBase");
@@ -446,27 +423,21 @@ namespace Todo_Gacha.Migrations
 
             modelBuilder.Entity("Todo_Gacha.Models.User", b =>
                 {
-                    b.HasOne("Todo_Gacha.Core.Item", "Slot1_ItemAtivo")
+                    b.HasOne("Todo_Gacha.Core.Item", "ItemAtivo")
                         .WithMany()
-                        .HasForeignKey("Slot1_ItemAtivoId");
+                        .HasForeignKey("ItemAtivoId");
 
                     b.HasOne("Todo_Gacha.Core.PersonagemBase", "Slot1_PersonagemAtivo")
                         .WithMany()
                         .HasForeignKey("Slot1_PersonagemAtivoId");
 
-                    b.HasOne("Todo_Gacha.Core.Item", "Slot2_ItemAtivo")
-                        .WithMany()
-                        .HasForeignKey("Slot2_ItemAtivoId");
-
                     b.HasOne("Todo_Gacha.Core.PersonagemBase", "Slot2_PersonagemAtivo")
                         .WithMany()
                         .HasForeignKey("Slot2_PersonagemAtivoId");
 
-                    b.Navigation("Slot1_ItemAtivo");
+                    b.Navigation("ItemAtivo");
 
                     b.Navigation("Slot1_PersonagemAtivo");
-
-                    b.Navigation("Slot2_ItemAtivo");
 
                     b.Navigation("Slot2_PersonagemAtivo");
                 });

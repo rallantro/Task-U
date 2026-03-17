@@ -36,6 +36,7 @@ namespace Todo_Gacha.Core
                 Console.WriteLine($"> [NANO RECONSTRUÇÃO] {Name} começa a se resonstruir.");
                 Console.ResetColor();
                 HpAtual += Mod;
+                Console.WriteLine($"> {Name} se curou em {Mod} pontos de vida.");
             }
         }
     }

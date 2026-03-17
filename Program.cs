@@ -18,13 +18,14 @@ InventarioServices inventario = new InventarioServices();
 AdventureService adventure = new AdventureService();
 using var context = new AppDbContext();
 
-var user = context.Users.Include(u => u.Slot1_PersonagemAtivo).Include(u => u.Slot2_PersonagemAtivo).Include(u => u.ItemAtivo).FirstOrDefault(u => u.Id == 1);
+var user = context.Users.Include(u => u.Slot1_PersonagemAtivo).Include(u => u.Slot2_PersonagemAtivo).Include(u => u.Slot1_ItemAtivo).FirstOrDefault(u => u.Id == 1);
 //adventure.AtualizarInimigo(context);
 banner.AtualizarBanner(context);
 service.AtualizarTarefas();
 adventure.AtualizarInimigo(context);
 
 CreateService create = new CreateService();
+
 
 
 
@@ -88,6 +89,7 @@ while (MenuShow)
         break;
 
         case "4":
+            context.Entry(user).Reload();
             Console.Clear();
             Console.WriteLine("--- EVENTO DA SEMANA ---");
             Console.ForegroundColor = ConsoleColor.Yellow;
@@ -127,8 +129,8 @@ while (MenuShow)
         break;
 
         case "5":
-            //var inimigo = context.Inimigos.Find(user.InimigoId);
             var equipe = new List<PersonagemBase>();
+            var inimigo = context.Inimigos.FirstOrDefault(x => x.Id == user.InimigoId);
             if (user.Slot1_PersonagemAtivo == null && user.Slot2_PersonagemAtivo == null)
             {
                 Console.WriteLine("Você não possui personagens equipados!");
@@ -137,7 +139,7 @@ while (MenuShow)
             }
             if(user.Slot1_PersonagemAtivo != null) equipe.Add(user.Slot1_PersonagemAtivo);
             if(user.Slot2_PersonagemAtivo != null) equipe.Add(user.Slot2_PersonagemAtivo);
-            combat.Combate(context.Inimigos.Find(2), equipe, context);
+            combat.Combate(inimigo, equipe, context, adventure);
             context.Entry(user).Reload();
         break;
 

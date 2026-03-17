@@ -7,6 +7,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Todo_Gacha.Services;
 using Todo_Gacha.Models;
 using Todo_Gacha.Data;
+using Todo_Gacha.Migrations;
 
 namespace Todo_Gacha.Core
 {
@@ -23,7 +24,10 @@ namespace Todo_Gacha.Core
         public int chanceAlvo {get; set;}
 
         [NotMapped]
-        public int HpAtual {get; set;}
+        public InimigoBase? inimigoAlvo {get; set;}
+
+        [NotMapped]
+        public virtual int HpAtual {get; set;}
         [NotMapped]
         public int Shield {get; set;}
         [NotMapped]
@@ -34,16 +38,45 @@ namespace Todo_Gacha.Core
         public int Mod {get; set;}
 
         [NotMapped]
-        public required User user {get; set;}
+        public User? user {get; set;}
 
         [NotMapped]
         public PersonagemBase? aliado {get; set;}
 
         public required string SummonQuote { get; set; }
 
-        public int ModTotal() => (user?.ItemAtivo?.Atr == 3) ? Mod + BuffMod + user.ItemAtivo.Mod : Mod + BuffMod;
+        public int ModTotal() {
+            Item? itemEquipado = null;
 
-        public int AtkTotal() => (user?.ItemAtivo?.Atr == 2) ? Atk + BuffAtk + user.ItemAtivo.Mod : Atk + BuffAtk;
+            if(this == user?.Slot1_PersonagemAtivo) itemEquipado = user.Slot1_ItemAtivo;
+            else if(this == user?.Slot2_PersonagemAtivo) itemEquipado = user.Slot2_ItemAtivo;
+
+            if (itemEquipado != null && itemEquipado.Atr == 3)
+            {
+                return Math.Max(0,Mod + BuffMod + itemEquipado.Mod);
+            }
+            else
+            {
+                return Math.Max(0,Mod + BuffMod);   
+            }
+            
+        }
+
+        public int AtkTotal(){
+            Item? itemEquipado = null;
+
+            if(this == user?.Slot1_PersonagemAtivo) itemEquipado = user.Slot1_ItemAtivo;
+            else if(this == user?.Slot2_PersonagemAtivo) itemEquipado = user.Slot2_ItemAtivo;
+
+            if (itemEquipado != null && itemEquipado.Atr == 2)
+            {
+                return Math.Max(0,Mod + BuffAtk + itemEquipado.Mod);
+            }
+            else
+            {
+                return Math.Max(0,Mod + BuffAtk);   
+            }
+        }
 
         public virtual int Damage()
         {
@@ -64,6 +97,11 @@ namespace Todo_Gacha.Core
             {
                 Console.WriteLine($"{inimigo} atacou {Name} e causou {danoTotal} de dano!");
             }
+        }
+
+        public virtual void curar(string aliado, int cura)
+        {
+            HpAtual = Math.Min(HpAtual + Mod, HpMax);;
         }
 
         public virtual void Habilidade()

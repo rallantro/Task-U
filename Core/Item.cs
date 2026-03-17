@@ -33,7 +33,7 @@ namespace Todo_Gacha.Core
                 if(Atr == (int)Atributo.Hp)
                 {
                     Console.WriteLine($"{Usuario.Name} recuperou {Mod} pontos de vida!");
-                    Usuario.HpAtual = Math.Min(Usuario.HpAtual + Mod, Usuario.HpMax);;
+                    Usuario.curar(Name, Mod);
                     var itemInv = context.InventarioItens.Where(x => x.ItemId == this.Id).FirstOrDefault();
                     if(itemInv != null) context.InventarioItens.Remove(itemInv);
                     context.SaveChanges();

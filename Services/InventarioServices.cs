@@ -160,13 +160,24 @@ namespace Todo_Gacha.Services
 
                 case "2":
                     MostrarItens(context, false, listaItens, 2);
-                    if (user.ItemAtivo == null)
+                    var itensAtivos = new List<String>();
+                    if (user.Slot1_ItemAtivo == null && user.Slot2_ItemAtivo == null)
                     {
-                        Console.WriteLine("Qual item deseja equipar? (Você não tem nenhum item equipado!)");
+                        Console.WriteLine("Qual item deseja equipar? (Você não tem nenhum personagem ativo!)");
                     }
                     else
                     {
-                        Console.WriteLine($"Qual item deseja equipar? (Item ativo no momento: {user.ItemAtivo.Name})");
+                        if (user.Slot1_ItemAtivo != null)
+                        {
+                            itensAtivos.Add(user.Slot1_ItemAtivo.Name);  
+                        }
+                        
+                        if (user.Slot2_ItemAtivo != null)
+                        {
+                            itensAtivos.Add(user.Slot2_ItemAtivo.Name);   
+                        }
+                        string result = String.Join(", ", itensAtivos);
+                        Console.WriteLine($"Qual item deseja equipar? (Ativo no momento: {result})");
                     }
                     var escolha = Console.ReadLine();
                     var escolhaInt = 0;
@@ -175,7 +186,7 @@ namespace Todo_Gacha.Services
                         Console.WriteLine("Comando inválido!");
                         return;
                     }
-                    var itemEscolhido = listaItens[int.Parse(escolha) - 1];
+                    var itemEscolhido = listaItens[escolhaInt - 1];
                     Console.Clear();
                     Console.WriteLine("Item Selecionado:");
                     Console.WriteLine($"[{itemEscolhido.Name}]");
@@ -183,11 +194,18 @@ namespace Todo_Gacha.Services
                     Console.WriteLine($"[{itemEscolhido.Desc}]");
                     Console.WriteLine($"--");
                     Console.WriteLine("Confirma essa escolha?");
-                    Console.WriteLine("1 - Equipar | Pressione qualquer coisa para voltar");
-                    if (Console.ReadLine() == "1")
+                    Console.WriteLine("1 - Equipar no slot 1 | 2 - Equipar no slot 2 |Pressione qualquer coisa para voltar");
+                    escolha = Console.ReadLine();
+                    if (escolha == "1")
                     {
-                        user.ItemAtivo = itemEscolhido;
-                        user.ItemAtivoId = itemEscolhido.Id;
+                        user.Slot1_ItemAtivo = itemEscolhido;
+                        user.Slot1_ItemAtivoId = itemEscolhido.Id;
+                        context.SaveChanges();
+                    }
+                    if (escolha == "2")
+                    {
+                        user.Slot2_ItemAtivo = itemEscolhido;
+                        user.Slot2_ItemAtivoId = itemEscolhido.Id;
                         context.SaveChanges();
                     }
                     else

@@ -14,7 +14,7 @@ namespace Todo_Gacha.Services
     public class CombatService
     {
         private readonly Random rand = new Random();
-        public void Combate(InimigoBase inimigo, List<PersonagemBase> equipe, AppDbContext context)
+        public void Combate(InimigoBase inimigo, List<PersonagemBase> equipe, AppDbContext context, AdventureService adventure)
         {
             var user = context.Users.Find(1);
             var x = 1;
@@ -39,9 +39,11 @@ namespace Todo_Gacha.Services
 
             while (equipe.Any(x => x.HpAtual > 0) && inimigo.HpAtual > 0)
             {
+                inimigo.BuffAtk = 0;
                 foreach (var personagem in equipe)
                 {
                     personagem.BuffAtk = 0;
+                    personagem.inimigoAlvo = inimigo;
                 }
                 Console.Clear();
                 foreach (var personagem in equipe)
@@ -171,7 +173,6 @@ namespace Todo_Gacha.Services
                 {
                     Console.Clear();
                     Cabecalho(equipe, inimigo, x);
-                    inimigo.BuffAtk = 0;
                     inimigo.Passiva(user); 
                     var vivos = equipe.Where(p => p.HpAtual > 0).ToList();
                     if(vivos.Count() == 0)
@@ -233,7 +234,6 @@ namespace Todo_Gacha.Services
                     Console.WriteLine($"Você recebeu {item.Name}!");
                 }
                 user.DerrotouInimigo = true;
-                var adventure = new AdventureService();
                 adventure.AtualizarInimigo(context);
                 Console.WriteLine("\nPressione qualquer tecla para voltar ao menu...");
                 Console.ReadKey();

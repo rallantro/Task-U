@@ -32,6 +32,9 @@ namespace Todo_Gacha.Data
             modelBuilder.Entity<Star>();
             modelBuilder.Entity<Domina>();
             modelBuilder.Entity<TechGoblin>();
+            modelBuilder.Entity<Fada>();
+            modelBuilder.Entity<FadaRa>();
+            modelBuilder.Entity<SlimeA>();
             modelBuilder.Entity<Gargula>();
             modelBuilder.Entity<Aranha>();
 
