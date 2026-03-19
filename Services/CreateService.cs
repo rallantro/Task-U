@@ -13,47 +13,17 @@ namespace Todo_Gacha.Services
     {
         public void CreateCharacter(AppDbContext context)
         {
-            var fada = new Fada
+            var Lab = new Lab
             {
-                Name = "Fada de Nanobots",
-                Desc = "Um enchame de nano robôs que se moldam na forma de uma fada, uma esfera brilhante e azul, como vírus de aprimoramento que consome tecnologia e magia.",
-                HpMax = 100,
-                Rarity = 1,
-                Atk = 4,
-                CrystalDrop = 1,
-                Mod = 10,
-                HabilidadeChance = 70,
-                DeathQuote = "Prriiii..."
-            };
-            context.Inimigos.Add(fada);
-            context.SaveChanges();
-
-            var QFada = new FadaRa
-            {
-                Name = "Rainha dos Nanobots",
-                Desc = "Protegida no subterrâneo, um aglomerado de nanobots que assumiu uma forma feminina majestosa, capaz de controlar outros enxames. Brilha com luz própria e emite um zumbido harmônico.",
-                HpMax = 400,
-                Rarity = 4,
+                Name = "Kael",
+                Desc = $"Kael personifica o arquétipo do gênio incompreendido e cativante. Apesar das olheiras profundas que denunciam noites em claro e do cabelo ruivo perfeitamente bagunçado, ele possui uma beleza magnética e traços marcantes, acentuados por uma barba por fazer estilosa e olhos verdes intensos. Ele veste um jaleco branco de polímero inteligente, com circuitos embutidos que brilham sutilmente, repleto de ferramentas modulares e um tablet tático holográfico. Sua personalidade combina uma gentileza genuína com um descarado talento para a improvisação tecnológica, criando soluções brilhantes a partir do caos. {Environment.NewLine} [Habilidade: Protocolo de Assistência Adaptativa] Kael implanta sistemas de suporte tático que se ajustam instantaneamente às condições vitais do alvo. Se o aliado mantiver integridade estrutural superior a 50%, ele injeta um Módulo de Sobrecarga, amplificando diretamente o potencial dos modificadores de atributo do alvo. Caso a integridade do aliado caia abaixo de 50%, Kael alterna para Reparo de Emergência ou Sinal de Socorro, realizando restaurações teciduais diretas (Cura) com eficácia triplicada. {Environment.NewLine} [Passiva: Matriz de Sobrevivência Reativa] O traje tático de Kael calibra sua prioridade de alvo tático com base em sua própria vitalidade: ao transbordar energia (integridade alta), ele gera distrações propositais para atrair 90% da atenção inimiga, atuando como um chamariz; ao sentir-se vulnerável, ativa um campo de camuflagem reativa, reduzindo sua detecção para apenas 20% de chance. Além disso, em cenários críticos onde o aliado atinge o limiar de 20% de integridade, Kael mobiliza um Campo de Força Experimental, gerando uma barreira de energia imediata com eficácia triplicada para garantir a sobrevivência do alvo.",
+                HpMax = 45,
+                Rarity = 3,
                 Atk = 10,
-                CrystalDrop = 8,
-                Mod = 8,
-                HabilidadeChance = 70,
-                DeathQuote = "Isso... É impossível... Priiiii"
+                Mod = 3,
+                SummonQuote = "Eu acho que eu preciso voltar pro laboratório eu ouvi minha esposa me chamando... Você não ouviu? É que... Ah..."
             };
-            context.Inimigos.Add(QFada);
-            context.SaveChanges();
-
-            var Bukubus = new SlimeA
-            {
-                Name = "Bukubus",
-                Desc = "Bukubus é um slime que transborda uma alegria efervescente e uma energia indomável, sendo a personificação viva de uma maré agitada. Seu corpo é inteiramente composto por uma substância aquosa translúcida de um azul cristalino, revelando uma musculatura levemente definida sob sua superfície fluida. Seus cabelos são mechas de água viva que parecem flutuar no ar, finalizados com uma pequena bolha saltitante no topo. Ele veste uma bermuda tática urbana em tons de azul-marinho e roxo, caída, mostrando parte de sua roupa de baixo e tiras de compressão que reforçam seu estilo streetwear futurista. Com um sorriso radiante e olhos que brilham como o reflexo do sol no oceano, ele se lança ao combate tratando cada confronto como uma grande e divertida brincadeira na arrebentação. {Environment.NewLine} [Habilidade: Disparo Hidro-Cinético] Bukubus molda a água ao seu redor em esferas de alta pressão e as dispara contra os inimigos. O dano é potencializado pelo seu estado de Fluxo atual e, ao atingir o alvo, as bolhas grudam em suas armas, reduzindo drasticamente a força ofensiva do adversário. {Environment.NewLine} [Passiva: Efervescência de Maré] Ao atingir sua plenitude vital, o corpo de Bukubus transborda, criando uma barreira superficial de bolhas que explode em um contra-ataque aquático assim que é rompida. Durante o combate, cada golpe recebido ou cura absorvida agita suas correntes internas, acumulando Fluxo; quando esse fluxo atinge o ápice, Bukubus torna-se capaz de absorver impactos massivos e devolvê-los como uma onda de choque devastadora.",
-                HpMax = 65,
-                Rarity = 4,
-                Atk = 10,
-                Mod = 4,
-                SummonQuote = "Splash! O slime da maré chegou para animar a festa!"
-            };
-            context.Personagens.Add(Bukubus);
+            context.Personagens.Add(Lab);
             context.SaveChanges();
             
         }

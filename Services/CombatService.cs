@@ -20,10 +20,12 @@ namespace Todo_Gacha.Services
             var x = 1;
             var inventario = new InventarioServices();
 
-            Console.WriteLine("Atenção para o combate!");
+            Console.Clear();
+            Console.WriteLine("===== ATENÇÃO PARA O COMBATE! =====");
             Console.WriteLine($"Seu inimigo será {inimigo.Name}");
-            Console.WriteLine("--");
+            Console.WriteLine("===================================");
             Console.WriteLine(inimigo.Desc);
+            Console.WriteLine("===================================");
             Console.ReadKey();
             inimigo.HpAtual = inimigo.HpMax;
             foreach (var personagem in equipe)
@@ -56,7 +58,7 @@ namespace Todo_Gacha.Services
                         Console.ResetColor();
                         Console.ReadKey();
                         personagem.TurnoStun--; 
-                        return;
+                        continue;
                     }
                     
                     if (inimigo.HpAtual <= 0)
@@ -199,7 +201,7 @@ namespace Todo_Gacha.Services
                         Console.ResetColor();
                         Console.ReadKey();
                         inimigo.TurnoStun--; 
-                        return;
+                        continue;
                     }
                     inimigo.Passiva(user); 
                     var vivos = equipe.Where(p => p.HpAtual > 0).ToList();
@@ -279,6 +281,19 @@ namespace Todo_Gacha.Services
                 Console.ForegroundColor = ConsoleColor.White;
                 context.SaveChanges();
             }
+
+            if (inimigo.HpAtual > 0)
+            {
+                Console.Clear();
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"==== DERROTA ====");
+                Console.WriteLine($"{inimigo.Name} foi forte demais para você.");
+                Console.WriteLine($"====    //   ====");
+                Console.ResetColor();
+                Console.WriteLine($"Dica: Tente trocar os itens e ou os personagens!");
+                Console.ReadKey();
+            }
+            
         }
         private void Cabecalho(List<PersonagemBase> equipe, InimigoBase inimigo, int turno)
         {

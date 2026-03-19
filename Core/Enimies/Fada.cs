@@ -12,7 +12,7 @@ namespace Todo_Gacha.Core
         {
             int useSkill = rand.Next(1, 101);
             int vezes = rand.Next(2,Mod);
-            if (useSkill < HabilidadeChance)
+            if (useSkill > HabilidadeChance)
             {
                 Console.ForegroundColor = ConsoleColor.DarkBlue;
                 Console.WriteLine($"> [ATAQUE NANO-BÔ!] {Name} se dissolve em um enxame de nano-bôs e ataca várias vezes!");
@@ -30,7 +30,7 @@ namespace Todo_Gacha.Core
         public override void Passiva(User user)
         {
             int useSkill = rand.Next(1, 11);
-            if (useSkill >= 3)
+            if (useSkill <= 3)
             {
                 Console.ForegroundColor = ConsoleColor.DarkBlue;
                 Console.WriteLine($"> [NANO RECONSTRUÇÃO] {Name} começa a se resonstruir.");
