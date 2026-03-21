@@ -30,6 +30,9 @@ namespace Todo_Gacha.Core.Entities
                         escudoBolha = true;
                         Console.ReadKey();
                     }
+
+                
+                
             }
         }
         private int Fluxo;

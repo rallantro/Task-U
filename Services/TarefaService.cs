@@ -69,6 +69,8 @@ namespace Todo_Gacha.Services
 
         public void verTarefas()
         {
+            Console.Clear();
+            Console.WriteLine ("==== TAREFAS DO DIA ====");
             using var context = new AppDbContext();
             foreach (Tarefa tarefa in context.Tarefas.Where(x => x.IsDone == false).ToList())
             {
@@ -80,13 +82,16 @@ namespace Todo_Gacha.Services
                 Console.WriteLine("--");
                 Console.WriteLine($"ID: {tarefa.Id} Nome:{tarefa.Name} | Descrição: {tarefa.Desc} | Dificuldade: {tarefa.Dif}");
             }
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("");
+            Console.WriteLine("-- Concluídas --");
             foreach (Tarefa tarefa in context.Tarefas.Where(x => x.IsDone == true).ToList())
-            {
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine("-- Concluídas --");
+            {    
                 Console.WriteLine($"ID: {tarefa.Id} Nome:{tarefa.Name} | Descrição: {tarefa.Desc} | Dificuldade: {tarefa.Dif}");
+                Console.WriteLine("--");
             }
             Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine("Pressione qualque tecla para voltar...");
         }
 
         public void ConcluirTarefa(int TarefaId, Gacha gacha)

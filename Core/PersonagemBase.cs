@@ -19,6 +19,8 @@ namespace Todo_Gacha.Core
         public int Rarity {get; set;}
         public int Atk {get; set;}
         public int HpMax {get; set;}
+
+        private int _HpAtual;
         
         [NotMapped]
         public int chanceAlvo {get; set;}
@@ -27,7 +29,7 @@ namespace Todo_Gacha.Core
         public InimigoBase? inimigoAlvo {get; set;}
 
         [NotMapped]
-        public virtual int HpAtual {get; set;}
+        public virtual int HpAtual {get { return _HpAtual; } set { _HpAtual = Math.Min(value, HpMax);}}
         [NotMapped]
         public int Shield {get; set;}
         [NotMapped]

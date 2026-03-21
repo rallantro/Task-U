@@ -301,11 +301,9 @@ namespace Todo_Gacha.Services
             foreach (var personagem in equipe)
             {
                 if (personagem.HpAtual <= 0) Console.ForegroundColor = ConsoleColor.DarkRed;
-                personagem.HpAtual = Math.Min(personagem.HpAtual, personagem.HpMax);
                 Console.WriteLine($" {personagem.Name} | HP: {personagem.HpAtual}");   
                 Console.ResetColor();
             }
-            inimigo.HpAtual = Math.Min(inimigo.HpAtual, inimigo.HpMax);
             Console.WriteLine("---------------------------------------------------");
             Console.WriteLine($" INIMIGO: {inimigo.Name.ToUpper()} | HP: {inimigo.HpAtual}/{inimigo.HpMax}");
             Console.WriteLine("===================================================");

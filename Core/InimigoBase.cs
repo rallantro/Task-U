@@ -22,12 +22,13 @@ namespace Todo_Gacha.Core
         public int? ItemDropId { get; set; }
         public string? DeathQuote { get; set; }
         public int Rarity {get; set;}
+        private int _HpAtual;
 
         [NotMapped]
         public Random rand = new Random();
 
         [NotMapped]
-        public int HpAtual {get; set;}
+        public int HpAtual {get { return _HpAtual; } set { _HpAtual = Math.Min(value, HpMax);}}
         [NotMapped]
         public int Shield {get; set;}
 
