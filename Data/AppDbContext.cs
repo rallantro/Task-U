@@ -33,10 +33,12 @@ namespace Todo_Gacha.Data
             modelBuilder.Entity<Domina>();
             modelBuilder.Entity<Police>();
             modelBuilder.Entity<SlimeA>();
+            modelBuilder.Entity<Lab>();
             modelBuilder.Entity<TechGoblin>();
             modelBuilder.Entity<Fada>();
             modelBuilder.Entity<FadaRa>();
-            modelBuilder.Entity<Gargula>();         
+            modelBuilder.Entity<Gargula>();       
+            modelBuilder.Entity<Banshee>();    
             modelBuilder.Entity<Aranha>();
 
             base.OnModelCreating(modelBuilder);

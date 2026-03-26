@@ -9,7 +9,7 @@ namespace Todo_Gacha.Core
     public class Gargula : InimigoBase
     {
         private int reducao;
-        public override void tomarDano(string inimigo, int dano)
+        public override void tomarDano(PersonagemBase inimigo, int dano)
         {
             
             int danoTotal = Math.Max(0, dano - Shield - reducao);
@@ -18,14 +18,14 @@ namespace Todo_Gacha.Core
             HpAtual -= danoTotal;
             if (danoShield > 0 && danoTotal == 0)
             {
-                Console.WriteLine($"{Name} bloqueou completamente o ataque de {inimigo} com seu escudo!");
+                Console.WriteLine($"{Name} bloqueou completamente o ataque de {inimigo.Name} com seu escudo!");
             }
             else if(danoTotal <= reducao)
             {
-                Console.WriteLine($"{Name} bloqueou completamente o ataque de {inimigo} com sua pele dura!");
+                Console.WriteLine($"{Name} bloqueou completamente o ataque de {inimigo.Name} com sua pele dura!");
             }else
             {
-                Console.WriteLine($"{inimigo} atacou {Name} e causou {danoTotal} de dano!");
+                Console.WriteLine($"{inimigo.Name} atacou {Name} e causou {danoTotal} de dano!");
             }
         }
 

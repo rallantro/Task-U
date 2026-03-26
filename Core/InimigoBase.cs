@@ -6,6 +6,7 @@ using Todo_Gacha.Services;
 using System.ComponentModel.DataAnnotations.Schema;
 using Todo_Gacha.Models;
 using Todo_Gacha.Data;
+using Todo_Gacha.Core;
 
 namespace Todo_Gacha.Core
 {
@@ -28,7 +29,7 @@ namespace Todo_Gacha.Core
         public Random rand = new Random();
 
         [NotMapped]
-        public int HpAtual {get { return _HpAtual; } set { _HpAtual = Math.Min(value, HpMax);}}
+        public int HpAtual {get { return _HpAtual; } set { _HpAtual = Math.Max(0, Math.Min(value, HpMax));}}
         [NotMapped]
         public int Shield {get; set;}
 
@@ -36,7 +37,7 @@ namespace Todo_Gacha.Core
         public int BuffAtk{get; set;}
 
         [NotMapped]
-        public int TurnoStun {get; set;} = 0;
+        public virtual int TurnoStun {get; set;} = 0;
 
         [NotMapped]
         public int TurnoSilence {get; set;} = 0;
@@ -45,7 +46,7 @@ namespace Todo_Gacha.Core
         public List<PersonagemBase> ?alvos {get; set;}
 
 
-        public virtual void tomarDano(string inimigo, int dano)
+        public virtual void tomarDano(PersonagemBase inimigo, int dano)
         {
             int danoTotal = Math.Max(0, dano - Shield);
             int danoShield = Math.Min(Shield, dano);
@@ -53,11 +54,11 @@ namespace Todo_Gacha.Core
             HpAtual -= danoTotal;
             if (danoShield > 0 && danoTotal == 0)
             {
-                Console.WriteLine($"{Name} bloqueou completamente o ataque de {inimigo} com seu escudo!");
+                Console.WriteLine($"{Name} bloqueou completamente o ataque de {inimigo.Name} com seu escudo!");
             }
             else
             {
-                Console.WriteLine($"{inimigo} atacou {Name} e causou {danoTotal} de dano!");
+                Console.WriteLine($"{inimigo.Name} atacou {Name} e causou {danoTotal} de dano!");
             }
         }
 

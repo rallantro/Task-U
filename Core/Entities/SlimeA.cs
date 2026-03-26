@@ -84,7 +84,7 @@ namespace Todo_Gacha.Core.Entities
                     Console.WriteLine($"> {aliado.Name}: E EXPLOSÃO DE TINTA TAMBÉM!");
                     Console.ResetColor();
                     if(inimigoAlvo != null)
-                    inimigoAlvo.tomarDano($"{Name} e {aliado.Name}", (danoTotal * 2/3) + aliado.Mod);
+                    inimigoAlvo.tomarDano(this, (danoTotal * 2/3) + aliado.Mod);
                     Console.WriteLine($"{inimigo} atacou {Name} e causou {danoTotal/3} de dano!");
                     Fluxo = Math.Max(0, Fluxo - danoTotal); 
                 }
@@ -97,7 +97,7 @@ namespace Todo_Gacha.Core.Entities
                     Console.ResetColor();
                     Console.WriteLine($"{inimigo} atacou {Name} e causou {danoTotal/3} de dano!");
                     if(inimigoAlvo != null)
-                    inimigoAlvo.tomarDano(Name, danoTotal * 2/3);
+                    inimigoAlvo.tomarDano(this, danoTotal * 2/3);
                     Fluxo = Math.Max(0, Fluxo - danoTotal);   
                 }
             }
@@ -112,7 +112,7 @@ namespace Todo_Gacha.Core.Entities
             int dano = Fluxo/10 * Mod;    
             if(inimigoAlvo != null)
             {
-                inimigoAlvo.tomarDano(Name,dano); 
+                inimigoAlvo.tomarDano(this,dano); 
                 inimigoAlvo.BuffAtk -= Mod; 
                 Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.WriteLine($"> [HABILIDADE] {Name} reduz o ataque de {inimigoAlvo.Name} em {Mod}!");
@@ -131,7 +131,7 @@ namespace Todo_Gacha.Core.Entities
                 Console.WriteLine($"> {Name}: Cuidado com o respingo! Hahaha!");
                 Console.ResetColor();
                 if(inimigoAlvo != null)
-                inimigoAlvo.tomarDano(Name, HpMax/10);
+                inimigoAlvo.tomarDano(this, HpMax/10);
                 escudoBolha = false;
             }
         }

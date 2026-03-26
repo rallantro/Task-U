@@ -24,7 +24,7 @@ namespace Todo_Gacha.Core.Entities
             if (aliado != null && aliado.HpAtual < aliado.HpMax)
             {
                 Console.ForegroundColor = ConsoleColor.DarkYellow;
-                Console.WriteLine($"> [HABILIDADE] {Name} roga as estrelas, curando {aliado.HpMax * Mod / 9 + curaBonus} de {aliado.Name}!"); 
+                Console.WriteLine($"> [HABILIDADE] {Name} roga as estrelas, curando {aliado.HpMax * Mod / 10 + curaBonus} pontos de vida de {aliado.Name}!"); 
                 Console.WriteLine($"> {Name}: Rogo por {aliado.Name}, estrelas, que sua luz brilhe por mim!"); 
                 Console.ResetColor();
                 HpAtual -= HpAtual/9;

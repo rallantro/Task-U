@@ -11,7 +11,7 @@ namespace Todo_Gacha.Core
         private int Aprimoramentos;
         private bool shieldInicial;
 
-        public override void tomarDano(string inimigo, int dano)
+        public override void tomarDano(PersonagemBase inimigo, int dano)
         {
             int danoTotal = Math.Max(0, dano - Shield);
             int danoShield = Math.Min(Shield, dano);
@@ -19,14 +19,14 @@ namespace Todo_Gacha.Core
             HpAtual -= danoTotal;
             if (danoShield > 0 && danoTotal == 0)
             {
-                Console.WriteLine($"{Name} bloqueou completamente o ataque de {inimigo} com suas fadas!");
+                Console.WriteLine($"{Name} bloqueou completamente o ataque de {inimigo.Name} com suas fadas!");
                 Console.ForegroundColor = ConsoleColor.DarkBlue;
                 Console.WriteLine($"> {Name}: Prrrrrriiii! Hahaha meu exército é infinito!");
                 Console.ResetColor();
             }
             else
             {
-                Console.WriteLine($"{inimigo} atacou {Name} e causou {danoTotal} de dano!");
+                Console.WriteLine($"{inimigo.Name} atacou {Name} e causou {danoTotal} de dano!");
                 Console.ForegroundColor = ConsoleColor.DarkBlue;
                 Console.WriteLine($"> {Name}: Prrrrrriiii!!!!!");
                 Console.ResetColor();

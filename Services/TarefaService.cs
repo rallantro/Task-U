@@ -55,7 +55,7 @@ namespace Todo_Gacha.Services
             using var context = new AppDbContext();
             var user = context.Users.Find(1);
             Console.WriteLine("Seus Status atuais são:");
-            Console.WriteLine($"Cristayls disponíveis: {user.Crystals}");
+            Console.WriteLine($"Cristais disponíveis: {user.Crystals}");
             Console.WriteLine($"Pity para Épicos: {user.PityEpic}");
             if (user.PityLeg >= 75)
             {
@@ -97,10 +97,17 @@ namespace Todo_Gacha.Services
         public void ConcluirTarefa(int TarefaId, Gacha gacha)
         {
             using var context = new AppDbContext();  
+            if(context.Tarefas.FirstOrDefault(x => x.Id ==TarefaId) == null)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Tarefa inválida!");
+                Console.ResetColor();
+                return;
+            }
             var tarefa = context.Tarefas.Find(TarefaId);
             var user = context.Users.Find(1);
 
-            if (!tarefa.IsDone)
+            if (tarefa != null && !tarefa.IsDone)
             {
                 if (tarefa.Dif >= 6)
                 {

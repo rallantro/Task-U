@@ -20,7 +20,7 @@ namespace Todo_Gacha.Core.Entities
             set 
             {
                 base.HpAtual = value; 
-                if(this.HpAtual >= HpMax*2/3)
+                if(HpAtual >= HpMax*2/3)
                     {
                         Console.ForegroundColor = ConsoleColor.Yellow;
                         Console.WriteLine($"> [PASSIVA] {Name} criou uma distração utilizando uma bugiganga.");

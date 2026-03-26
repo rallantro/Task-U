@@ -44,11 +44,11 @@ namespace Todo_Gacha.Models
             pityLeg++;
             pityEpic++;
 
-            int curruentChance = (pityLeg >= 75) ? legChance + (5 * (pityLeg - 74)) : 10;
+            int currentChance = (pityLeg >= 75) ? legChance + (5 * (pityLeg - 74)) : 10;
 
             if (luckEvent)
             {
-                curruentChance*=2;
+                currentChance*=2;
                 luckEvent = false;
             }
 
@@ -57,7 +57,7 @@ namespace Todo_Gacha.Models
             Thread.Sleep(1500);
 
 
-            if(number <= curruentChance || pityLeg == maxPityLeg)
+            if(number <= currentChance || pityLeg == maxPityLeg)
             {
                 Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.WriteLine("...");

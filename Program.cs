@@ -25,6 +25,7 @@ service.AtualizarTarefas();
 adventure.AtualizarInimigo(context);
 
 CreateService create = new CreateService();
+//create.CreateCharacter(context);
 
 
 
@@ -74,6 +75,7 @@ while (MenuShow)
         break;
 
         case "3":
+            context.Entry(user).Reload();
             Console.WriteLine("--");
             Console.WriteLine("Digite o ID da Tarefa Realizada:");
             var EscolhaId = 0;
@@ -85,7 +87,7 @@ while (MenuShow)
             {
                 Console.WriteLine("Comando Inválido!");
             }
-            
+            context.Entry(user).Reload();
             Console.ReadKey();
         break;
 
@@ -101,14 +103,14 @@ while (MenuShow)
             Console.WriteLine("-------------------------");
             Console.WriteLine($"O banner será atualizado no dia: {user.LastBannerUpdate.AddDays(7)}");
             Console.WriteLine("--");
-            Console.WriteLine($"Quantos desejos deseja fazer? (1 desejo = 10 Crystals) - {user.Crystals} Crystals Restantes");
+            Console.WriteLine($"Quantos desejos deseja fazer? (1 desejo = 10 Cristais) - {user.Crystals} Cristais Restantes");
             Console.WriteLine("Digite qualquer coisa que não seja um número para voltar ao menu...");
             var num = 0;
             var sucesso = int.TryParse(Console.ReadLine(), out num);
             var x = 0;
             if (sucesso && user.Crystals < num * 10)
             {
-                Console.WriteLine("Você não possui Crystals suficientes!");
+                Console.WriteLine("Você não possui Cristais suficientes!");
                 Console.WriteLine("--");
                 Console.WriteLine("Pressione qualquer tecla para voltar ao menu...");
                 Console.ReadKey();

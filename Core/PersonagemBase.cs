@@ -29,7 +29,7 @@ namespace Todo_Gacha.Core
         public InimigoBase? inimigoAlvo {get; set;}
 
         [NotMapped]
-        public virtual int HpAtual {get { return _HpAtual; } set { _HpAtual = Math.Min(value, HpMax);}}
+        public virtual int HpAtual {get { return _HpAtual; } set { _HpAtual = Math.Max(0, Math.Min(value, HpMax));}}
         [NotMapped]
         public int Shield {get; set;}
         [NotMapped]
@@ -39,10 +39,10 @@ namespace Todo_Gacha.Core
         public int BuffMod {get; set;}
 
         [NotMapped]
-        public int TurnoStun {get; set;} = 0;
+        public int TurnoStun {get; set;} =0;
 
         [NotMapped]
-        public int TurnoSilence {get; set;} = 0;
+        public int TurnoSilence {get; set;} =0;
         public int Mod {get; set;}
 
         [NotMapped]
@@ -96,7 +96,7 @@ namespace Todo_Gacha.Core
             int danoTotal = Math.Max(0, dano - Shield);
             int danoShield = Math.Min(Shield, dano);
             Shield -= danoShield;
-            HpAtual -= danoTotal;
+            HpAtual = Math.Max(0, HpAtual -= danoTotal);
             if (danoShield > 0 && danoTotal == 0)
             {
                 Console.WriteLine($"{Name} bloqueou completamente o ataque de {inimigo} com seu escudo!");
@@ -109,7 +109,7 @@ namespace Todo_Gacha.Core
 
         public virtual void curar(string aliado, int cura)
         {
-            HpAtual = Math.Min(HpAtual + Mod, HpMax);;
+            HpAtual = Math.Min(HpAtual + cura, HpMax);;
         }
 
         public virtual void Habilidade()

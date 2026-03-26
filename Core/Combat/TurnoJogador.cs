@@ -15,8 +15,9 @@ namespace Todo_Gacha.Core.Combat
             if (personagem.TurnoStun > 0)
             {
                 combateUI.ExibirMensagem($"{personagem.Name} está atordoado e não pode agir!", ConsoleColor.Red);
-                Console.ReadKey();
+                combateUI.AguardarTecla();
                 personagem.TurnoStun--;
+                return;
             }
 
             if (inimigo.HpAtual <= 0)
@@ -29,8 +30,7 @@ namespace Todo_Gacha.Core.Combat
             }
             combateUI.Cabecalho(equipe, inimigo, x);
             personagem.Passiva();
-            Console.ReadKey();
-            //Turno do Player
+            combateUI.AguardarTecla();
             bool Atacou = false;
             bool UsouHabilidade = false;
             bool UsouItem = false;
@@ -49,41 +49,41 @@ namespace Todo_Gacha.Core.Combat
                         if (!Atacou)
                         {
                             int dano = personagem.Damage();
-                            inimigo.tomarDano(personagem.Name, dano);
+                            inimigo.tomarDano(personagem, dano);
                             Atacou = true;
                         }
-                        Console.ReadKey();
+                        combateUI.AguardarTecla();
                         break;
                     case 2:
                         if (personagem.TurnoSilence > 0)
                         {
                             combateUI.ExibirMensagem($"{personagem.Name} está silenciado e não pode usar habilidades!", ConsoleColor.Red);
-                            Console.ReadKey();
+                            combateUI.AguardarTecla();
                         }
                         else if (!UsouHabilidade)
                         {
                             personagem.Habilidade();
                             UsouHabilidade = true;
                         }
-                        Console.ReadKey();
+                        combateUI.AguardarTecla();
                         break;
                     case 3:
-                        escolherItem(UsouItem, combateUI, equipe, personagem, inimigo, x, inventario, context);
+                        UsouItem = escolherItem(combateUI, equipe, personagem, inimigo, x, inventario, context);
 
                         break;
                     case 4:
                         combateUI.ExibirMensagem($"Fim do turno.", ConsoleColor.White);
-                        Console.ReadKey();
+                        combateUI.AguardarTecla();
                         MenuShow = false;
                         break;
 
                 }
                 
             }
-            personagem.TurnoSilence--;
+            personagem.TurnoSilence = Math.Max(0, personagem.TurnoSilence-1);
         }
 
-        public void escolherItem(bool UsouItem, CombateUI combateUI, List<PersonagemBase> equipe, PersonagemBase personagem, InimigoBase inimigo, int x, InventarioServices inventario, AppDbContext context)
+        public bool escolherItem(CombateUI combateUI, List<PersonagemBase> equipe, PersonagemBase personagem, InimigoBase inimigo, int x, InventarioServices inventario, AppDbContext context)
         {
             combateUI.Cabecalho(equipe, inimigo, x);
             var consumiveis = new List<Item>();
@@ -92,7 +92,7 @@ namespace Todo_Gacha.Core.Combat
             if (consumiveis.Count == 0)
             {
                 combateUI.ExibirMensagem($"Você não possui itens utilizáveis.", ConsoleColor.Red);
-                return;
+                return false;
             }
             combateUI.ExibirMensagem("--", ConsoleColor.White);
             combateUI.ExibirMensagem($"Qual item deseja usar?", ConsoleColor.White);
@@ -101,8 +101,8 @@ namespace Todo_Gacha.Core.Combat
             var itemEscolhido = consumiveis[num - 1];
             combateUI.ExibirMensagem($"{personagem.Name} usou {itemEscolhido.Name}!", ConsoleColor.White);
             itemEscolhido.Uso(personagem, context);
-            UsouItem = true;
-            Console.ReadKey();
+            combateUI.AguardarTecla();
+            return true;
         }
     }
 }

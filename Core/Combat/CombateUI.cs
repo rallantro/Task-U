@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyModel.Resolution;
+using Todo_Gacha.Data;
 
 namespace Todo_Gacha.Core.Combat
 {
@@ -68,11 +70,26 @@ namespace Todo_Gacha.Core.Combat
             int escolha;
             while (true)
             {
-                string entrada = Console.ReadLine();
+                string ? entrada = Console.ReadLine();
                 if (int.TryParse(entrada, out escolha) && escolha >= minOpcao && escolha <= maxOpcao)
                     return escolha;
                 Console.WriteLine($"Opção inválida. Digite um número entre {minOpcao} e {maxOpcao}.");
             }
+        }
+
+        public void Chamada(InimigoBase inimigo)
+        {
+            Console.Clear();
+            Console.WriteLine("===== ATENÇÃO PARA O COMBATE! =====");
+            if (inimigo.Rarity == 2) Console.ForegroundColor = ConsoleColor.Blue;  
+            else if (inimigo.Rarity == 3) Console.ForegroundColor = ConsoleColor.Magenta; 
+            else if (inimigo.Rarity == 4) Console.ForegroundColor = ConsoleColor.Yellow;  
+            Console.WriteLine($"Seu inimigo será {inimigo.Name}");
+            Console.WriteLine("===================================");
+            Console.WriteLine(inimigo.Desc);
+            Console.WriteLine("===================================");
+            Console.ResetColor();
+            Console.ReadKey();
         }
 
         public void ExibirMensagem(string Mensagem, ConsoleColor color)
@@ -81,5 +98,43 @@ namespace Todo_Gacha.Core.Combat
             Console.WriteLine(Mensagem);
             Console.ResetColor();
         }
+
+        public void Vitoria(InimigoBase inimigo, Item ? item)
+        {
+            if (inimigo.DeathQuote != null)
+                {
+                   Console.WriteLine($"{inimigo.Name} grunhe antes de morrer:");
+                   Console.WriteLine($"'{inimigo.DeathQuote}'"); 
+                }
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("--");
+                Console.WriteLine($"Parabéns Você derrotou {inimigo.Name}");
+                Console.WriteLine("--");
+                if (inimigo.CrystalDrop > 0)
+                {
+                    Console.WriteLine($"Você recebeu {inimigo.CrystalDrop} Crystals!");
+                }
+                if (item != null)
+                {
+                    Console.WriteLine($"Você recebeu {item.Name}!");
+                }
+                Console.WriteLine("\nPressione qualquer tecla para voltar ao menu...");
+                Console.ResetColor();
+                Console.ReadKey();
+        }
+
+        public void Derrota(InimigoBase inimigo)
+        {
+            Console.Clear();
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine($"==== DERROTA ====");
+            Console.WriteLine($"{inimigo.Name} foi forte demais para você.");
+            Console.WriteLine($"====    //   ====");
+            Console.ResetColor();
+            Console.WriteLine($"Dica: Tente trocar os itens e ou os personagens!");
+            Console.ReadKey();
+        }
+
+        public void AguardarTecla() => Console.ReadKey();
     }
 }
