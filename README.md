@@ -1,8 +1,9 @@
 # Task-u
+![Version](https://img.shields.io/badge/version-1.0.0-blue)
 ![.NET 10](https://img.shields.io/badge/.NET-10-blueviolet)
 ![EF Core](https://img.shields.io/badge/EF%20Core-SQLite-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
-![Version](https://img.shields.io/badge/version-1.0.0-blue)
+![Maintained](https://img.shields.io/badge/maintained-yes-green)
 
 **Task-u** é um RPG de console (*CLI RPG*) desenvolvido em C# com .NET 10, que aplica mecânicas de gamificação à produtividade. O jogo converte a conclusão de tarefas diárias em progresso dentro de um sistema de RPG, utilizando elementos como gacha, combate por turnos e gerenciamento de inventário.
 
