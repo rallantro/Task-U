@@ -1,6 +1,28 @@
-## Personagens
+# Personagens
 
-### Épicos (SR - Raridade 3)
+## Tabela de Atributos
+
+Abaixo estão os 12 personagens disponíveis, com seus atributos base e raridade. Os valores de `Atk`, `HpMax` e `Mod` representam os valores iniciais.
+
+| Nome | Raridade | ATK | HP Máx | MOD | Classe |
+|------|----------|-----|--------|-----|--------|
+| Lurios | Épico (SR) | 10 | 20 | 10 | Apostador |
+| Shiro | Épico (SR) | 10 | 40 | 3 | Bárbaro |
+| Jax | Épico (SR) | 2 | 60 | 5 | Grafiteiro |
+| Lucien | Épico (SR) | 10 | 30 | 5 | Voodo |
+| Astraea | Épico (SR) | 12 | 50 | 4 | Star |
+| Kael | Épico (SR) | 10 | 45 | 3 | Lab |
+| Legião Lunar | Lendário (SSR) | 15 | 50 | 10 | Moon |
+| Valentine | Lendário (SSR) | 15 | 40 | 5 | Vampire |
+| Regina | Lendário (SSR) | 15 | 45 | 4 | Domina |
+| Bukubus | Lendário (SSR) | 10 | 65 | 4 | SlimeA |
+| Agente Clara | Lendário (SSR) | 15 | 50 | 4 | Police |
+
+> **Nota:** Os atributos apresentados são os valores base. Durante o combate, eles podem ser modificados por buffs, itens equipados e habilidades passivas.
+
+# Descrição dos Personagens
+
+## Épicos (SR - Raridade 3)
 
 **Lurios**  
 *“Let it ride! Hoje é meu dia de sorte!”*  
@@ -56,7 +78,7 @@ Kael personifica o arquétipo do gênio incompreendido e cativante. Apesar das o
 
 ---
 
-### Lendários (SSR - Raridade 4)
+## Lendários (SSR - Raridade 4)
 
 **Legião Lunar**  
 *“A luz da lua é serena e gentil... Ótima para disfarçar o massacre!”*  
@@ -102,3 +124,6 @@ Agente Clara é a personificação da eficiência tática e do rigor analítico.
 
 - **Habilidade (Protocolo de Inibição Tática):** Clara dispara projéteis de energia neurotóxica ou algemas eletromagnéticas dependendo do seu nível de Análise. Alvos com baixa prioridade são silenciados; alvos totalmente analisados sofrem atordoamento completo (Stun), permitindo que Clara exponha pontos fracos e conceda um bônus de ataque direto ao seu aliado.  
 - **Passiva (Scanner de Combate Sentinela):** Clara acumula dados de Análise continuamente ao sofrer ou desferir ataques. Ao atingir o limiar crítico (Análise > 8), ela ativa protocolos de defesa que reduzem o dano recebido em 50%. Além disso, ela debuffa constantemente a capacidade ofensiva do inimigo estudado e, caso o alvo esteja incapacitado, converte uma porcentagem da vida máxima do inimigo em dano adicional para si mesma.
+
+---
+
