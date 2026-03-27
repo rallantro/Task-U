@@ -2,6 +2,7 @@
 ![.NET 10](https://img.shields.io/badge/.NET-10-blueviolet)
 ![EF Core](https://img.shields.io/badge/EF%20Core-SQLite-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
+![Version](https://img.shields.io/badge/version-1.0.0-blue)
 
 **Task-u** é um RPG de console (*CLI RPG*) desenvolvido em C# com .NET 10, que aplica mecânicas de gamificação à produtividade. O jogo converte a conclusão de tarefas diárias em progresso dentro de um sistema de RPG, utilizando elementos como gacha, combate por turnos e gerenciamento de inventário.
 
@@ -49,7 +50,7 @@ O projeto demonstra competências em:
 1. Clone o repositório:
    ```bash
    git clone https://github.com/rallantro/Task-U.git
-   cd Task-u
+   cd Task-U
    ```
 
 2. Restaure as dependências e compile:
@@ -350,8 +351,7 @@ O combate é estruturado como um RPG de turnos alternados, onde o jogador contro
 - **Passivas e Habilidades**: Cada personagem (herói e inimigo) possui habilidades únicas que alteram o fluxo do combate. Além disso, cada personagem e inimigo possui uma passiva única, que é utilizada no início de cada turno próprio. 
 - **Alvos**: O inimigo escolhe alvos com base em `chanceAlvo` (peso que pode ser modificado por habilidades). O jogador sempre ataca o inimigo, mas habilidades de suporte podem mirar aliados.
 
-Para uma descrição detalhada de todas as mecânicas, classes envolvidas e lógica de geração de inimigos, consulte:  
-➡️ **[COMBATE.md](./docs/COMBATE.md)**
+Para uma descrição detalhada de todas as mecânicas, classes envolvidas e lógica de geração de inimigos, consulte: **[COMBATE.md](./docs/COMBATE.md)**
 
 ---
 
