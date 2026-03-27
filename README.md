@@ -155,7 +155,7 @@ Contém as classes base que definem o comportamento do jogo, independente de per
 **Models**  
 Define as entidades que são mapeadas para o banco de dados via Entity Framework Core:
 - `User`, `Tarefa`, `BaseTarefas`, `SideQuest`, `Banner`, `Item`, `PersonagemInventario`, `ItemInventario`.
-- Essas classes são “puras” (POCOs) e não contêm comportamento de negócio.
+- Essas classes são POCOs (*Plain Old CLR Object*) e não contêm comportamento de negócio, criadas apenas para carregar os dados.
 
 **Data**  
 Contém `AppDbContext`, que configura o mapeamento entre as entidades e o banco SQLite. É o ponto único de acesso ao banco.
@@ -170,7 +170,7 @@ Orquestram a lógica de negócio e coordenam as interações entre as camadas:
 - `CombatService` – atua como fachada para o `CombateEngine`.
 
 **Program.cs**  
-Contém o loop principal, o menu e a interação com o usuário. Instancia os serviços e injeta as dependências manualmente (padrão *Poor Man's DI*).
+Contém o loop principal, o menu e a interação com o usuário. Instancia os serviços e realiza a implementação de injeção de dependência manual (*Poor Man's DI*) para desacoplamento de serviços.
 
 ### Fluxo de Dados
 
@@ -202,7 +202,69 @@ O subsistema de combate foi extraído para `Core/Combat` com as seguintes respon
 Essa separação permitiu testar a lógica de turnos independentemente da interface e facilitou a correção de bugs relacionados a status e cálculos de dano.
 
 
+## Sistema de Gacha: Pity, Banner e Raridades
 
+O sistema de invocação (*gacha*) do Task-u é baseado em probabilidades com mecanismos de garantia (*pity*) para equilibrar a experiência do jogador. A seguir, são detalhados os componentes que regem os sorteios.
+
+### Raridades e Probabilidades Base
+
+| Raridade | Nome (Código) | Probabilidade Base |
+|----------|---------------|-------------------|
+| 1        | Comum (C)     | 75% (números 1–750) |
+| 2        | Raro (R)      | 15% (números 751–900) |
+| 3        | Épico (SR)    | 9% (números 901–990) |
+| 4        | Lendário (SSR)| 1% (números 991–1000) |
+
+Os sorteios são realizados por um gerador de números aleatórios que define um valor entre 1 e 1000. A raridade obtida é determinada por faixas fixas, exceto nos casos garantidos pelo sistema de *pity*.
+
+### Sistema de Pity
+
+O pity é um contador que assegura a obtenção de itens de alta raridade após um número determinado de tentativas sem sucesso. Existem dois pitys independentes:
+
+- **Pity Épico (maxPityEpic = 10):**  
+  Se o jogador realizar 10 pulls consecutivos sem obter um personagem Épico (SR) ou Lendário (SSR), o décimo pull será garantidamente um Épico (ou Lendário, caso o pity de Lendário também seja acionado).
+
+- **Pity Lendário (maxPityLeg = 100):**  
+  Se o jogador realizar 100 pulls consecutivos sem obter um Lendário, o centésimo pull será garantidamente um Lendário.  
+  **Soft Pity:** A partir do 75º pull sem Lendário, a chance de obtê-lo aumenta progressivamente:  
+  - 75º pull: 10% + (5 * 1) = 15%  
+  - 76º pull: 10% + (5 * 2) = 20%  
+  - ...  
+  - 99º pull: 10% + (5 * 25) = 135% (efetivamente garantido antes do hard pity).
+
+### Evento de Sorte (Luck Event)
+
+Ao concluir uma tarefa épica (dificuldade ≥ 6), o jogador ativa um evento de sorte que dobra a chance de obter um personagem Lendário no próximo pull. Esse efeito é consumido no primeiro pull após a ativação.
+
+### Banner Rotativo
+
+O banner semanal determina quais personagens têm **rate-up** (chance aumentada) dentro de suas respectivas raridades.
+
+- A cada 7 dias (baseado no campo `LastBannerUpdate` do usuário), o banner é atualizado:
+  - Um personagem Épico e um Lendário são selecionados aleatoriamente entre os disponíveis.
+  - Esses personagens são salvos na tabela `Banner`.
+
+- Durante o sorteio:
+  - Quando um pull resulta em **Épico (SR)**, há 50% de chance de ser o personagem rate-up (vs. 50% para qualquer outro Épico).
+  - Quando um pull resulta em **Lendário (SSR)**, há 50% de chance de ser o personagem rate-up (vs. 50% para qualquer outro Lendário).
+
+Essa lógica mantém o banner sempre renovado e estimula o jogador a retornar semanalmente para aproveitar os rate-ups.
+
+### Fluxo de um Pull
+
+1. Verifica se o pity Lendário atingiu o soft pity ou o hard pity para ajustar a chance.
+2. Gera um número aleatório e compara com a chance ajustada.
+3. Se Lendário: chama `BannerService.LegendPull()` – decide se será rate-up (50%) ou aleatório.
+4. Se Épico: chama `BannerService.EpicPull()` – mesma lógica de rate-up.
+5. Se Raro ou Comum: obtém um item correspondente das tabelas `Itens`.
+6. Atualiza pitys, adiciona o item/personagem ao inventário, decrementa cristais e persiste no banco.
+
+### Observações Técnicas
+
+- Os pitys são armazenados por usuário (`User.PityLeg` e `User.PityEpic`) e são resetados quando um pull da raridade correspondente é obtido.
+- O cálculo de soft pity é dinâmico: `chance = legChance + (5 * (pityLeg - 74))` para pityLeg ≥ 75.
+- O banner é recalculado apenas quando a data da última atualização ultrapassa 7 dias, garantindo que o mesmo banner permaneça ativo durante a semana.
+- O sistema utiliza `EF.Functions.Random()` no banco para selecionar itens/personagens aleatórios quando o rate-up não é escolhido.
 
 
 
