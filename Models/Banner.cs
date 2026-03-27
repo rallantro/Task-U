@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Todo_Gacha.Models
+namespace Task_U.Models
 {
     public class Banner
     {

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyModel.Resolution;
-using Todo_Gacha.Data;
+using Task_U.Data;
 
-namespace Todo_Gacha.Core.Combat
+namespace Task_U.Core.Combat
 {
     public class CombateUI
     {

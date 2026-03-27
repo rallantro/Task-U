@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 #nullable enable
 
-namespace Todo_Gacha.Core
+namespace Task_U.Core
 {
     public class ItemInventario
     {

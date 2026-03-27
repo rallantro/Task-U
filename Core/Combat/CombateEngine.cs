@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using Todo_Gacha.Data;
-using Todo_Gacha.Core;
-using Todo_Gacha.Services;
-using Todo_Gacha.Models;
+using Task_U.Data;
+using Task_U.Core;
+using Task_U.Services;
+using Task_U.Models;
 
-namespace Todo_Gacha.Core.Combat
+namespace Task_U.Core.Combat
 {
     public class CombateEngine
     {

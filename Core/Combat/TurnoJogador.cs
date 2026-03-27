@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Todo_Gacha.Data;
-using Todo_Gacha.Services;
+using Task_U.Data;
+using Task_U.Services;
 
-namespace Todo_Gacha.Core.Combat
+namespace Task_U.Core.Combat
 {
     public class TurnoJogador
     {

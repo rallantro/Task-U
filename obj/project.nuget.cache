@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "LcajxK0QWbc=",
+  "dgSpecHash": "TjXvZsfGwhI=",
   "success": true,
-  "projectFilePath": "D:\\Allan\\Projetos\\Programação\\Todo-Gacha\\Todo-Gacha.csproj",
+  "projectFilePath": "D:\\Allan\\Projetos\\Programação\\Todo-Gacha\\Task-U.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Vital\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
     "C:\\Users\\Vital\\.nuget\\packages\\microsoft.build.framework\\18.0.2\\microsoft.build.framework.18.0.2.nupkg.sha512",

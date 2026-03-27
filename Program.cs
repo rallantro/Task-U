@@ -4,10 +4,10 @@ using System.Security.Cryptography.X509Certificates;
 using System.Xml;
 using Microsoft.VisualBasic;
 using Microsoft.EntityFrameworkCore;
-using Todo_Gacha.Models;
-using Todo_Gacha.Core;
-using Todo_Gacha.Services;
-using Todo_Gacha.Data;
+using Task_U.Models;
+using Task_U.Core;
+using Task_U.Services;
+using Task_U.Data;
 using System.Diagnostics;
 
 Gacha gacha = new Gacha();

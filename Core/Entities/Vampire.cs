@@ -4,7 +4,7 @@ using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 
-namespace Todo_Gacha.Core.Entities
+namespace Task_U.Core.Entities
 {
     public class Vampire : PersonagemBase
     {

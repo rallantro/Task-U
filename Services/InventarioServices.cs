@@ -2,11 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Todo_Gacha.Data;
-using Todo_Gacha.Core;
-using Todo_Gacha.Models;
+using Task_U.Data;
+using Task_U.Core;
+using Task_U.Models;
 
-namespace Todo_Gacha.Services
+namespace Task_U.Services
 {
     public class InventarioServices
     {

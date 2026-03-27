@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace Todo_Gacha.Migrations
+namespace Task_U.Migrations
 {
     /// <inheritdoc />
     public partial class ItensUpdate : Migration

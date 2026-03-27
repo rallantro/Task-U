@@ -6,7 +6,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Todo_Gacha.Models
+namespace Task_U.Models
 {
     public class Tarefa
     {

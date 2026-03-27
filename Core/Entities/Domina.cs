@@ -4,7 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Todo_Gacha.Core.Entities
+namespace Task_U.Core.Entities
 {
     public class Domina : PersonagemBase
     {

@@ -2955,9 +2955,9 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\Allan\\Projetos\\Programação\\Todo-Gacha\\Todo-Gacha.csproj",
-      "projectName": "Todo-Gacha",
-      "projectPath": "D:\\Allan\\Projetos\\Programação\\Todo-Gacha\\Todo-Gacha.csproj",
+      "projectUniqueName": "D:\\Allan\\Projetos\\Programação\\Todo-Gacha\\Task-U.csproj",
+      "projectName": "Task-U",
+      "projectPath": "D:\\Allan\\Projetos\\Programação\\Todo-Gacha\\Task-U.csproj",
       "packagesPath": "C:\\Users\\Vital\\.nuget\\packages\\",
       "outputPath": "D:\\Allan\\Projetos\\Programação\\Todo-Gacha\\obj\\",
       "projectStyle": "PackageReference",

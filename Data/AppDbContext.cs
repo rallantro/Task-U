@@ -1,10 +1,10 @@
 using System.Reflection.Metadata;
 using Microsoft.EntityFrameworkCore;
-using Todo_Gacha.Models;
-using Todo_Gacha.Core;
-using Todo_Gacha.Core.Entities;
+using Task_U.Models;
+using Task_U.Core;
+using Task_U.Core.Entities;
 
-namespace Todo_Gacha.Data
+namespace Task_U.Data
 {
     public class AppDbContext : DbContext
     {

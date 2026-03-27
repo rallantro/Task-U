@@ -6,11 +6,11 @@ using System.Reflection.Metadata;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
-using Todo_Gacha.Data;
-using Todo_Gacha.Core;
-using Todo_Gacha.Services;
+using Task_U.Data;
+using Task_U.Core;
+using Task_U.Services;
 
-namespace Todo_Gacha.Models
+namespace Task_U.Models
 {
     public class Gacha
     {

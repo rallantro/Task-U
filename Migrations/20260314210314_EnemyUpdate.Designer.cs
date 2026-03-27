@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Todo_Gacha.Data;
+using Task_U.Data;
 
 #nullable disable
 
-namespace Todo_Gacha.Migrations
+namespace Task_U.Migrations
 {
     [DbContext(typeof(AppDbContext))]
     [Migration("20260314210314_EnemyUpdate")]
@@ -20,7 +20,7 @@ namespace Todo_Gacha.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.4");
 
-            modelBuilder.Entity("Todo_Gacha.Core.InimigoBase", b =>
+            modelBuilder.Entity("Task_U.Core.InimigoBase", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -61,7 +61,7 @@ namespace Todo_Gacha.Migrations
                     b.ToTable("Inimigos");
                 });
 
-            modelBuilder.Entity("Todo_Gacha.Core.Item", b =>
+            modelBuilder.Entity("Task_U.Core.Item", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -90,7 +90,7 @@ namespace Todo_Gacha.Migrations
                     b.ToTable("Itens");
                 });
 
-            modelBuilder.Entity("Todo_Gacha.Core.ItemInventario", b =>
+            modelBuilder.Entity("Task_U.Core.ItemInventario", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -107,7 +107,7 @@ namespace Todo_Gacha.Migrations
                     b.ToTable("InventarioItens");
                 });
 
-            modelBuilder.Entity("Todo_Gacha.Core.PersonagemBase", b =>
+            modelBuilder.Entity("Task_U.Core.PersonagemBase", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -148,7 +148,7 @@ namespace Todo_Gacha.Migrations
                     b.UseTphMappingStrategy();
                 });
 
-            modelBuilder.Entity("Todo_Gacha.Core.PersonagemInventario", b =>
+            modelBuilder.Entity("Task_U.Core.PersonagemInventario", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -165,7 +165,7 @@ namespace Todo_Gacha.Migrations
                     b.ToTable("InventarioPersonagens");
                 });
 
-            modelBuilder.Entity("Todo_Gacha.Models.Banner", b =>
+            modelBuilder.Entity("Task_U.Models.Banner", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -182,7 +182,7 @@ namespace Todo_Gacha.Migrations
                     b.ToTable("banners");
                 });
 
-            modelBuilder.Entity("Todo_Gacha.Models.BaseTarefas", b =>
+            modelBuilder.Entity("Task_U.Models.BaseTarefas", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -208,7 +208,7 @@ namespace Todo_Gacha.Migrations
                     b.ToTable("BaseTarefas");
                 });
 
-            modelBuilder.Entity("Todo_Gacha.Models.SideQuest", b =>
+            modelBuilder.Entity("Task_U.Models.SideQuest", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -231,7 +231,7 @@ namespace Todo_Gacha.Migrations
                     b.ToTable("SideQuests");
                 });
 
-            modelBuilder.Entity("Todo_Gacha.Models.Tarefa", b =>
+            modelBuilder.Entity("Task_U.Models.Tarefa", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -254,7 +254,7 @@ namespace Todo_Gacha.Migrations
                     b.ToTable("Tarefas");
                 });
 
-            modelBuilder.Entity("Todo_Gacha.Models.User", b =>
+            modelBuilder.Entity("Task_U.Models.User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -296,9 +296,9 @@ namespace Todo_Gacha.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("Todo_Gacha.Core.Apostador", b =>
+            modelBuilder.Entity("Task_U.Core.Apostador", b =>
                 {
-                    b.HasBaseType("Todo_Gacha.Core.PersonagemBase");
+                    b.HasBaseType("Task_U.Core.PersonagemBase");
 
                     b.Property<int>("BaseAtk")
                         .HasColumnType("INTEGER");
@@ -315,9 +315,9 @@ namespace Todo_Gacha.Migrations
                     b.HasDiscriminator().HasValue("Apostador");
                 });
 
-            modelBuilder.Entity("Todo_Gacha.Core.Barbaro", b =>
+            modelBuilder.Entity("Task_U.Core.Barbaro", b =>
                 {
-                    b.HasBaseType("Todo_Gacha.Core.PersonagemBase");
+                    b.HasBaseType("Task_U.Core.PersonagemBase");
 
                     b.Property<int>("BaseAtk")
                         .HasColumnType("INTEGER");
@@ -325,16 +325,16 @@ namespace Todo_Gacha.Migrations
                     b.HasDiscriminator().HasValue("Barbaro");
                 });
 
-            modelBuilder.Entity("Todo_Gacha.Core.Grafiteiro", b =>
+            modelBuilder.Entity("Task_U.Core.Grafiteiro", b =>
                 {
-                    b.HasBaseType("Todo_Gacha.Core.PersonagemBase");
+                    b.HasBaseType("Task_U.Core.PersonagemBase");
 
                     b.HasDiscriminator().HasValue("Grafiteiro");
                 });
 
-            modelBuilder.Entity("Todo_Gacha.Core.Moon", b =>
+            modelBuilder.Entity("Task_U.Core.Moon", b =>
                 {
-                    b.HasBaseType("Todo_Gacha.Core.PersonagemBase");
+                    b.HasBaseType("Task_U.Core.PersonagemBase");
 
                     b.Property<int>("BonusDMG")
                         .HasColumnType("INTEGER");
@@ -345,20 +345,20 @@ namespace Todo_Gacha.Migrations
                     b.HasDiscriminator().HasValue("Moon");
                 });
 
-            modelBuilder.Entity("Todo_Gacha.Core.Voodo", b =>
+            modelBuilder.Entity("Task_U.Core.Voodo", b =>
                 {
-                    b.HasBaseType("Todo_Gacha.Core.PersonagemBase");
+                    b.HasBaseType("Task_U.Core.PersonagemBase");
 
                     b.HasDiscriminator().HasValue("Voodo");
                 });
 
-            modelBuilder.Entity("Todo_Gacha.Models.User", b =>
+            modelBuilder.Entity("Task_U.Models.User", b =>
                 {
-                    b.HasOne("Todo_Gacha.Core.Item", "ItemAtivo")
+                    b.HasOne("Task_U.Core.Item", "ItemAtivo")
                         .WithMany()
                         .HasForeignKey("ItemAtivoId");
 
-                    b.HasOne("Todo_Gacha.Core.PersonagemBase", "PersonagemAtivo")
+                    b.HasOne("Task_U.Core.PersonagemBase", "PersonagemAtivo")
                         .WithMany()
                         .HasForeignKey("PersonagemAtivoId");
 

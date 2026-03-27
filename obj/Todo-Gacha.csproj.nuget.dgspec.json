@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Allan\\Projetos\\Programação\\Todo-Gacha\\Todo-Gacha.csproj": {}
+    "D:\\Allan\\Projetos\\Programação\\Task-U\\Task-U.csproj": {}
   },
   "projects": {
-    "D:\\Allan\\Projetos\\Programação\\Todo-Gacha\\Todo-Gacha.csproj": {
+    "D:\\Allan\\Projetos\\Programação\\Task-U\\Task-U.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Allan\\Projetos\\Programação\\Todo-Gacha\\Todo-Gacha.csproj",
-        "projectName": "Todo-Gacha",
-        "projectPath": "D:\\Allan\\Projetos\\Programação\\Todo-Gacha\\Todo-Gacha.csproj",
+        "projectUniqueName": "D:\\Allan\\Projetos\\Programação\\Task-U\\Task-U.csproj",
+        "projectName": "Task-U",
+        "projectPath": "D:\\Allan\\Projetos\\Programação\\Task-U\\Task-U.csproj",
         "packagesPath": "C:\\Users\\Vital\\.nuget\\packages\\",
-        "outputPath": "D:\\Allan\\Projetos\\Programação\\Todo-Gacha\\obj\\",
+        "outputPath": "D:\\Allan\\Projetos\\Programação\\Task-U\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Vital\\AppData\\Roaming\\NuGet\\NuGet.Config"

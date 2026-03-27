@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Todo_Gacha.Models;
-using Todo_Gacha.Data;
+using Task_U.Models;
+using Task_U.Data;
 
-namespace Todo_Gacha.Core
+namespace Task_U.Core
 {
     public class Barbaro : PersonagemBase
     {

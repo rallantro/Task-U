@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Todo_Gacha.Models;
+using Task_U.Models;
 
-namespace Todo_Gacha.Core
+namespace Task_U.Core
 {
     public class Gargula : InimigoBase
     {

@@ -4,12 +4,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations.Schema;
-using Todo_Gacha.Services;
-using Todo_Gacha.Models;
-using Todo_Gacha.Data;
-using Todo_Gacha.Migrations;
+using Task_U.Services;
+using Task_U.Models;
+using Task_U.Data;
+using Task_U.Migrations;
 
-namespace Todo_Gacha.Core
+namespace Task_U.Core
 {
     public class PersonagemBase
     {

@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Todo_Gacha.Core;
+using Task_U.Core;
 
-namespace Todo_Gacha.Models
+namespace Task_U.Models
 {
     public class User
     {

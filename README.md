@@ -45,7 +45,7 @@ O projeto demonstra competências em:
 
 1. Clone o repositório:
    ```bash
-   git clone https://github.com/rallantro/Todo-Gacha.git
+   git clone https://github.com/rallantro/Task-U.git
    cd Task-u
    ```
 

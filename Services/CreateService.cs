@@ -2,12 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Todo_Gacha.Data;
-using Todo_Gacha.Core;
-using Todo_Gacha.Services;
-using Todo_Gacha.Core.Entities;
+using Task_U.Data;
+using Task_U.Core;
+using Task_U.Services;
+using Task_U.Core.Entities;
 
-namespace Todo_Gacha.Services
+namespace Task_U.Services
 {
     public class CreateService
     {
