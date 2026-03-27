@@ -1,4 +1,7 @@
 # Task-u
+![.NET 10](https://img.shields.io/badge/.NET-10-blueviolet)
+![EF Core](https://img.shields.io/badge/EF%20Core-SQLite-blue)
+![License](https://img.shields.io/badge/license-MIT-green)
 
 **Task-u** é um RPG de console (*CLI RPG*) desenvolvido em C# com .NET 10, que aplica mecânicas de gamificação à produtividade. O jogo converte a conclusão de tarefas diárias em progresso dentro de um sistema de RPG, utilizando elementos como gacha, combate por turnos e gerenciamento de inventário.
 
@@ -6,7 +9,7 @@
 
 ## Sobre o Projeto
 
-O Task-u foi concebido como um motor de gamificação que processa a conclusão de tarefas e as traduz em recompensas no jogo. Cada tarefa finalizada gera Cristais, a moeda interna, que podem ser utilizados no subsistema de invocação (*gacha*). A lógica por trás do gacha inclui:
+O projeto nasceu da ideia de transformar tarefas diárias em algo mais recompensador. Cada tarefa concluída gera Cristais, a moeda do jogo, que podem ser usados no sistema de invocação de personagens (*gacha*). A lógica por trás do gacha inclui:
 
 - **Sistema de Pity:** Contadores internos que garantem a obtenção de personagens de alta raridade após um número definido de tentativas, equilibrando a progressão.
 - **Banners Rotativos:** Atualização semanal dos personagens com taxa de aparição aumentada, controlada por lógica de tempo e persistência.
@@ -67,18 +70,91 @@ O projeto demonstra competências em:
 
 ---
 
-## Estrutura do Projeto
+## Arquitetura
+
+O Task-u foi estruturado em camadas para separar responsabilidades e facilitar a manutenção. A organização do código reflete a divisão entre lógica de domínio, serviços de negócio, persistência e interface com o usuário.
 
 ```
 Task-u/
-├── Core/               # Classes base (Personagem, Inimigo, Combate)
-├── Data/               # AppDbContext e configurações EF Core
-├── Models/             # Entidades do banco de dados (Tarefa, User, etc.)
-├── Services/           # Lógica de negócio (Gacha, Inventário, Tarefas)
-├── Migrations/         # Migrações geradas pelo EF Core
-├── Program.cs          # Loop principal e interação com o usuário
-└── gacha_database.db   # Banco de dados SQLite (gerado na primeira execução)
+│
+├── Core/                           # Lógica central e entidades de domínio
+│   ├── PersonagemBase.cs           # Classe base dos personagens
+│   ├── InimigoBase.cs              # Classe base dos inimigos
+│   ├── Item.cs                     # Modelo de item (usado também em Models)
+│   ├── PersonagemInventario.cs     # Relação usuário-personagem
+│   ├── ItemInventario.cs           # Relação usuário-item
+│   ├── Combat/                     # Módulo de combate
+│   │   ├── CombateEngine.cs        # Orquestração da batalha
+│   │   ├── CombateUI.cs            # Interface do combate
+│   │   ├── TurnoJogador.cs         # Lógica do turno do jogador
+│   │   └── TurnoInimigo.cs         # Lógica do turno do inimigo
+│   ├── Entities/                   # Personagens específicos (heróis)
+│   │   ├── Apostador.cs
+│   │   ├── Barbaro.cs
+│   │   └── ...
+│   └── Enemies/                    # Inimigos específicos
+│       ├── Banshee.cs
+│       ├── Fada.cs
+│       └── ...
+│
+├── Models/                         # Entidades de persistência (EF Core)
+│   ├── User.cs                     # Dados do jogador
+│   ├── Tarefa.cs                   # Tarefas ativas do dia
+│   ├── BaseTarefas.cs              # Modelo de tarefas diárias
+│   ├── SideQuest.cs                # Missões secundárias
+│   ├── Banner.cs                   # Banner semanal
+│   └── ...
+│
+├── Data/                           # Contexto do EF Core
+│   └── AppDbContext.cs             # DbContext e configurações
+│
+├── Services/                       # Lógica de negócio
+│   ├── TarefaService.cs            # Regeneração e conclusão de tarefas
+│   ├── GachaService.cs             # Sorteios e pity
+│   ├── BannerService.cs            # Rotação e rate-up
+│   ├── InventarioServices.cs       # Gerenciamento de inventário
+│   ├── AdventureService.cs         # Geração de inimigos
+│   ├── CombatService.cs            # Fachada para o combate
+│   └── CreateService.cs            # (Auxiliar, usado para testes)
+│
+├── Migrations/                     # Migrações geradas pelo EF Core
+│
+├── Program.cs                      # Loop principal e menu
+├── gacha_database.db               # Banco de dados SQLite (gerado)
+├── Task-u.csproj                   # Arquivo do projeto
+└── README.md
 ```
+
+A separação em camadas permite que a lógica de negócio (Services) seja independente da persistência (Data) e das definições de domínio (Core). O combate foi isolado no submódulo `Core/Combat`, facilitando manutenção e correção de bugs.
+
+### Fluxo de Dados
+
+1. **Entrada do usuário** → `Program.cs` captura a opção do menu.
+2. **Serviço correspondente** é chamado (ex.: `TarefaService.ConcluirTarefa`).
+3. O serviço acessa o `AppDbContext` para recuperar/atualizar dados.
+4. A lógica de negócio é executada (ex.: calcular cristais, atualizar pity).
+5. As alterações são persistidas via `SaveChanges()`.
+6. O resultado é exibido no console.
+
+### Padrões Utilizados
+
+- **Herança e Polimorfismo** – usado extensivamente em `PersonagemBase` e `InimigoBase` para permitir que cada personagem/inimigo tenha habilidades únicas.
+- **Fachada (Facade)** – `CombatService` esconde a complexidade do `CombateEngine` e dos turnos.
+- **Repositório implícito** – o `DbContext` atua como repositório; nenhuma camada adicional foi criada para manter a simplicidade.
+- **Injeção de Dependência manual** – as dependências são passadas via construtor ou instanciadas diretamente, mantendo o projeto acessível para um cenário de console.
+
+### Persistência
+
+O Entity Framework Core em modo Code-First gerencia o esquema do banco de dados. As migrações garantem que a estrutura esteja sempre sincronizada com as classes `Models`. SQLite foi escolhido por ser leve, portátil e não exigir servidor.
+
+### Considerações sobre o Combate
+
+O subsistema de combate foi extraído para `Core/Combat` com as seguintes responsabilidades:
+- `CombateEngine` – orquestra o loop de batalha.
+- `TurnoJogador` e `TurnoInimigo` – controlam as ações de cada lado.
+- `CombateUI` – gerencia toda a saída textual e entrada durante o combate.
+
+---
 
 ## Banco de Dados
 
@@ -130,81 +206,9 @@ VALUES ('Meditar', 'Faça 10 minutos de meditação.', 1, 0);
 
 ---
 
-## Arquitetura
-
-O Task-u foi estruturado em camadas para separar responsabilidades e facilitar a manutenção. A organização do código reflete a divisão entre lógica de domínio, serviços de negócio, persistência e interface com o usuário.
-
-```
-Task-u/
-├── Core/               # Entidades de domínio e lógica central
-├── Models/             # Entidades de persistência (EF Core)
-├── Data/               # Contexto do banco de dados e configurações
-├── Services/           # Serviços de orquestração (regras de negócio)
-├── Migrations/         # Migrações geradas pelo EF Core
-├── Program.cs          # Loop principal e interação com o usuário
-```
-
-### Camadas e Responsabilidades
-
-**Core**  
-Contém as classes base que definem o comportamento do jogo, independente de persistência ou interface:
-- `PersonagemBase` e suas especializações (ex.: `Barbaro`, `Moon`) – implementam lógica de habilidades, passivas, cálculo de dano.
-- `InimigoBase` e suas variações – comportamento específico dos inimigos.
-- `CombateEngine`, `TurnoJogador`, `TurnoInimigo` e `CombateUI` – gerenciam o fluxo de batalha, encapsulando a lógica de turnos e a exibição.
-
-**Models**  
-Define as entidades que são mapeadas para o banco de dados via Entity Framework Core:
-- `User`, `Tarefa`, `BaseTarefas`, `SideQuest`, `Banner`, `Item`, `PersonagemInventario`, `ItemInventario`.
-- Essas classes são POCOs (*Plain Old CLR Object*) e não contêm comportamento de negócio, criadas apenas para carregar os dados.
-
-**Data**  
-Contém `AppDbContext`, que configura o mapeamento entre as entidades e o banco SQLite. É o ponto único de acesso ao banco.
-
-**Services**  
-Orquestram a lógica de negócio e coordenam as interações entre as camadas:
-- `TarefaService` – gerencia a regeneração diária, conclusão e recompensas.
-- `Gacha` – implementa o sorteio, pity e integração com o `BannerService`.
-- `BannerService` – controla a rotação semanal e os rate-ups.
-- `InventarioServices` – gerencia a visualização e equipamento de personagens e itens.
-- `AdventureService` – define o inimigo atual e sua regeneração.
-- `CombatService` – atua como fachada para o `CombateEngine`.
-
-**Program.cs**  
-Contém o loop principal, o menu e a interação com o usuário. Instancia os serviços e realiza a implementação de injeção de dependência manual (*Poor Man's DI*) para desacoplamento de serviços.
-
-### Fluxo de Dados
-
-1. **Entrada do usuário** → `Program.cs` captura a opção do menu.
-2. **Serviço correspondente** é chamado (ex.: `TarefaService.ConcluirTarefa`).
-3. O serviço acessa o `AppDbContext` para recuperar/atualizar dados.
-4. A lógica de negócio é executada (ex.: calcular cristais, atualizar pity).
-5. As alterações são persistidas via `SaveChanges()`.
-6. O resultado é exibido no console.
-
-### Padrões Utilizados
-
-- **Herança e Polimorfismo** – usado extensivamente em `PersonagemBase` e `InimigoBase` para permitir que cada personagem/inimigo tenha habilidades únicas.
-- **Fachada (Facade)** – `CombatService` esconde a complexidade do `CombateEngine` e dos turnos.
-- **Repositório implícito** – o `DbContext` atua como repositório; nenhuma camada adicional foi criada para manter a simplicidade.
-- **Injeção de Dependência manual** – as dependências são passadas via construtor ou instanciadas diretamente, mantendo o projeto acessível para um cenário de console.
-
-### Persistência
-
-O Entity Framework Core em modo Code-First gerencia o esquema do banco de dados. As migrações garantem que a estrutura esteja sempre sincronizada com as classes `Models`. SQLite foi escolhido por ser leve, portátil e não exigir servidor.
-
-### Considerações sobre o Combate
-
-O subsistema de combate foi extraído para `Core/Combat` com as seguintes responsabilidades:
-- `CombateEngine` – orquestra o loop de batalha.
-- `TurnoJogador` e `TurnoInimigo` – controlam as ações de cada lado.
-- `CombateUI` – gerencia toda a saída textual e entrada durante o combate.
-
-Essa separação permitiu testar a lógica de turnos independentemente da interface e facilitou a correção de bugs relacionados a status e cálculos de dano.
-
-
 ## Sistema de Gacha: Pity, Banner e Raridades
 
-O sistema de invocação (*gacha*) do Task-u é baseado em probabilidades com mecanismos de garantia (*pity*) para equilibrar a experiência do jogador. A seguir, são detalhados os componentes que regem os sorteios.
+O sistema de invocação (*gacha*) do Task-u é baseado em probabilidades com mecanismos de garantia (*pity*) para equilibrar a experiência do jogador. 
 
 ### Raridades e Probabilidades Base
 
@@ -217,7 +221,9 @@ O sistema de invocação (*gacha*) do Task-u é baseado em probabilidades com me
 
 Os sorteios são realizados por um gerador de números aleatórios que define um valor entre 1 e 1000. A raridade obtida é determinada por faixas fixas, exceto nos casos garantidos pelo sistema de *pity*.
 
-### Sistema de Pity
+Os pulls Comuns (C) e Raros (R) dão ao jogador um item de equivalente raridade, já os pulls Épicos (SR) e Lendários (SRR) dão ao jogador um personagem.
+
+### Pity
 
 O pity é um contador que assegura a obtenção de itens de alta raridade após um número determinado de tentativas sem sucesso. Existem dois pitys independentes:
 
@@ -248,16 +254,18 @@ O banner semanal determina quais personagens têm **rate-up** (chance aumentada)
   - Quando um pull resulta em **Épico (SR)**, há 50% de chance de ser o personagem rate-up (vs. 50% para qualquer outro Épico).
   - Quando um pull resulta em **Lendário (SSR)**, há 50% de chance de ser o personagem rate-up (vs. 50% para qualquer outro Lendário).
 
-Essa lógica mantém o banner sempre renovado e estimula o jogador a retornar semanalmente para aproveitar os rate-ups.
+Essa lógica foi feita para incentivar o usuário a guardar seus cristais, realizando mais tarefas, para conseguir o personagem que deseja quando ele estiver em **rate-up**. Além disso, também cria um maior dinamismo ao longo do tempo.
 
 ### Fluxo de um Pull
 
-1. Verifica se o pity Lendário atingiu o soft pity ou o hard pity para ajustar a chance.
+Quando o usuário realiza um *desejo*, o `gachaService` realiza o seguinte fluxo:
+
+1. Ele verifica se o pity Lendário atingiu o soft pity ou o hard pity para ajustar a chance.
 2. Gera um número aleatório e compara com a chance ajustada.
-3. Se Lendário: chama `BannerService.LegendPull()` – decide se será rate-up (50%) ou aleatório.
-4. Se Épico: chama `BannerService.EpicPull()` – mesma lógica de rate-up.
-5. Se Raro ou Comum: obtém um item correspondente das tabelas `Itens`.
-6. Atualiza pitys, adiciona o item/personagem ao inventário, decrementa cristais e persiste no banco.
+3. Se for Lendário: chama `BannerService.LegendPull()` – que decide se será rate-up (50%) ou aleatório.
+4. Se for Épico: chama `BannerService.EpicPull()` – mesma lógica de rate-up, porém para um personagem épico.
+5. Se for Raro ou Comum: obtém um item correspondente das tabelas `Itens`.
+6. Por fim, atualiza pitys, adiciona o item/personagem ao inventário, decrementa cristais e persiste no banco.
 
 ### Observações Técnicas
 
@@ -266,18 +274,170 @@ Essa lógica mantém o banner sempre renovado e estimula o jogador a retornar se
 - O banner é recalculado apenas quando a data da última atualização ultrapassa 7 dias, garantindo que o mesmo banner permaneça ativo durante a semana.
 - O sistema utiliza `EF.Functions.Random()` no banco para selecionar itens/personagens aleatórios quando o rate-up não é escolhido.
 
-## Personagens
+## Inventário e Itens
+
+O sistema de inventário do Task-u gerencia dois tipos de recursos: **personagens** e **itens**. Ambos são armazenados no banco de dados e podem ser visualizados ou equipados através do menu principal.
+
+### Personagens
+
+Os personagens obtidos no gacha são adicionados ao inventário do jogador. Eles podem ser equipados em dois slots de equipe (Slot 1 e Slot 2), que determinam quem participa dos combates. Apenas personagens equipados podem ser usados em batalha.
+
+- **Equipamento:** Através do menu `1 - Ver Status > 1 - Ver Personagens > 2 - Trocar Personagem Ativo`, é possível selecionar um personagem disponível para ocupar um dos slots.  
+- **Duplicatas:** Personagens repetidos são armazenados como cópias adicionais. (No futuro, planeja-se fazer um sistema de ascensão ou melhoria nos personagens com base nas cópias adicionais.)
+
+#### Personagens Disponíveis
 
 O jogo conta atualmente com **12 personagens** distribuídos entre as raridades Épico (SR) e Lendário (SSR). Cada personagem possui habilidades únicas, passivas e estilos de combate distintos, que incentivam diferentes estratégias durante as batalhas.
 
-Para descrições detalhadas, citações de invocação e mecânicas específicas, consulte o arquivo:  
-➡️ **[PERSONAGENS.md](./docs/PERSONAGENS.md)**
+Para descrições detalhadas, citações de invocação e mecânicas específicas, consulte o arquivo:  **[PERSONAGENS.md](./docs/PERSONAGENS.md)**
 
+### Itens
+
+Os itens são divididos em duas categorias principais, definidas pelo campo `Type` na tabela `Itens`:
+
+| Tipo | Descrição |
+|------|-----------|
+| **Consumível (1)** | Utilizados durante o combate para gerar um efeito imediato e são removidos do inventário após o uso. Ex.: poções de cura, buffs temporários. |
+| **Modificador (2)** | Equipáveis nos slots de item (Slot 1 e Slot 2). Concedem bônus permanentes aos atributos do personagem enquanto estiverem equipados. |
+
+#### Atributos dos Itens
+
+Cada item possui um `Atr` que define qual estatística ele afeta:
+
+| Atr | Efeito |
+|-----|--------|
+| 1 (HP) | Restaura ou aumenta pontos de vida (consumíveis) |
+| 2 (Atk) | Aumenta o dano causado (equipáveis) |
+| 3 (Mod) | Aumenta o modificador de habilidades (equipáveis ou consumíveis) |
+
+O valor do bônus é definido pelo campo `Mod` do item.
+
+### Uso em Combate
+
+- **Itens consumíveis:** Durante o turno de um personagem, o jogador pode optar por usar um item. Uma lista de itens consumíveis disponíveis é exibida; ao selecionar um, o efeito é aplicado imediatamente (ex.: cura de HP) e o item é removido do inventário.  
+- **Itens equipáveis:** São equipados no menu principal e seus efeitos são calculados automaticamente em cada ação do personagem (dano, cura, etc.). A fórmula de `AtkTotal()` e `ModTotal()` já considera os bônus dos itens equipados.
+
+### Gerenciamento no Menu
+
+- **Ver Inventário:** Acessado via `1 - Ver Status`. Permite visualizar todos os personagens e itens obtidos, incluindo quantidades.  
+- **Trocar Equipamentos:** Através da opção de inventário, é possível equipar personagens nos slots de equipe e itens nos slots de item. O sistema impede que o mesmo personagem seja equipado em ambos os slots simultaneamente.
+
+### Persistência
+
+Todas as informações de inventário são mantidas em duas tabelas de junção:
+
+- `InventarioPersonagens` – relaciona `User` com `PersonagemBase` (quantidade implícita pela contagem de registros).  
+- `InventarioItens` – relaciona `User` com `Item`, também usando contagem de registros para duplicatas.
+
+Essa estrutura permite consultas eficientes e mantém a integridade referencial com o Entity Framework Core.
+
+---
+
+## Sistema de Combate
+
+O combate é estruturado como um RPG de turnos alternados, onde o jogador controla até dois personagens contra um inimigo gerado dinamicamente. 
+
+### Fluxo Básico
+
+1. **Inicialização** – O inimigo é apresentado e os personagens da equipe são preparados (HP restaurado, aliados definidos).
+2. **Turno do Jogador** – Cada personagem pode realizar uma ação por turno: ataque básico, habilidade especial ou usar um item. Ações podem ser bloqueadas por efeitos de stun ou silêncio.
+3. **Turno do Inimigo** – O inimigo executa sua passiva, habilidade (se disponível) e um ataque direcionado a um alvo com base em pesos de agressividade.
+4. **Fim do Combate** – A batalha termina quando a equipe ou o inimigo chega a 0 HP. Vitórias concedem cristais e, ocasionalmente, itens.
+
+### Mecânicas Principais
+
+- **Status**: Stun (perde turno), Silence (impede habilidades), Shield (absorve dano), Buffs temporários.
+- **Passivas e Habilidades**: Cada personagem (herói e inimigo) possui habilidades únicas que alteram o fluxo do combate. Além disso, cada personagem e inimigo possui uma passiva única, que é utilizada no início de cada turno próprio. 
+- **Alvos**: O inimigo escolhe alvos com base em `chanceAlvo` (peso que pode ser modificado por habilidades). O jogador sempre ataca o inimigo, mas habilidades de suporte podem mirar aliados.
+
+Para uma descrição detalhada de todas as mecânicas, classes envolvidas e lógica de geração de inimigos, consulte:  
+➡️ **[COMBATE.md](./docs/COMBATE.md)**
+
+---
+
+## Geração de Inimigos
+
+O inimigo enfrentado pelo jogador é determinado dinamicamente pelo `AdventureService`, que define sua raridade e identidade com base em duas situações: **regeneração diária** ou **evolução pós-derrota**.
+
+### Regeneração Diária
+
+Todos os dias, ao realizar o primeiro login após a meia-noite, um novo inimigo é gerado. A raridade é sorteada com as seguintes probabilidades:
+
+| Raridade | Chance |
+|----------|--------|
+| Comum (1) | 50%    |
+| Raro (2)  | 30%    |
+| Épico (3) | 16%    |
+| Lendário (4)| 4%    |
+
+Após definir a raridade, um inimigo específico daquela classe é selecionado aleatoriamente entre os disponíveis no banco de dados e atribuído ao campo `User.InimigoId`.
+
+### Evolução Pós-Derrota
+
+Quando o jogador derrota um inimigo (sinalizado por `User.DerrotouInimigo = true`), o próximo inimigo gerado segue uma lógica de **progressão de dificuldade**:
+
+- Se o inimigo derrotado tinha raridade **1 (Comum) ou 2 (Raro)**, o novo inimigo terá raridade aumentada em 0 ou 1 (50% de chance para cada).
+- Se o inimigo derrotado tinha raridade **3 (Épico)**, o novo inimigo tem 10% de chance de evoluir para Lendário (raridade 4) e 90% de chance de permanecer Épico.
+- Se o inimigo derrotado era **Lendário (4)**, a raridade é reiniciada para Comum (raridade 1).
+
+Em todos os casos, o novo inimigo é sorteado aleatoriamente dentro da raridade resultante.
+
+### Persistência
+
+O inimigo atual do jogador é armazenado no campo `InimigoId` da tabela `Users`, e o estado de derrota é controlado por `DerrotouInimigo`. Ambos são atualizados automaticamente ao final de cada combate vitorioso ou no início de um novo dia.
+
+---
+
+## Contribuições
+
+Este projeto é um trabalho pessoal voltado para estudo e portfólio. Feedbacks, sugestões e contribuições são bem-vindos.
+
+### Como contribuir
+
+- **Bugs e melhorias:** Caso encontre algum erro ou tenha uma ideia de refatoração, fique à vontade para abrir uma *Issue* ou enviar um *Pull Request*. Todos os PRs passarão por revisão antes do merge.
+- **Novos personagens:** Se tiver uma sugestão de herói, habilidade ou passiva, abra uma *Issue* com a tag `suggestion` utilizando o modelo abaixo:
+  - Nome
+  - Raridade
+  - Habilidades e Passivas
+  - Frase de Invocação
+  - Atributos base (ATK, HP, Mod)
+
+### Sugerindo um personagem
+
+Caso queira sugerir um personagem, pode seguir o formato utilizado em `PERSONAGENS.md`. Ficarei feliz em avaliar ideias que possam expandir o universo do Task-u.
 
 ---
 
 ## Desenvolvimento Futuro
 
 - **Ascensão de Personagens:** Cópias repetidas de um mesmo personagem concederão bônus de atributos ou habilidades.
+- **Expansão do Sistema de Itens:** Implementar itens consumíveis com efeitos variados (buff de ataque, escudo temporário, remoção de status) e ampliar os tipos de itens equipáveis.
 - **Expansão de Conteúdo:** Novos inimigos e personagens com mecânicas distintas.
 - **Interface Melhorada:** Possível migração para uma interface gráfica simples (Windows Forms ou Terminal.Gui).
+
+---
+
+### Limitações Conhecidas
+
+- **Itens Consumíveis:** Atualmente, apenas itens de cura e buff temporário de modificador estão implementados. Suporte para outros efeitos (buff de ataque, escudo, etc.) está planejado para versões futuras.
+- **Usuário Único:** O jogo foi desenvolvido com um único usuário fixo (ID = 1) para simplificar a lógica. Uma versão futura poderá implementar múltiplos perfis.
+
+---
+
+## Licença
+
+Este projeto está licenciado sob a **MIT License** – consulte o arquivo [LICENSE](LICENSE) para mais detalhes.
+
+A licença MIT é uma licença permissiva e de código aberto que permite que qualquer pessoa utilize, copie, modifique, distribua e até mesmo utilize o código em projetos comerciais, desde que mantenham os créditos originais (aviso de copyright e a própria licença).
+
+> **Nota:** Este projeto foi desenvolvido para fins educacionais e de portfólio. O código é fornecido "como está", sem garantias de qualquer tipo.
+
+---
+
+## Autor
+
+**Ronaldo Allan**  
+Desenvolvedor Júnior | C# / .NET | APIs REST & SQL | Full Stack
+
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/ronaldovrocha/)  [![GitHub](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/rallantro/)
+
