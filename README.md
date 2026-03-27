@@ -266,7 +266,12 @@ Essa lógica mantém o banner sempre renovado e estimula o jogador a retornar se
 - O banner é recalculado apenas quando a data da última atualização ultrapassa 7 dias, garantindo que o mesmo banner permaneça ativo durante a semana.
 - O sistema utiliza `EF.Functions.Random()` no banco para selecionar itens/personagens aleatórios quando o rate-up não é escolhido.
 
+## Personagens
 
+O jogo conta atualmente com **12 personagens** distribuídos entre as raridades Épico (SR) e Lendário (SSR). Cada personagem possui habilidades únicas, passivas e estilos de combate distintos, que incentivam diferentes estratégias durante as batalhas.
+
+Para descrições detalhadas, citações de invocação e mecânicas específicas, consulte o arquivo:  
+➡️ **[PERSONAGENS.md](./docs/PERSONAGENS.md)**
 
 
 ---
