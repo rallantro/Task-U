@@ -400,8 +400,11 @@ O combate é estruturado como um RPG de turnos alternados, onde o jogador contro
 - **Passivas e Habilidades**: Cada personagem (herói e inimigo) possui habilidades únicas que alteram o fluxo do combate. Além disso, cada personagem e inimigo possui uma passiva única, que é utilizada no início de cada turno próprio. 
 - **Alvos**: O inimigo escolhe alvos com base em `chanceAlvo` (peso que pode ser modificado por habilidades). O jogador sempre ataca o inimigo, mas habilidades de suporte podem mirar aliados.
 
-Para uma descrição detalhada de todas as mecânicas, classes envolvidas e lógica de geração de inimigos, consulte:  
-➡️ **[COMBATE.md](./docs/COMBATE.md)**
+Para uma descrição detalhada de todas as mecânicas, classes envolvidas e lógica de geração de inimigos, consulte: **[COMBATE.md](./docs/COMBATE.md)**
+
+### Demonstração de Combate
+
+![Inventário](./docs/img/demoFight.gif)
 
 ---
 
