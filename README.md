@@ -1,9 +1,9 @@
 # Task-u
-![Version](https://img.shields.io/badge/version-1.0.0-blue)
-![.NET 10](https://img.shields.io/badge/.NET-10-blueviolet)
-![EF Core](https://img.shields.io/badge/EF%20Core-SQLite-blue)
-![License](https://img.shields.io/badge/license-MIT-green)
-![Maintained](https://img.shields.io/badge/maintained-yes-green)
+![Versão](https://img.shields.io/badge/version-1.0.0-blue?style=for-the-badge)
+![.NET 10](https://img.shields.io/badge/.NET%2010-512BD4?style=for-the-badge&logo=dotnet&logoColor=white)
+![EF Core](https://img.shields.io/badge/EF%20Core-SQLite-003B57?style=for-the-badge&logo=sqlite&logoColor=white)
+![Mantido](https://img.shields.io/badge/Mantido-Sim-brightgreen?style=for-the-badge)
+![Licença](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)
 
 **Task-u** é um RPG de console (*CLI RPG*) desenvolvido em C# com .NET 10, que aplica mecânicas de gamificação à produtividade. O jogo converte a conclusão de tarefas diárias em progresso dentro de um sistema de RPG, utilizando elementos como gacha, combate por turnos e gerenciamento de inventário.
 
