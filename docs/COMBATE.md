@@ -1,9 +1,5 @@
 # Sistema de Combate – Task-u
 
-Este documento detalha o funcionamento do sistema de combate do Task-u, incluindo mecânicas de turnos, status, cálculos e geração de inimigos.
-
----
-
 ## Visão Geral
 
 O combate é estruturado como um RPG de turnos alternados. O jogador controla até dois personagens simultaneamente contra um inimigo gerado dinamicamente. Cada batalha exige planejamento no uso de habilidades, itens e gerenciamento de recursos.
