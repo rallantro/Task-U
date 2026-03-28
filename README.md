@@ -208,6 +208,42 @@ VALUES ('Meditar', 'Faça 10 minutos de meditação.', 1, 0);
 
 ---
 
+## Sistema de Tarefas
+
+O Task-u tem como objetivo incentivar a produtividade através de tarefas diárias e side quests que regeneram automaticamente a cada novo dia. O sistema é composto por:
+
+- **Tarefas Principais**: geradas diariamente a partir de uma base fixa (`BaseTarefas`), cada uma associada a um dia da semana.
+- **Side Quests**: missões secundárias sorteadas aleatoriamente a cada dia, com dificuldade variável.
+
+### Regeneração Diária
+
+Ao realizar o primeiro login após a meia-noite, o jogo:
+1. Limpa as tarefas do dia anterior.
+2. Seleciona as tarefas principais correspondentes ao dia atual.
+3. Adiciona de 2 a 4 side quests aleatórias.
+4. Atualiza o campo `lastLogin` do usuário para a data atual.
+
+### Conclusão e Recompensas
+
+Cada tarefa possui um valor de dificuldade (`Dif`). Ao ser concluída, o jogador recebe Cristais de acordo com a fórmula:
+
+- **Tarefas comuns**: `Cristais = Dif × 2`
+- **Tarefas épicas (Dif ≥ 6)**: `Cristais = Dif × 3` e, além disso, ativa um **Evento de Sorte**, que dobra a chance de obter um personagem Lendário no próximo pull.
+
+As tarefas concluídas são marcadas como `IsDone = true` e permanecem visíveis na lista de concluídas.
+
+### Estrutura no Banco
+
+- `BaseTarefas`: modelo das tarefas principais, contendo nome, descrição, dificuldade e o dia da semana.
+- `SideQuests`: modelo das missões secundárias.
+- `Tarefas`: instâncias ativas do dia, geradas a partir das tabelas acima.
+
+### Demonstração de Tarefa
+
+![Tarefas](./docs/img/demoTarefas.gif)
+
+---
+
 ## Sistema de Gacha: Pity, Banner e Raridades
 
 O sistema de invocação (*gacha*) do Task-u é baseado em probabilidades com mecanismos de garantia (*pity*) para equilibrar a experiência do jogador. 
@@ -268,6 +304,14 @@ Quando o usuário realiza um *desejo*, o `gachaService` realiza o seguinte fluxo
 4. Se for Épico: chama `BannerService.EpicPull()` – mesma lógica de rate-up, porém para um personagem épico.
 5. Se for Raro ou Comum: obtém um item correspondente das tabelas `Itens`.
 6. Por fim, atualiza pitys, adiciona o item/personagem ao inventário, decrementa cristais e persiste no banco.
+
+### Demonstração de Pull:
+
+![Gacha](./docs/img/demoPull.gif)
+
+### Demonstração de Pull SSR:
+
+![Gacha](./docs/img/demoSSR.gif)
 
 ### Observações Técnicas
 
@@ -333,6 +377,10 @@ Todas as informações de inventário são mantidas em duas tabelas de junção:
 
 Essa estrutura permite consultas eficientes e mantém a integridade referencial com o Entity Framework Core.
 
+### Demonstração do Inventário
+
+![Inventário](./docs/img/demoInv.gif)
+
 ---
 
 ## Sistema de Combate
@@ -353,6 +401,14 @@ O combate é estruturado como um RPG de turnos alternados, onde o jogador contro
 - **Alvos**: O inimigo escolhe alvos com base em `chanceAlvo` (peso que pode ser modificado por habilidades). O jogador sempre ataca o inimigo, mas habilidades de suporte podem mirar aliados.
 
 Para uma descrição detalhada de todas as mecânicas, classes envolvidas e lógica de geração de inimigos, consulte: **[COMBATE.md](./docs/COMBATE.md)**
+<<<<<<< HEAD
+
+### Demonstração de Combate
+
+![Inventário](./docs/img/demoFight.gif)
+
+=======
+>>>>>>> e8dd0750adb4fba95a9766ddbc6f68da4346e57e
 
 ---
 
@@ -441,4 +497,3 @@ A licença MIT é uma licença permissiva e de código aberto que permite que qu
 Desenvolvedor Júnior | C# / .NET | APIs REST & SQL | Full Stack
 
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/ronaldovrocha/)  [![GitHub](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/rallantro/)
-
