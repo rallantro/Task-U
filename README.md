@@ -70,6 +70,18 @@ O projeto demonstra competências em:
    dotnet run
    ```
 
+## Execução Rápida
+
+Se preferir não configurar o ambiente de desenvolvimento, você pode baixar a versão compilada do jogo na seção **Releases** do repositório.
+
+[Baixar Task-U v1.0.0](https://github.com/rallantro/Task-U/releases/latest)
+
+| Plataforma | Instruções |
+|------------|------------|
+| Windows | Extraia o arquivo `.zip` e execute `Task-U.exe`. |
+| Linux | Extraia o arquivo `.zip`, conceda permissão de execução (`chmod +x Task-U`) e execute `./Task-U`. |
+
+> O banco de dados SQLite (`gacha_database.db`) já está incluso com os dados base para iniciar o jogo imediatamente.
 ---
 
 ## Arquitetura
