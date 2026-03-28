@@ -18,11 +18,13 @@ namespace Task_U.Core.Combat
 
             if (inimigo.TurnoStun > 0)
             {
-                combateUI.ExibirMensagem($"{inimigo.Name} está atordoado e não pode agir!", ConsoleColor.Red);
+                combateUI.ExibirMensagem($"> {inimigo.Name} está atordoado e não pode agir!", ConsoleColor.Red);
                 combateUI.AguardarTecla();
                 inimigo.TurnoStun--;
                 return;
             }
+
+            combateUI.TurnoInimigo(inimigo);
 
             inimigo.Passiva(user);
             var vivos = equipe.Where(p => p.HpAtual > 0).ToList();
@@ -33,7 +35,7 @@ namespace Task_U.Core.Combat
             inimigo.alvos = vivos;
             if (inimigo.TurnoSilence > 0)
             {
-                combateUI.ExibirMensagem($"{inimigo.Name} está silenciado e não pode usar suas habilidades!", ConsoleColor.Yellow);
+                combateUI.ExibirMensagem($"> {inimigo.Name} está silenciado e não pode usar suas habilidades!", ConsoleColor.Yellow);
                 combateUI.AguardarTecla();
             }
             else
@@ -61,7 +63,7 @@ namespace Task_U.Core.Combat
                 chance -= personagem.chanceAlvo;
             }
             alvo.tomarDano(inimigo.Name, danoInimigo);
-            combateUI.ExibirMensagem("\nPressione qualquer tecla para o próximo turno...", ConsoleColor.White);
+            combateUI.ExibirMensagem("\n [ Pressione qualquer tecla para o próximo turno...] ", ConsoleColor.White);
             combateUI.AguardarTecla();
             inimigo.TurnoSilence = Math.Max(0, inimigo.TurnoSilence-1);
         }

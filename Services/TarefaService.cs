@@ -24,10 +24,11 @@ namespace Task_U.Services
 
                 foreach (var tf in TarefasDoDia)
                 {
-                    context.Tarefas.Add(new Tarefa { 
-                        Name = tf.Name, 
-                        Desc = tf.Desc, 
-                        Dif = tf.Dif 
+                    context.Tarefas.Add(new Tarefa
+                    {
+                        Name = tf.Name,
+                        Desc = tf.Desc,
+                        Dif = tf.Dif
                     });
                 }
 
@@ -36,10 +37,11 @@ namespace Task_U.Services
                 var sideSorteada = context.SideQuests.ToList().OrderBy(s => Guid.NewGuid()).Take(quantidade);
                 foreach (var side in sideSorteada)
                 {
-                    context.Tarefas.Add(new Tarefa { 
-                        Name = "[SIDE] " + side.Name, 
-                        Desc = side.Desc, 
-                        Dif = side.Dif 
+                    context.Tarefas.Add(new Tarefa
+                    {
+                        Name = "[SIDE] " + side.Name,
+                        Desc = side.Desc,
+                        Dif = side.Dif
                     });
                 }
 
@@ -54,50 +56,80 @@ namespace Task_U.Services
         {
             using var context = new AppDbContext();
             var user = context.Users.Find(1);
-            Console.WriteLine("Seus Status atuais são:");
-            Console.WriteLine($"Cristais disponíveis: {user.Crystals}");
-            Console.WriteLine($"Pity para Épicos: {user.PityEpic}");
+
+            Console.Clear();
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.WriteLine(" ╔══════════════════════════════════════════════════════════╗");
+            Console.WriteLine(" ║                    STATUS DO VIAJANTE                    ║");
+            Console.WriteLine(" ╠══════════════════════════════════════════════════════════╣");
+            Console.ForegroundColor = ConsoleColor.White;
+            string cristais = $" Cristais: {user.Crystals}";
+            Console.WriteLine(" ║" + cristais.PadRight(58) + "║");
+            Console.ForegroundColor = ConsoleColor.Magenta;
+            string pSR = $" Pity [SR]: {user.PityEpic} / 10";
+            Console.WriteLine(" ║" + pSR.PadRight(58) + "║");
             if (user.PityLeg >= 75)
             {
-                Console.WriteLine($"Pity para Lendário: {user.PityLeg}... Está no Soft Pity!");
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                string pSSR = $" Pity [SSR]: {user.PityLeg} / 100 [SOFT PITY ATIVO!]";
+                Console.WriteLine(" ║" + pSSR.PadRight(58) + "║");
             }
             else
             {
-                Console.WriteLine($"Pity para lendário: {user.PityLeg}");
+                Console.ForegroundColor = ConsoleColor.White;
+                string pSSR = $" Pity [SSR]: {user.PityLeg} / 100";
+                Console.WriteLine(" ║" + pSSR.PadRight(58) + "║");
             }
+
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.WriteLine(" ╚══════════════════════════════════════════════════════════╝");
+            Console.ResetColor();
         }
 
         public void verTarefas()
         {
             Console.Clear();
-            Console.WriteLine ("==== TAREFAS DO DIA ====");
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.WriteLine(" ╔══════════════════════════════════════════════════════════╗");
+            Console.WriteLine(" ║                       TAREFAS DO DIA                     ║");
+            Console.WriteLine(" ╚══════════════════════════════════════════════════════════╝");
             using var context = new AppDbContext();
             foreach (Tarefa tarefa in context.Tarefas.Where(x => x.IsDone == false).ToList())
             {
-                if (tarefa.Name.Contains("[SIDE]")) {
-                    Console.ForegroundColor = ConsoleColor.DarkYellow; 
-                } else {
-                    Console.ForegroundColor = ConsoleColor.White;
+                bool isSide = tarefa.Name.Contains("[SIDE]");
+                if (tarefa.Name.Contains("[SIDE]"))
+                {
+                    Console.ForegroundColor = ConsoleColor.DarkYellow;
+                    isSide = true;
                 }
-                Console.WriteLine("--");
-                Console.WriteLine($"ID: {tarefa.Id} Nome:{tarefa.Name} | Descrição: {tarefa.Desc} | Dificuldade: {tarefa.Dif}");
+                else
+                {
+                    Console.ForegroundColor = ConsoleColor.White;
+                    isSide = false;
+                }
+                string tipo = isSide ? "[SIDE]" : "[PRINCIPAL]";
+                Console.WriteLine($"\n  ID #{tarefa.Id:D3} - {tipo}");
+                Console.WriteLine($"  Título: {tarefa.Name.Replace("[SIDE]", "").Trim()}");
+                Console.ForegroundColor = ConsoleColor.Gray;
+                Console.WriteLine($"  ├─ Desc: {tarefa.Desc}");
+                Console.WriteLine($"  └─ Rank: {tarefa.Dif} ");
             }
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("");
-            Console.WriteLine("-- Concluídas --");
+            Console.ForegroundColor = ConsoleColor.DarkGreen;
+            Console.WriteLine("\n ─────────────────── MISSÕES FINALIZADAS ───────────────────");
             foreach (Tarefa tarefa in context.Tarefas.Where(x => x.IsDone == true).ToList())
-            {    
-                Console.WriteLine($"ID: {tarefa.Id} Nome:{tarefa.Name} | Descrição: {tarefa.Desc} | Dificuldade: {tarefa.Dif}");
-                Console.WriteLine("--");
+            {
+                Console.WriteLine($"  [✔] {tarefa.Name} (Dificuladade: {tarefa.Dif})");
             }
             Console.ForegroundColor = ConsoleColor.White;
-            Console.WriteLine("Pressione qualque tecla para voltar...");
+            Console.WriteLine(" [Pressione qualque tecla para voltar...] ");
         }
 
         public void ConcluirTarefa(int TarefaId, Gacha gacha)
         {
-            using var context = new AppDbContext();  
-            if(context.Tarefas.FirstOrDefault(x => x.Id ==TarefaId) == null)
+            using var context = new AppDbContext();
+            if (context.Tarefas.FirstOrDefault(x => x.Id == TarefaId) == null)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("Tarefa inválida!");
@@ -116,30 +148,38 @@ namespace Task_U.Services
                     Console.Clear();
                     Console.WriteLine("...");
                     Thread.Sleep(1500);
-                    Console.BackgroundColor = ConsoleColor.Gray;
-                    Console.BackgroundColor = ConsoleColor.Green;
-                    Console.BackgroundColor = ConsoleColor.Black;
-                    Console.WriteLine($"UUUUUAUUUUU! Uma tarefa épica foi concluída!");
-                    Console.WriteLine($"Isso te deu {tarefa.Dif * 3} Crystals! Sinto a sorte se aproximando...");
+                    Console.BackgroundColor = ConsoleColor.White; Console.Clear(); Thread.Sleep(50);
+                    Console.BackgroundColor = ConsoleColor.Green; Console.Clear(); Thread.Sleep(50);
+                    Console.BackgroundColor = ConsoleColor.Black; Console.Clear();
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    Console.WriteLine(" ╔══════════════════════════════════════════════════════════╗");
+                    Console.WriteLine(" ║       TAREFA ÉPICA CONCLUÍDA!                            ║");
+                    Console.WriteLine(" ╠══════════════════════════════════════════════════════════╣");
+                    Console.ForegroundColor = ConsoleColor.White;
+                    Console.WriteLine($" ║ Recompensa: {tarefa.Dif * 3,-4} Crystals                            ║");
+                    Console.ForegroundColor = ConsoleColor.Magenta;
+                    Console.WriteLine(" ║ BÔNUS: Sinto a sorte fluindo... (Luck Event Ativo!)      ║");
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    Console.WriteLine(" ╚══════════════════════════════════════════════════════════╝");
                 }
                 else
                 {
-                    Console.WriteLine("...");
-                    Thread.Sleep(1500);
-                    Console.BackgroundColor = ConsoleColor.Gray;
-                    Console.BackgroundColor = ConsoleColor.Black;
+                    Console.WriteLine("\n...");
+                    Thread.Sleep(800);
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine($" [✔] Bom trabalho! +{tarefa.Dif * 2} Crystals adicionados à sua conta.");
+                    Console.ResetColor();
                     user.Crystals += tarefa.Dif * 2;
-                    Console.WriteLine($"Parabéns você ganhou {tarefa.Dif * 2} Crystals! Continue assim!");
                 }
 
                 context.Users.Update(user);
-                
+
                 tarefa.IsDone = true;
                 context.Tarefas.Update(tarefa);
                 context.SaveChanges();
             }
 
-            
-        } 
+
+        }
     }
 }

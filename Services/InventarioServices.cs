@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Task_U.Data;
+using System.Text.RegularExpressions;
 using Task_U.Core;
 using Task_U.Models;
 
@@ -16,14 +17,18 @@ namespace Task_U.Services
             var personagemInventarios = context.InventarioPersonagens.GroupBy(x => x.PersonagemId).ToList();
 
 
-            Console.WriteLine("----- INVENTÁRIO DE PERSONAGENS -----");
-            Console.WriteLine("1 - Ver inventário | 2 - Trocar Personagem Ativo");
+            Console.WriteLine("\n ╔══════════════════════════════════════════════════════════╗");
+            Console.WriteLine(" ║                SEUS COMPANHEIROS                         ║");
+            Console.WriteLine(" ╚══════════════════════════════════════════════════════════╝");
+            Console.ResetColor();
+            Console.WriteLine("\n [1] Ver Coleção | [2] Trocar Personagem Ativo | [Qualquer tecla] Voltar");
+            var op = Console.ReadLine();
 
-            switch (Console.ReadLine())
+            switch (op)
             {
                 case "1":
                     MostrarPersonagens(context, true, listaPersonagens);
-                    Console.WriteLine("Pressione qualquer tecla para voltar");
+                    Console.WriteLine("[Qualquer tecla] Voltar");
                     Console.ReadKey();
                     break;
 
@@ -38,36 +43,38 @@ namespace Task_U.Services
                         var PersonagensAtivos = new List<string>();
                         if (user.Slot1_PersonagemAtivo != null)
                         {
-                            PersonagensAtivos.Add(user.Slot1_PersonagemAtivo.Name);  
+                            PersonagensAtivos.Add(user.Slot1_PersonagemAtivo.Name);
                         }
-                        
+
                         if (user.Slot2_PersonagemAtivo != null)
                         {
-                            PersonagensAtivos.Add(user.Slot2_PersonagemAtivo.Name);   
+                            PersonagensAtivos.Add(user.Slot2_PersonagemAtivo.Name);
                         }
                         string result = String.Join(", ", PersonagensAtivos);
                         Console.WriteLine($"Qual personagem deseja equipar? (Ativo no momento: {result})");
                     }
                     var escolha = Console.ReadLine();
                     var escolhaInt = 0;
-                    if(!int.TryParse(escolha, out escolhaInt) || escolhaInt < 0 || escolhaInt > listaPersonagens.Count())
+                    if (!int.TryParse(escolha, out escolhaInt) || escolhaInt < 0 || escolhaInt > listaPersonagens.Count())
                     {
-                        Console.WriteLine("Comando inválido!");
+                        Console.WriteLine(" >> Seleção cancelada ou inválida.");
                         return;
                     }
                     var personagemEscolhido = listaPersonagens[escolhaInt - 1];
                     Console.Clear();
-                    Console.WriteLine("Personagem Selecionado:");
-                    Console.WriteLine($"[{personagemEscolhido.Name}]");
-                    Console.WriteLine($"--");
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    Console.WriteLine(" ┌──────────────────────────────────────────────────────────┐");
+                    Console.WriteLine($" │ SELECIONADO: {personagemEscolhido.Name.ToUpper().PadRight(44)}│");
+                    Console.WriteLine(" └──────────────────────────────────────────────────────────┘");
                     Console.WriteLine($"[{personagemEscolhido.Desc}]");
-                    Console.WriteLine($"--");
+                    Console.WriteLine($"────────────");
                     Console.WriteLine("Confirma essa escolha?");
-                    Console.WriteLine("1 - Equipar no Slot 1| 2 - Equipar no Slot 2 | Pressione qualquer coisa para voltar");
+                    Console.WriteLine("[1] Equipar no Slot 1| [2] - Equipar no Slot 2 |  [Qualquer Tecla] Para voltar");
                     escolha = Console.ReadLine();
                     if (escolha == "1")
                     {
-                        if (personagemEscolhido.Id == user.Slot2_PersonagemAtivoId) {
+                        if (personagemEscolhido.Id == user.Slot2_PersonagemAtivoId)
+                        {
                             Console.WriteLine("Este personagem já está no Slot 2!");
                             Console.ReadKey();
                             return;
@@ -76,13 +83,14 @@ namespace Task_U.Services
                         {
                             user.Slot1_PersonagemAtivo = personagemEscolhido;
                             user.Slot1_PersonagemAtivoId = personagemEscolhido.Id;
-                            context.SaveChanges(); 
+                            context.SaveChanges();
                         }
-                        
+
                     }
                     if (escolha == "2")
                     {
-                        if (personagemEscolhido.Id == user.Slot1_PersonagemAtivoId) {
+                        if (personagemEscolhido.Id == user.Slot1_PersonagemAtivoId)
+                        {
                             Console.WriteLine("Este personagem já está no Slot 1!");
                             Console.ReadKey();
                             return;
@@ -91,9 +99,9 @@ namespace Task_U.Services
                         {
                             user.Slot2_PersonagemAtivo = personagemEscolhido;
                             user.Slot2_PersonagemAtivoId = personagemEscolhido.Id;
-                            context.SaveChanges();  
+                            context.SaveChanges();
                         }
-                        
+
                     }
                     else
                     {
@@ -128,34 +136,54 @@ namespace Task_U.Services
                 {
                     Console.ForegroundColor = ConsoleColor.Yellow;
                 }
-                Console.WriteLine("--");
-                Console.WriteLine($"{contador} - [{PersonagemOg.Name}] x {quantidade}");
+
+                Console.Write($"  [{contador}] ");
+                Console.Write($"{PersonagemOg.Name.PadRight(25)}");
                 Console.ResetColor();
+                Console.WriteLine($" x{quantidade} unidades");
+
                 if (ShowDesc)
                 {
-                    Console.WriteLine($"Descrição: {PersonagemOg.Desc}");
+                    Console.ForegroundColor = ConsoleColor.DarkGray;
+                    string curta = PersonagemOg.Desc.Length > 50 ? PersonagemOg.Desc.Substring(0, 47) + "..." : PersonagemOg.Desc;
+                    Console.WriteLine($"   Descrição: {curta}");
+                    Console.ResetColor();
                 }
                 contador++;
             }
-
-
+            Console.WriteLine(" ─────────────────────────────────────────────────────────────");
+            contador++;
         }
+
 
         public void VerItens(AppDbContext context, User user)
         {
             var listaItens = new List<Item>();
             var itens = context.InventarioItens.GroupBy(x => x.ItemId).ToList();
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.WriteLine("\n ╔══════════════════════════════════════════════════════════╗");
+            Console.WriteLine(" ║                       SEUS ITENS                         ║");
+            Console.WriteLine(" ╚══════════════════════════════════════════════════════════╝");
+            Console.ResetColor();
+            Console.WriteLine("\n [1] Ver Coleção | [2] Trocar Itens  Ativo | [Qualquer tecla] Voltar");
+            var op = Console.ReadLine();
 
-            Console.WriteLine("----- INVENTÁRIO DE ITENS -----");
-            Console.WriteLine("1 - Ver inventário | 2 - Trocar Item Equipado");
-
-            switch (Console.ReadLine())
+            switch (op)
             {
                 case "1":
                     int contadorGlobal = 1;
+                    Console.Clear();
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    Console.WriteLine("\n ╔══════════════════════════════════════════════════════════╗");
+                    Console.WriteLine(" ║                       SEUS ITENS                         ║");
+                    Console.WriteLine(" ╚══════════════════════════════════════════════════════════╝");
+                    Console.ResetColor();
+                    Console.WriteLine("Equipáveis:");
                     MostrarItens(context, true, listaItens, 2, ref contadorGlobal);
+                    Console.WriteLine(" ─────────────────────────────────────────────────────────────");
+                    Console.WriteLine("Consumíveis:");
                     MostrarItens(context, true, listaItens, 1, ref contadorGlobal);
-                    Console.WriteLine("Pressione qualquer tecla para voltar");
+                    Console.WriteLine("[Pressione qualquer tecla para voltar]");
                     Console.ReadKey();
                     break;
 
@@ -171,19 +199,19 @@ namespace Task_U.Services
                     {
                         if (user.Slot1_ItemAtivo != null)
                         {
-                            itensAtivos.Add(user.Slot1_ItemAtivo.Name);  
+                            itensAtivos.Add(user.Slot1_ItemAtivo.Name);
                         }
-                        
+
                         if (user.Slot2_ItemAtivo != null)
                         {
-                            itensAtivos.Add(user.Slot2_ItemAtivo.Name);   
+                            itensAtivos.Add(user.Slot2_ItemAtivo.Name);
                         }
                         string result = String.Join(", ", itensAtivos);
                         Console.WriteLine($"Qual item deseja equipar? (Ativo no momento: {result})");
                     }
                     var escolha = Console.ReadLine();
                     var escolhaInt = 0;
-                    if(!int.TryParse(escolha, out escolhaInt) || escolhaInt < 0 || escolhaInt > listaItens.Count())
+                    if (!int.TryParse(escolha, out escolhaInt) || escolhaInt < 0 || escolhaInt > listaItens.Count())
                     {
                         Console.WriteLine("Comando inválido!");
                         return;
@@ -227,16 +255,6 @@ namespace Task_U.Services
         public void MostrarItens(AppDbContext context, bool ShowDesc, List<Item> listaItens, int TypeItem, ref int contador)
         {
             var itens = context.InventarioItens.GroupBy(x => x.ItemId).ToList();
-            if (TypeItem == 1)
-            {
-                Console.WriteLine("--//--");
-                Console.WriteLine("Itens Consumíveis:");
-            }
-            else
-            {
-                Console.WriteLine("--//--");
-                Console.WriteLine("Itens Equipáveis:");
-            }
 
             foreach (var item in itens)
             {
@@ -261,12 +279,18 @@ namespace Task_U.Services
                     {
                         Console.ForegroundColor = ConsoleColor.Yellow;
                     }
-                    Console.WriteLine("--");
-                    Console.WriteLine($"{contador} - [{ItemOg.Name}] x {quantidade}");
+                    Console.Write($"  [{contador}] ");
+                    Console.Write($"{ItemOg.Name.PadRight(25)}");
                     Console.ResetColor();
+                    Console.WriteLine($" x{quantidade} unidades");
                     if (ShowDesc)
                     {
-                        Console.WriteLine($"Descrição: {ItemOg.Desc}");
+                        Console.ForegroundColor = ConsoleColor.DarkGray;
+                        var att = Regex.Match(ItemOg.Desc, @"\((.*?)\)");
+                        var bonus = att.Value;
+                        string curta = ItemOg.Desc.Length > 50 ? $"{ItemOg.Desc.Substring(0, 46 - bonus.Length).Trim()}... {bonus}" : ItemOg.Desc;
+                        Console.WriteLine($"   Descrição: {curta}");
+                        Console.ResetColor();
                     }
                     contador++;
                 }

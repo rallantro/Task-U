@@ -400,15 +400,8 @@ O combate é estruturado como um RPG de turnos alternados, onde o jogador contro
 - **Passivas e Habilidades**: Cada personagem (herói e inimigo) possui habilidades únicas que alteram o fluxo do combate. Além disso, cada personagem e inimigo possui uma passiva única, que é utilizada no início de cada turno próprio. 
 - **Alvos**: O inimigo escolhe alvos com base em `chanceAlvo` (peso que pode ser modificado por habilidades). O jogador sempre ataca o inimigo, mas habilidades de suporte podem mirar aliados.
 
-Para uma descrição detalhada de todas as mecânicas, classes envolvidas e lógica de geração de inimigos, consulte: **[COMBATE.md](./docs/COMBATE.md)**
-<<<<<<< HEAD
-
-### Demonstração de Combate
-
-![Inventário](./docs/img/demoFight.gif)
-
-=======
->>>>>>> e8dd0750adb4fba95a9766ddbc6f68da4346e57e
+Para uma descrição detalhada de todas as mecânicas, classes envolvidas e lógica de geração de inimigos, consulte:  
+➡️ **[COMBATE.md](./docs/COMBATE.md)**
 
 ---
 
@@ -497,3 +490,4 @@ A licença MIT é uma licença permissiva e de código aberto que permite que qu
 Desenvolvedor Júnior | C# / .NET | APIs REST & SQL | Full Stack
 
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/ronaldovrocha/)  [![GitHub](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/rallantro/)
+

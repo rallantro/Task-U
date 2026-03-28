@@ -14,7 +14,7 @@ namespace Task_U.Core.Combat
         {
             if (personagem.TurnoStun > 0)
             {
-                combateUI.ExibirMensagem($"{personagem.Name} está atordoado e não pode agir!", ConsoleColor.Red);
+                combateUI.ExibirMensagem($"> {personagem.Name} está atordoado e não pode agir!", ConsoleColor.Red);
                 combateUI.AguardarTecla();
                 personagem.TurnoStun--;
                 return;
@@ -57,7 +57,7 @@ namespace Task_U.Core.Combat
                     case 2:
                         if (personagem.TurnoSilence > 0)
                         {
-                            combateUI.ExibirMensagem($"{personagem.Name} está silenciado e não pode usar habilidades!", ConsoleColor.Red);
+                            combateUI.ExibirMensagem($"> {personagem.Name} está silenciado e não pode usar habilidades!", ConsoleColor.Red);
                             combateUI.AguardarTecla();
                         }
                         else if (!UsouHabilidade)
@@ -78,28 +78,42 @@ namespace Task_U.Core.Combat
                         break;
 
                 }
-                
+
             }
-            personagem.TurnoSilence = Math.Max(0, personagem.TurnoSilence-1);
+            personagem.TurnoSilence = Math.Max(0, personagem.TurnoSilence - 1);
         }
 
         public bool escolherItem(CombateUI combateUI, List<PersonagemBase> equipe, PersonagemBase personagem, InimigoBase inimigo, int x, InventarioServices inventario, AppDbContext context)
         {
+            Console.Clear();
             combateUI.Cabecalho(equipe, inimigo, x);
             var consumiveis = new List<Item>();
             int contador = 1;
+
+            combateUI.ExibirMensagem("\n    BOLSA DE ITENS (CONSUMÍVEIS)", ConsoleColor.Cyan);
+            combateUI.ExibirMensagem("  ┌──────────────────────────────────────────────────────────┐", ConsoleColor.Cyan);
+
             inventario.MostrarItens(context, true, consumiveis, 1, ref contador);
             if (consumiveis.Count == 0)
             {
-                combateUI.ExibirMensagem($"Você não possui itens utilizáveis.", ConsoleColor.Red);
+                combateUI.ExibirMensagem("  │  (Vazio) Você não possui itens utilizáveis.              │", ConsoleColor.Gray);
+                combateUI.ExibirMensagem("  └──────────────────────────────────────────────────────────┘", ConsoleColor.Cyan);
+                combateUI.ExibirMensagem("\n  > Pressione qualquer tecla para voltar...", ConsoleColor.Red);
+                Console.ReadKey(true);
                 return false;
             }
-            combateUI.ExibirMensagem("--", ConsoleColor.White);
-            combateUI.ExibirMensagem($"Qual item deseja usar?", ConsoleColor.White);
 
-            var num = combateUI.EscolhaJogador(1, consumiveis.Count());
+
+            combateUI.ExibirMensagem("  └──────────────────────────────────────────────────────────┘", ConsoleColor.Cyan);
+            combateUI.ExibirMensagem("\n  >> Escolha o número do item (ou 0 para cancelar): ", ConsoleColor.White);
+
+            var num = combateUI.EscolhaJogador(0, consumiveis.Count());
+            if (num == 0)
+            {
+                return false;
+            }
             var itemEscolhido = consumiveis[num - 1];
-            combateUI.ExibirMensagem($"{personagem.Name} usou {itemEscolhido.Name}!", ConsoleColor.White);
+            combateUI.ExibirMensagem($"\n    {personagem.Name.ToUpper()} USOU {itemEscolhido.Name.ToUpper()}!", ConsoleColor.Yellow);
             itemEscolhido.Uso(personagem, context);
             combateUI.AguardarTecla();
             return true;

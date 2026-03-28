@@ -15,26 +15,26 @@ namespace Task_U.Core
             Analise++;
             if (Analise > 8)
             {
-                
-                base.tomarDano(inimigo, dano/2); 
+
+                base.tomarDano(inimigo, dano / 2);
                 Console.ForegroundColor = ConsoleColor.Blue;
                 Console.WriteLine($"> [PASSIVA] {Name} aprendeu a se defender.");
                 Console.WriteLine($"> {Name}: Protocolo de defesa!");
-                Console.ResetColor(); 
+                Console.ResetColor();
             }
             else
             {
-                base.tomarDano(inimigo, dano);  
+                base.tomarDano(inimigo, dano);
                 Console.ForegroundColor = ConsoleColor.Blue;
                 Console.WriteLine($"> [PASSIVA] {Name} analisou o golpe que recebeu.");
                 Console.WriteLine($"> {Name}: Examinando ataque...");
                 Console.ResetColor();
-            }  
+            }
         }
         public override int Damage()
         {
             Analise = Math.Min(10, Analise + 1);
-            if(Analise == 10 && inimigoAlvo != null)
+            if (Analise == 10 && inimigoAlvo != null)
             {
                 Console.ForegroundColor = ConsoleColor.Blue;
                 Console.WriteLine($"> [CAMPO DE SUPRESSÃO SENTINELA!] {Name} cria um campo eletromagnético capaz de suprimir os inimigos!");
@@ -53,7 +53,7 @@ namespace Task_U.Core
                 inimigoAlvo.TurnoSilence += 4;
                 Console.WriteLine($"> {inimigoAlvo.Name} está atordoado por 2 turnos.");
                 Console.WriteLine($"> {inimigoAlvo.Name} está silenciado por 4 turnos.");
-                int danoFinal = AtkTotal() + Analise * 2 + inimigoAlvo.HpMax/10;
+                int danoFinal = AtkTotal() + Analise * 2 + inimigoAlvo.HpMax / 10;
                 Analise = 0;
                 Console.WriteLine($"> {Name} precisará recomçar sua análise.");
                 return danoFinal;
@@ -63,7 +63,7 @@ namespace Task_U.Core
 
         public override void Habilidade()
         {
-            int chance = random.Next(0,100);
+            int chance = random.Next(0, 100);
             if (chance < 10 + (Analise * 10) - 10)
             {
                 if (Analise <= 5 && inimigoAlvo != null)
@@ -95,13 +95,15 @@ namespace Task_U.Core
                         Console.WriteLine($"> {Name}: Você vai conseguir Kael.");
                     }
                     Console.ResetColor();
-                    Console.WriteLine($"> {aliado.Name} recebeu um bônus de {2 *Mod} de ataque.");
-                }   
+                    Console.WriteLine($"> {aliado.Name} recebeu um bônus de {2 * Mod} de ataque.");
+                }
             }
-            Console.ForegroundColor = ConsoleColor.Blue;
-            Console.WriteLine($"> [HABILIDADE] {Name} falhou em impedir o inimigo.");
-            if (aliado != null && aliado.Name == "Kael")
+            else
             {
+                Console.ForegroundColor = ConsoleColor.Blue;
+                Console.WriteLine($"> [HABILIDADE] {Name} falhou em impedir o inimigo.");
+                if (aliado != null && aliado.Name == "Kael")
+                {
                     Console.ForegroundColor = ConsoleColor.Yellow;
                     Console.WriteLine($"> {aliado.Name}: Não se preocupa... Na próxima você consegue, amor...");
                     Console.ForegroundColor = ConsoleColor.Blue;
@@ -109,12 +111,13 @@ namespace Task_U.Core
                     Console.ForegroundColor = ConsoleColor.Yellow;
                     Console.WriteLine($"> {aliado.Name}: Eu... Eh... A gente tenta né?");
                     Console.ResetColor();
-            }else
-            {
-                Console.WriteLine($"> {Name}: Preciso de mais dados!");
-                Console.ResetColor();   
+                }
+                else
+                {
+                    Console.WriteLine($"> {Name}: Preciso de mais dados!");
+                    Console.ResetColor();
+                }
             }
-             
         }
 
         public override void Passiva()
@@ -143,7 +146,8 @@ namespace Task_U.Core
                 Console.ResetColor();
                 Console.WriteLine($"> {inimigoAlvo.Name} agora dá -{Analise} de dano em ataques.");
                 inimigoAlvo.BuffAtk -= Analise;
-            } else if (inimigoAlvo != null && Analise < 5) 
+            }
+            else if (inimigoAlvo != null && Analise < 5)
             {
                 Console.ForegroundColor = ConsoleColor.Blue;
                 Console.WriteLine($"> [PASSIVA] {Name} está estudando o inimigo.");
@@ -151,13 +155,13 @@ namespace Task_U.Core
                 Console.ResetColor();
                 Analise++;
             }
-            if (inimigoAlvo != null &&  (inimigoAlvo.TurnoSilence > 0 || inimigoAlvo.TurnoStun > 0) )
+            if (inimigoAlvo != null && (inimigoAlvo.TurnoSilence > 0 || inimigoAlvo.TurnoStun > 0))
             {
                 Console.ForegroundColor = ConsoleColor.Blue;
                 Console.WriteLine($"> [PASSIVA] {Name} sabe onde atacar com o inimigo incapacitado.");
                 Console.WriteLine($"> {Name}: Uso de força autorizado.");
                 Console.ResetColor();
-                BuffAtk = inimigoAlvo.HpMax/20;
+                BuffAtk = inimigoAlvo.HpMax / 20;
             }
         }
     }
