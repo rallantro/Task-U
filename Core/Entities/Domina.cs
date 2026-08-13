@@ -11,9 +11,9 @@ namespace Task_U.Core.Entities
 
         public override void tomarDano(string inimigo, int dano)
         {
-            int danoTotal = Math.Max(0, dano - Shield *2);
-            int danoShield = Math.Min(Shield*2, dano);
-            Shield -= danoShield/2;
+            int danoTotal = Math.Max(0, dano - Shield * 2);
+            int danoShield = Math.Min(Shield * 2, dano);
+            Shield -= danoShield / 2;
             HpAtual -= danoTotal;
             if (danoShield > 0 && danoTotal == 0)
             {
@@ -39,33 +39,71 @@ namespace Task_U.Core.Entities
             {
                 Console.WriteLine($"Para quem {Name} deve dar o escudo?");
                 Console.WriteLine($"1 - {Name} | 2 - {aliado.Name}");
+                Console.WriteLine($"");
                 bool escolheu = false;
                 while (!escolheu)
                 {
                     switch (Console.ReadLine())
                     {
                         case "1":
-                            Console.ForegroundColor = ConsoleColor.DarkMagenta;
-                            Console.WriteLine($"> [HABILIDADE] {Name} recebe {(HpMax / 4) + (ModTotal() * 2)} de escudo!");
-                            Console.WriteLine($"> {Name}: Ah! Não toca em mim!");
-                            Console.ResetColor();
-                            Shield = (HpMax / 4) + ModTotal() * 2;
-                            escolheu = true;
-                        break;
+
+                            if (Shield > 0)
+                            {
+                                Console.ForegroundColor = ConsoleColor.DarkMagenta;
+                                Console.WriteLine($"> {Name}: Não dá para criar um campo em cima do outro!");
+                                Console.ResetColor();
+                                escolheu = false;
+                            }
+                            else
+                            {
+                                Shield += (HpMax / 4) + ModTotal() * 2;
+                                Console.ForegroundColor = ConsoleColor.DarkMagenta;
+                                Console.WriteLine($"> [HABILIDADE] {Name} recebe {(HpMax / 4) + (ModTotal() * 2)} de escudo!");
+                                Console.WriteLine($"> {Name}: Ah! Não toca em mim!");
+                                Console.ResetColor();
+                                escolheu = true;
+                            }
+
+                            break;
                         case "2":
-                            Console.ForegroundColor = ConsoleColor.DarkMagenta;
-                            Console.WriteLine($"> [HABILIDADE] {aliado.Name} recebe {(HpMax / 4) + (ModTotal() * 2)} de escudo!");
-                            Console.WriteLine($"> {Name}: Não despreze um presente como este.");
-                            Console.ResetColor();
-                            aliado.Shield = (HpMax / 4) + ModTotal() * 2;
-                            escolheu = true;
-                        break;
+                            if (aliado.Shield > 0)
+                            {
+                                Console.ForegroundColor = ConsoleColor.DarkMagenta;
+                                Console.WriteLine($"> {Name}: Não dá para criar um campo em cima do outro!");
+                                Console.ResetColor();
+                                escolheu = false;
+                            }
+                            else
+                            {
+                                Console.ForegroundColor = ConsoleColor.DarkMagenta;
+                                Console.WriteLine($"> [HABILIDADE] {aliado.Name} recebe {(HpMax / 4) + (ModTotal() * 2)} de escudo!");
+                                Console.WriteLine($"> {Name}: Não despreze um presente como este.");
+                                Console.ResetColor();
+                                aliado.Shield += (HpMax / 4) + ModTotal() * 2;
+                                escolheu = true;
+                            }
+
+                            break;
                         default:
-                            Console.WriteLine($"> {Name}: A escolha não é muito difícil...");
-                        break;
+                            if (aliado.Shield > 0 && Shield > 0)
+                            {
+                                Console.ForegroundColor = ConsoleColor.DarkMagenta;
+                                Console.WriteLine($"> {Name}: Ninguém pra gastar meu dinheiro."); 
+                                Console.ResetColor();   
+                                escolheu = true;
+                                break;
+                            }
+                            else
+                            {
+                                Console.ForegroundColor = ConsoleColor.DarkMagenta;
+                                Console.WriteLine($"> {Name}: A escolha não é muito difícil..."); 
+                                Console.ResetColor();   
+                            }
+                            
+                            break;
                     }
                 }
-                
+
             }
             else
             {
@@ -75,8 +113,8 @@ namespace Task_U.Core.Entities
                 Console.ResetColor();
                 Shield = (HpMax / 3) + (ModTotal() * 2);
             }
-            
-            
+
+
         }
 
         public override void Passiva()
@@ -84,18 +122,18 @@ namespace Task_U.Core.Entities
             if (aliado != null && aliado.Shield > 0)
             {
                 Console.ForegroundColor = ConsoleColor.DarkMagenta;
-                Console.WriteLine($"> [PASSIVA] {Name} recebe {HpMax/ModTotal()} de dano adicional em seus ataques!");
+                Console.WriteLine($"> [PASSIVA] {Name} recebe {HpMax / ModTotal()} de dano adicional em seus ataques!");
                 Console.WriteLine($"> {Name}: Se você ganha alguma coisa, eu também vou ganhar.");
                 Console.ResetColor();
-                BuffAtk += HpMax/ModTotal();
+                BuffAtk += HpMax / ModTotal();
             }
             else if (aliado != null && Shield > 0)
             {
                 Console.ForegroundColor = ConsoleColor.DarkMagenta;
-                Console.WriteLine($"> [PASSIVA] {aliado.Name} recebe {HpMax/ModTotal()} de dano adicional em seus ataques!");
+                Console.WriteLine($"> [PASSIVA] {aliado.Name} recebe {HpMax / ModTotal()} de dano adicional em seus ataques!");
                 Console.WriteLine($"> {Name}: Considere isso um investimento.");
                 Console.ResetColor();
-                aliado.BuffAtk += HpMax/ModTotal();
+                aliado.BuffAtk += HpMax / ModTotal();
             }
             else
             {
@@ -103,6 +141,6 @@ namespace Task_U.Core.Entities
                 if (aliado != null) aliado.BuffAtk = 0;
             }
         }
-        
+
     }
 }

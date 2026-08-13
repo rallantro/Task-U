@@ -38,7 +38,7 @@ namespace Task_U.Migrations
 
                     b.Property<string>("Discriminator")
                         .IsRequired()
-                        .HasMaxLength(13)
+                        .HasMaxLength(21)
                         .HasColumnType("TEXT");
 
                     b.Property<int>("HabilidadeChance")
@@ -58,6 +58,12 @@ namespace Task_U.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<int>("Rarity")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Speed")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("tipoBoss")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
@@ -82,6 +88,11 @@ namespace Task_U.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasMaxLength(21)
+                        .HasColumnType("TEXT");
+
                     b.Property<int>("Mod")
                         .HasColumnType("INTEGER");
 
@@ -95,9 +106,16 @@ namespace Task_U.Migrations
                     b.Property<int>("Type")
                         .HasColumnType("INTEGER");
 
+                    b.Property<bool>("exclLoja")
+                        .HasColumnType("INTEGER");
+
                     b.HasKey("Id");
 
                     b.ToTable("Itens");
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("Item");
+
+                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("Task_U.Core.ItemInventario", b =>
@@ -148,6 +166,9 @@ namespace Task_U.Migrations
                     b.Property<int>("Rarity")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("Speed")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("SummonQuote")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -167,7 +188,13 @@ namespace Task_U.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("NodesNivel")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int>("PersonagemId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Quantidade")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("UserId")
@@ -221,6 +248,29 @@ namespace Task_U.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("BaseTarefas");
+                });
+
+            modelBuilder.Entity("Task_U.Models.Loja", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("comprado")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("personagem")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("personagemId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("preco")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("id");
+
+                    b.ToTable("loja");
                 });
 
             modelBuilder.Entity("Task_U.Models.SideQuest", b =>
@@ -279,6 +329,9 @@ namespace Task_U.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("Bits")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int>("Crystals")
                         .HasColumnType("INTEGER");
 
@@ -289,6 +342,9 @@ namespace Task_U.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("LastBannerUpdate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("LastLojaUpdate")
                         .HasColumnType("TEXT");
 
                     b.Property<int>("PityEpic")
@@ -332,6 +388,48 @@ namespace Task_U.Migrations
                     b.HasDiscriminator().HasValue("Aranha");
                 });
 
+            modelBuilder.Entity("Task_U.Core.Banshee", b =>
+                {
+                    b.HasBaseType("Task_U.Core.InimigoBase");
+
+                    b.HasDiscriminator().HasValue("Banshee");
+                });
+
+            modelBuilder.Entity("Task_U.Core.DronEscaravelho", b =>
+                {
+                    b.HasBaseType("Task_U.Core.InimigoBase");
+
+                    b.HasDiscriminator().HasValue("DronEscaravelho");
+                });
+
+            modelBuilder.Entity("Task_U.Core.Enemies.DragaoEgito", b =>
+                {
+                    b.HasBaseType("Task_U.Core.InimigoBase");
+
+                    b.HasDiscriminator().HasValue("DragaoEgito");
+                });
+
+            modelBuilder.Entity("Task_U.Core.Enemies.GreedFollower", b =>
+                {
+                    b.HasBaseType("Task_U.Core.InimigoBase");
+
+                    b.HasDiscriminator().HasValue("GreedFollower");
+                });
+
+            modelBuilder.Entity("Task_U.Core.Enemies.Kappa", b =>
+                {
+                    b.HasBaseType("Task_U.Core.InimigoBase");
+
+                    b.HasDiscriminator().HasValue("Kappa");
+                });
+
+            modelBuilder.Entity("Task_U.Core.Enemies.Karakasa", b =>
+                {
+                    b.HasBaseType("Task_U.Core.InimigoBase");
+
+                    b.HasDiscriminator().HasValue("Karakasa");
+                });
+
             modelBuilder.Entity("Task_U.Core.Fada", b =>
                 {
                     b.HasBaseType("Task_U.Core.InimigoBase");
@@ -353,11 +451,116 @@ namespace Task_U.Migrations
                     b.HasDiscriminator().HasValue("Gargula");
                 });
 
+            modelBuilder.Entity("Task_U.Core.Mumia", b =>
+                {
+                    b.HasBaseType("Task_U.Core.InimigoBase");
+
+                    b.HasDiscriminator().HasValue("Mumia");
+                });
+
+            modelBuilder.Entity("Task_U.Core.Oni", b =>
+                {
+                    b.HasBaseType("Task_U.Core.InimigoBase");
+
+                    b.HasDiscriminator().HasValue("Oni");
+                });
+
             modelBuilder.Entity("Task_U.Core.TechGoblin", b =>
                 {
                     b.HasBaseType("Task_U.Core.InimigoBase");
 
                     b.HasDiscriminator().HasValue("TechGoblin");
+                });
+
+            modelBuilder.Entity("Task_U.Core.Itens.AdagaDeVidro", b =>
+                {
+                    b.HasBaseType("Task_U.Core.Item");
+
+                    b.HasDiscriminator().HasValue("AdagaDeVidro");
+                });
+
+            modelBuilder.Entity("Task_U.Core.Itens.AdagaDoSacrificio", b =>
+                {
+                    b.HasBaseType("Task_U.Core.Item");
+
+                    b.HasDiscriminator().HasValue("AdagaDoSacrificio");
+                });
+
+            modelBuilder.Entity("Task_U.Core.Itens.AmpulhetaAreia", b =>
+                {
+                    b.HasBaseType("Task_U.Core.Item");
+
+                    b.HasDiscriminator().HasValue("AmpulhetaAreia");
+                });
+
+            modelBuilder.Entity("Task_U.Core.Itens.AnkhBronze", b =>
+                {
+                    b.HasBaseType("Task_U.Core.Item");
+
+                    b.HasDiscriminator().HasValue("AnkhBronze");
+                });
+
+            modelBuilder.Entity("Task_U.Core.Itens.CapaMesquinha", b =>
+                {
+                    b.HasBaseType("Task_U.Core.Item");
+
+                    b.HasDiscriminator().HasValue("CapaMesquinha");
+                });
+
+            modelBuilder.Entity("Task_U.Core.Itens.FragmentoEstelar", b =>
+                {
+                    b.HasBaseType("Task_U.Core.Item");
+
+                    b.HasDiscriminator().HasValue("FragmentoEstelar");
+                });
+
+            modelBuilder.Entity("Task_U.Core.Itens.LuvaImpiedosa", b =>
+                {
+                    b.HasBaseType("Task_U.Core.Item");
+
+                    b.HasDiscriminator().HasValue("LuvaImpiedosa");
+                });
+
+            modelBuilder.Entity("Task_U.Core.Itens.MantoDoSacrificio", b =>
+                {
+                    b.HasBaseType("Task_U.Core.Item");
+
+                    b.HasDiscriminator().HasValue("MantoDoSacrificio");
+                });
+
+            modelBuilder.Entity("Task_U.Core.Itens.MoedaDaSorte", b =>
+                {
+                    b.HasBaseType("Task_U.Core.Item");
+
+                    b.HasDiscriminator().HasValue("MoedaDaSorte");
+                });
+
+            modelBuilder.Entity("Task_U.Core.Itens.aranhaItem", b =>
+                {
+                    b.HasBaseType("Task_U.Core.Item");
+
+                    b.HasDiscriminator().HasValue("aranhaItem");
+                });
+
+            modelBuilder.Entity("Task_U.Core.Itens.fadaNucleo", b =>
+                {
+                    b.HasBaseType("Task_U.Core.Item");
+
+                    b.HasDiscriminator().HasValue("fadaNucleo");
+                });
+
+            modelBuilder.Entity("Task_U.Core.Itens.grilhaoGreed", b =>
+                {
+                    b.HasBaseType("Task_U.Core.Item");
+
+                    b.HasDiscriminator().HasValue("grilhaoGreed");
+                });
+
+            modelBuilder.Entity("Task_U.Core.Itens.oniHeart", b =>
+                {
+                    b.HasBaseType("Task_U.Core.Item");
+
+                    b.HasDiscriminator().HasValue("oniHeart");
                 });
 
             modelBuilder.Entity("Task_U.Core.Apostador", b =>
@@ -389,11 +592,60 @@ namespace Task_U.Migrations
                     b.HasDiscriminator().HasValue("Barbaro");
                 });
 
+            modelBuilder.Entity("Task_U.Core.Entities.Atacante", b =>
+                {
+                    b.HasBaseType("Task_U.Core.PersonagemBase");
+
+                    b.HasDiscriminator().HasValue("Atacante");
+                });
+
+            modelBuilder.Entity("Task_U.Core.Entities.Bennu", b =>
+                {
+                    b.HasBaseType("Task_U.Core.PersonagemBase");
+
+                    b.HasDiscriminator().HasValue("Bennu");
+                });
+
+            modelBuilder.Entity("Task_U.Core.Entities.Cleaner", b =>
+                {
+                    b.HasBaseType("Task_U.Core.PersonagemBase");
+
+                    b.HasDiscriminator().HasValue("Cleaner");
+                });
+
             modelBuilder.Entity("Task_U.Core.Entities.Domina", b =>
                 {
                     b.HasBaseType("Task_U.Core.PersonagemBase");
 
                     b.HasDiscriminator().HasValue("Domina");
+                });
+
+            modelBuilder.Entity("Task_U.Core.Entities.Exorcist", b =>
+                {
+                    b.HasBaseType("Task_U.Core.PersonagemBase");
+
+                    b.HasDiscriminator().HasValue("Exorcist");
+                });
+
+            modelBuilder.Entity("Task_U.Core.Entities.Lab", b =>
+                {
+                    b.HasBaseType("Task_U.Core.PersonagemBase");
+
+                    b.HasDiscriminator().HasValue("Lab");
+                });
+
+            modelBuilder.Entity("Task_U.Core.Entities.Ladra", b =>
+                {
+                    b.HasBaseType("Task_U.Core.PersonagemBase");
+
+                    b.HasDiscriminator().HasValue("Ladra");
+                });
+
+            modelBuilder.Entity("Task_U.Core.Entities.Priest", b =>
+                {
+                    b.HasBaseType("Task_U.Core.PersonagemBase");
+
+                    b.HasDiscriminator().HasValue("Priest");
                 });
 
             modelBuilder.Entity("Task_U.Core.Entities.SlimeA", b =>
@@ -435,6 +687,20 @@ namespace Task_U.Migrations
                         .HasColumnType("INTEGER");
 
                     b.HasDiscriminator().HasValue("Moon");
+                });
+
+            modelBuilder.Entity("Task_U.Core.Police", b =>
+                {
+                    b.HasBaseType("Task_U.Core.PersonagemBase");
+
+                    b.HasDiscriminator().HasValue("Police");
+                });
+
+            modelBuilder.Entity("Task_U.Core.Soul", b =>
+                {
+                    b.HasBaseType("Task_U.Core.PersonagemBase");
+
+                    b.HasDiscriminator().HasValue("Soul");
                 });
 
             modelBuilder.Entity("Task_U.Core.Voodo", b =>

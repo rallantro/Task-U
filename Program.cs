@@ -10,19 +10,22 @@ using Task_U.Services;
 using Task_U.Data;
 using System.Diagnostics;
 
+
 Gacha gacha = new Gacha();
 BannerService banner = new BannerService();
 TarefaService service = new TarefaService();
 CombatService combat = new CombatService();
 InventarioServices inventario = new InventarioServices();
 AdventureService adventure = new AdventureService();
+LojaService loja = new LojaService();
 using var context = new AppDbContext();
 
 var user = context.Users.Include(u => u.Slot1_PersonagemAtivo).Include(u => u.Slot2_PersonagemAtivo).Include(u => u.Slot1_ItemAtivo).FirstOrDefault(u => u.Id == 1);
-//adventure.AtualizarInimigo(context);
+adventure.AtualizarInimigo(context);
 banner.AtualizarBanner(context);
 service.AtualizarTarefas();
 adventure.AtualizarInimigo(context);
+loja.atualizarLoja(context);
 
 CreateService create = new CreateService();
 //create.CreateCharacter(context);
@@ -46,6 +49,7 @@ while (MenuShow)
     | |/ _` / __| |/ /______| | | |
     | | (_| \__ \   <       | |_| |
     \_/\__,_|___/_|\_\       \___/ 
+    
 ");
 
     Console.ForegroundColor = ConsoleColor.DarkBlue;
@@ -56,8 +60,9 @@ while (MenuShow)
     Console.WriteLine(" ║  [2] Ver Tarefas                         ║");
     Console.WriteLine(" ║  [3] Concluir Tarefas                    ║");
     Console.WriteLine(" ║  [4] Desejar (Gacha)                     ║");
-    Console.WriteLine(" ║  [5] Iniciar Combate                     ║");
-    Console.WriteLine(" ║  [6] Salvar e Sair                       ║");
+    Console.WriteLine(" ║  [5] Protocolo Loja                      ║");
+    Console.WriteLine(" ║  [6] Iniciar Combate                     ║");
+    Console.WriteLine(" ║  [7] Salvar e Sair                       ║");
     Console.WriteLine(" ╚══════════════════════════════════════════╝");
     Console.ResetColor();
 
@@ -165,6 +170,11 @@ while (MenuShow)
             break;
 
         case "5":
+            loja.exibirLoja(context);
+            Console.ReadLine();
+        break;
+
+        case "6":
             var equipe = new List<PersonagemBase>();
             var inimigo = context.Inimigos.FirstOrDefault(x => x.Id == user.InimigoId);
             if (user.Slot1_PersonagemAtivo == null && user.Slot2_PersonagemAtivo == null)
@@ -179,7 +189,7 @@ while (MenuShow)
             context.Entry(user).Reload();
             break;
 
-        case "6":
+        case "7":
             Environment.Exit(0);
             break;
 

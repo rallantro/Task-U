@@ -15,16 +15,16 @@ namespace Task_U.Core.Entities
             Console.ForegroundColor = ConsoleColor.DarkYellow; 
             Console.WriteLine($"> {Name}: Que sua dor me ilumine!"); 
             Console.ResetColor();
-            HpAtual += (AtkTotal() * 2/7) +  (HpMax/8);
-            Console.WriteLine($"> {Name} se curou em {(AtkTotal() * 2/7) +  (HpMax/8)}."); 
+            HpAtual += (AtkTotal() + Mod +  (HpMax/8))/2;
+            Console.WriteLine($"> {Name} se curou em {(AtkTotal() + Mod +  (HpMax/8))/2}."); 
             return AtkTotal();
         }
         public override void Habilidade()
         {
-            if (aliado != null && aliado.HpAtual < aliado.HpMax)
+            if (aliado != null && aliado.HpAtual < aliado.HpMax && HpAtual > HpMax/5 && aliado.HpAtual > 0)
             {
                 Console.ForegroundColor = ConsoleColor.DarkYellow;
-                Console.WriteLine($"> [HABILIDADE] {Name} roga as estrelas, curando {aliado.HpMax * Mod / 10 + curaBonus} pontos de vida de {aliado.Name}!"); 
+                Console.WriteLine($"> [HABILIDADE] {Name} roga as estrelas, curando {aliado.HpMax / 15 * Mod + curaBonus} pontos de vida de {aliado.Name}!"); 
                 Console.WriteLine($"> {Name}: Rogo por {aliado.Name}, estrelas, que sua luz brilhe por mim!"); 
                 Console.ResetColor();
                 HpAtual -= HpAtual/9;
@@ -32,7 +32,7 @@ namespace Task_U.Core.Entities
                 {
                     orarCD = 0;
                 }
-                aliado.curar(Name, aliado.HpMax * Mod / 10 + curaBonus);   
+                aliado.curar(Name, (aliado.HpMax / 15 * Mod ) + curaBonus);   
                 orarCD += Math.Min(4, orarCD +1);
             }
             else
@@ -41,7 +41,7 @@ namespace Task_U.Core.Entities
                 Console.WriteLine($"> [HABILIDADE] {Name} roga as estrelas, curando a si mesma..."); 
                 Console.WriteLine($"> {Name}: Que o brilho de cada estrela brilhe através de meu corpo!"); 
                 Console.ResetColor();
-                HpAtual += HpAtual * 2/9;
+                HpAtual += HpMax / 15 * Mod + curaBonus;
             }
             
         }
@@ -55,7 +55,7 @@ namespace Task_U.Core.Entities
                 Console.ResetColor();
                 podeOrar = true;
             }
-            if (aliado != null && aliado.HpAtual <= aliado.HpMax/5 && podeOrar)
+            if (aliado != null && aliado.HpAtual <= aliado.HpMax/5 && aliado.HpAtual > 0 && podeOrar)
             {
                 Console.ForegroundColor = ConsoleColor.DarkYellow;
                 Console.WriteLine($"> [PASSIVA] Cintilação do Desespero! {Name} intensificou suas orações!"); 
@@ -64,10 +64,27 @@ namespace Task_U.Core.Entities
                 curaBonus = aliado.HpMax * 2/3 + (Mod * 2/3); 
                 podeOrar = false;
             }
+            else if (HpAtual <= HpMax/6 && podeOrar)
+            {
+                Console.ForegroundColor = ConsoleColor.DarkYellow;
+                Console.WriteLine($"> [PASSIVA] Cintilação do Desespero! {Name} intensificou suas orações!"); 
+                Console.WriteLine($"> {Name}: ESTRELAS OUÇAM A MIM!"); 
+                Console.ResetColor();
+                curaBonus = HpMax / 5 + (Mod * 2/3); 
+                podeOrar = false;
+            }
             else
             {
                 curaBonus = 0;
             }
+        }
+
+        public override void Resetar()
+        {
+            podeOrar = false;
+            orarCD = 0;
+            curaBonus = 0;
+            base.Resetar();
         }
     }
 }

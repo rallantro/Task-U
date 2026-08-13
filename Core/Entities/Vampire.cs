@@ -62,14 +62,14 @@ namespace Task_U.Core.Entities
                 }
                 else
                 {
-                    var curaTotal = Math.Max(0, Mod - aliado.Shield);
+                    var curaTotal = Math.Max(0, aliado.HpMax * Mod /20);
                     if (curaTotal > 0)
                     {
                         Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine($"> [HABILIDADE] {Name} drena {Mod} pontos de vida de {aliado.Name}!");
+                        Console.WriteLine($"> [HABILIDADE] {Name} drena {aliado.HpMax * Mod /20} pontos de vida de {aliado.Name}!");
                         Console.WriteLine($"> {Name}: Isso pode mechucar um pouco..."); 
                         Console.ResetColor();
-                        aliado.tomarDano(Name, Mod);
+                        aliado.tomarDano(Name, aliado.HpMax * Mod /20);
                         HpAtual += curaTotal;
                         FrenesiDown++;  
                     }
@@ -96,6 +96,13 @@ namespace Task_U.Core.Entities
                 aliado.tomarDano(Name, Mod);
                 Frenesi = true;
             }    
+        }
+
+        public override void Resetar()
+        {
+            FrenesiDown = 0;
+            Frenesi = false;
+            base.Resetar();
         }
     }
 }

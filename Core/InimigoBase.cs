@@ -7,49 +7,93 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Task_U.Models;
 using Task_U.Data;
 using Task_U.Core;
+using Task_U.Core.StatusEffects;
 
 namespace Task_U.Core
 {
     public class InimigoBase
     {
+        public enum TipoBoss
+        {
+            Buffer,
+            Dot,
+            Controller,
+            Tank,
+            Healer,
+            Berserker,
+        }
         public int Id { get; set; }
-        public required string Name {get; set;}
-        public required string Desc {get; set;}
-        public int Atk {get; set;}
-        public int HpMax {get; set;}
-        public int Mod {get; set;}
+        public required string Name { get; set; }
+        public required string Desc { get; set; }
+        public int Atk { get; set; }
+        public int HpMax { get; set; }
+        public int Mod { get; set; }
         public int HabilidadeChance { get; set; }
         public int CrystalDrop { get; set; }
         public int? ItemDropId { get; set; }
         public string? DeathQuote { get; set; }
-        public int Rarity {get; set;}
+        public int Rarity { get; set; }
+
+        public int Speed { get; set; }
+
+        [NotMapped]
+        public double AvAtual { get; set; }
+
+        public TipoBoss? tipoBoss { get; set; }
         private int _HpAtual;
 
         [NotMapped]
         public Random rand = new Random();
 
         [NotMapped]
-        public int HpAtual {get { return _HpAtual; } set { _HpAtual = Math.Max(0, Math.Min(value, HpMax));}}
+        public int HpAtual { get { return _HpAtual; } set { _HpAtual = Math.Max(0, Math.Min(value, HpMax)); } }
         [NotMapped]
-        public int Shield {get; set;}
+        public int Shield { get; set; }
 
         [NotMapped]
-        public int BuffAtk{get; set;}
+        public int BuffAtk { get; set; }
 
         [NotMapped]
-        public virtual int TurnoStun {get; set;} = 0;
+        public int BuffMod { get; set; }
 
         [NotMapped]
-        public int TurnoSilence {get; set;} = 0;
-        
+        public int BuffSpeed { get; set; }
+
         [NotMapped]
-        public List<PersonagemBase> ?alvos {get; set;}
+        public double debuffRes { get; set; } = 1;
+
+        [NotMapped]
+        public List<StatusEffect> status { get; set; } = new();
+
+        [NotMapped]
+        public bool Stuneed { get; set; }
+
+        [NotMapped]
+        public bool Silenced { get; set; }
+
+        [NotMapped]
+        public bool Blinded { get; set; }
+
+        [NotMapped]
+        public List<PersonagemBase>? alvos { get; set; }
+
+        public virtual void aplicarEfeitos()
+        {
+            foreach (var effect in status.ToList())
+            {
+                effect.Aplicar(this);
+                if (effect.Duration == 0)
+                {
+                    status.Remove(effect);
+                }
+            }
+        }
 
 
         public virtual void tomarDano(PersonagemBase inimigo, int dano)
         {
-            int danoTotal = Math.Max(0, dano - Shield);
-            int danoShield = Math.Min(Shield, dano);
+            int danoTotal = (int)Math.Max(0, Math.Ceiling(dano * debuffRes) - Shield);
+            int danoShield = Math.Min(Shield, (int)Math.Max(0, Math.Ceiling(dano * debuffRes)));
             Shield -= danoShield;
             HpAtual -= danoTotal;
             if (danoShield > 0 && danoTotal == 0)
@@ -58,23 +102,64 @@ namespace Task_U.Core
             }
             else
             {
+                if (danoShield > 0 && Shield == 0)
+                {
+                    Console.WriteLine($"{inimigo.Name} atacou {Name} e destruiu seu escudo!");
+                }
                 Console.WriteLine($"{inimigo.Name} atacou {Name} e causou {danoTotal} de dano!");
             }
         }
 
         public virtual int Damage()
         {
-            return Atk + BuffAtk;
+            return Math.Max(0, Atk + BuffAtk);
         }
 
+        public int SpeedTotal()
+        {
+            return Math.Max(1, Speed + BuffSpeed);
+        }
         public virtual void Habilidade()
         {
-                
+
         }
 
         public virtual void Passiva(User user)
         {
-            
+
+        }
+
+        public virtual PersonagemBase EscolherAlvo()
+        {
+            int chanceTotal = 0;
+            foreach (var personagem in alvos)
+            {
+                chanceTotal += personagem.chanceAlvo;
+            }
+            int chance = rand.Next(0, chanceTotal);
+            foreach (var personagem in alvos)
+            {
+                if (chance < personagem.chanceAlvo)
+                {
+                    return personagem;
+                }
+                chance -= personagem.chanceAlvo;
+            }
+            return alvos.FirstOrDefault();
+        }
+
+        public virtual void aoUsarSkill(PersonagemBase personagem)
+        {
+
+        }
+
+        public virtual void Resetar()
+        {
+            BuffAtk = 0;
+            Silenced = false;
+            Blinded = false;
+            Stuneed = false;
+            Shield = 0;
         }
     }
 }

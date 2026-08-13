@@ -26,6 +26,13 @@ namespace Task_U.Core
             }
             else
             {
+                if (danoShield > 0 && Shield == 0)
+                {
+                    Console.WriteLine($"{inimigo.Name} atacou {Name} e destruiu seu escudo!");
+                    Console.ForegroundColor = ConsoleColor.DarkBlue;
+                    Console.WriteLine($"> {Name}: Meu precioso!");
+                    Console.ResetColor();
+                }
                 Console.WriteLine($"{inimigo.Name} atacou {Name} e causou {danoTotal} de dano!");
                 Console.ForegroundColor = ConsoleColor.DarkBlue;
                 Console.WriteLine($"> {Name}: Prrrrrriiii!!!!!");
@@ -40,7 +47,7 @@ namespace Task_U.Core
         {
             int useSkill = rand.Next(1, 101);
             int vezes = rand.Next(2, 4 + Aprimoramentos);
-            if (useSkill < HabilidadeChance/2)
+            if (useSkill < HabilidadeChance / 2)
             {
                 Console.ForegroundColor = ConsoleColor.DarkBlue;
                 Console.WriteLine($"> [Ordens da Rainha!] {Name} ordena que seus nano-bôs e ataca várias vezes!");
@@ -48,19 +55,18 @@ namespace Task_U.Core
                 Console.ResetColor();
                 for (int i = 0; i < vezes; i++)
                 {
-                    int chance = rand.Next(0, alvos.Count());
-                    PersonagemBase alvo = alvos[chance];
+                    PersonagemBase alvo = EscolherAlvo();
                     alvo.tomarDano(Name, 4);
                 }
-                
-            } else if (useSkill < HabilidadeChance)
+
+            }
+            else if (useSkill < HabilidadeChance)
             {
                 Console.ForegroundColor = ConsoleColor.DarkBlue;
                 Console.WriteLine($"> [NANO ASSIMILAR!] {Name} ordena que seus nano-bôs roubem os dados de um aliado!");
                 Console.WriteLine($"> {Name}: Prrrrrriiii! Resistir é inútil, vocês serão assimilados!");
-                Console.ResetColor(); 
-                int chance = rand.Next(0, alvos.Count());
-                PersonagemBase alvo = alvos[chance];
+                Console.ResetColor();
+                PersonagemBase alvo = EscolherAlvo();
                 alvo.BuffAtk -= Mod;
                 BuffAtk += Mod;
                 Aprimoramentos++;
@@ -81,7 +87,8 @@ namespace Task_U.Core
                     Console.ResetColor();
                     Shield = Mod;
                 }
-            } else if (!shieldInicial)
+            }
+            else if (!shieldInicial)
             {
                 Console.ForegroundColor = ConsoleColor.DarkBlue;
                 Console.WriteLine($"> [NANO BARREIRA] {Name} junta fadas a sua frente como uma barreira.");
@@ -104,8 +111,15 @@ namespace Task_U.Core
                 Console.WriteLine($"> [NANO RECONSTRUÇÃO] {Name} começa a se resonstruir.");
                 Console.WriteLine($"> {Name}: Prrrrrriiii! Me tornem gloriosa!");
                 Console.ResetColor();
-                HpAtual += HpMax/20;
+                HpAtual += HpMax / 20;
             }
+        }
+
+        public override void Resetar()
+        {
+            Aprimoramentos = 0;
+            shieldInicial = false;
+            base.Resetar();
         }
     }
 }

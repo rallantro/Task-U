@@ -12,27 +12,15 @@ namespace Task_U.Core.Entities
     public class SlimeA : PersonagemBase
     {
         [NotMapped]
-        public override int HpAtual { 
-            get 
+        public override int HpAtual
+        {
+            get
             {
                 return base.HpAtual;
-            } 
-            set 
+            }
+            set
             {
-                base.HpAtual = value; 
-                if(this.HpAtual >= HpMax && !escudoBolha)
-                    {
-                        Console.ForegroundColor = ConsoleColor.Cyan;
-                        Console.WriteLine($"> [PASSIVA] {Name} criou um escudo de bolha em volta de si.");
-                        Console.WriteLine($"> {Name}: Estou transbordando agora!");
-                        Console.ResetColor();
-                        Shield += HpMax/10;
-                        escudoBolha = true;
-                        Console.ReadKey();
-                    }
-
-                
-                
+                base.HpAtual = value;
             }
         }
         private int Fluxo;
@@ -50,9 +38,9 @@ namespace Task_U.Core.Entities
 
         public override void tomarDano(string inimigo, int dano)
         {
-            int danoTotal = Math.Max(0, dano - Shield);
-            int danoShield = Math.Min(Shield, dano);
-            int newFluxo = danoTotal * 3;
+            int danoTotal = Math.Max(0, (int)(dano * debuffRes) - Shield);
+            int danoShield = Math.Min(Shield, (int)(dano * debuffRes));
+            int newFluxo = danoTotal * 2;
             Fluxo += Math.Min(100, newFluxo);
             Shield -= danoShield;
             if (danoShield > 0 && danoTotal == 0)
@@ -62,43 +50,55 @@ namespace Task_U.Core.Entities
                 Console.WriteLine($"> {Name}: Isso nem fez cócegas!");
                 Console.ResetColor();
             }
-            else if(Fluxo < 60)
+            else if (Fluxo < 60)
             {
                 HpAtual -= danoTotal;
                 Console.WriteLine($"{inimigo} atacou {Name} e causou {danoTotal} de dano!");
                 Console.ForegroundColor = ConsoleColor.Cyan;
-                Console.WriteLine($"> [PASSIVA] {Name} recebeu {newFluxo}% de fluxo pelo dano recebido!");
+                Console.WriteLine($"> [PASSIVA] {Name} recebeu {newFluxo}% de fluxo pelo dano recebido! (Fluxo total: {Fluxo}%)");
                 Console.WriteLine($"> {Name}: Ei isso doeu!");
                 Console.ResetColor();
-                Console.WriteLine($"{inimigo} atacou {Name} e causou {danoTotal} de dano!");
             }
             else
             {
-                if (aliado != null && aliado.Name == "Jax")
+                if (aliado != null && (aliado.Name == "Jax" || aliado.Name == "Lurios"))
                 {
-                    HpAtual -= danoTotal/3;
+                    HpAtual -= danoTotal / 2;
+                    Console.WriteLine($"{inimigo} atacou {Name} e causou {danoTotal / 2} de dano!");
                     Console.ForegroundColor = ConsoleColor.Cyan;
                     Console.WriteLine($"> [PASSIVA] O fluxo de {Name} está cheio! Ele vai estourar!");
                     Console.WriteLine($"> {Name}: Explosão de bolhas! Ploc, ploc, POW!!");
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine($"> {aliado.Name}: E EXPLOSÃO DE TINTA TAMBÉM!");
-                    Console.ResetColor();
-                    if(inimigoAlvo != null)
-                    inimigoAlvo.tomarDano(this, (danoTotal * 2/3) + aliado.Mod);
-                    Console.WriteLine($"{inimigo} atacou {Name} e causou {danoTotal/3} de dano!");
-                    Fluxo = Math.Max(0, Fluxo - danoTotal); 
+                    if (aliado.Name == "Jax")
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine($"> {aliado.Name}: E EXPLOSÃO DE TINTA TAMBÉM!");
+                        Console.ResetColor();
+                        if (inimigoAlvo != null)
+                            inimigoAlvo.tomarDano(this, (danoTotal * 2) + aliado.AtkTotal() * aliado.Mod);
+                    }
+                    else
+                    {
+                        Console.ForegroundColor = ConsoleColor.Yellow;
+                        Console.WriteLine($"> {aliado.Name}: Uau!! Pera, deixa eu colocar minha sorte!");
+                        Console.ResetColor();
+                        if (inimigoAlvo != null)
+                            inimigoAlvo.tomarDano(this, (danoTotal * 2) + aliado.Damage());
+                    }
+
+
+                    Fluxo = Math.Max(0, Fluxo - danoTotal);
                 }
                 else
                 {
-                    HpAtual -= danoTotal/3;
+                    HpAtual -= danoTotal / 2;
+                    Console.WriteLine($"{inimigo} atacou {Name} e causou {danoTotal / 2} de dano!");
                     Console.ForegroundColor = ConsoleColor.Cyan;
                     Console.WriteLine($"> [PASSIVA] O fluxo de {Name} está cheio! Ele vai estourar!");
                     Console.WriteLine($"> {Name}: Explosão de bolhas! Ploc, ploc, POW!!");
                     Console.ResetColor();
-                    Console.WriteLine($"{inimigo} atacou {Name} e causou {danoTotal/3} de dano!");
-                    if(inimigoAlvo != null)
-                    inimigoAlvo.tomarDano(this, danoTotal * 2/3);
-                    Fluxo = Math.Max(0, Fluxo - danoTotal);   
+                    if (inimigoAlvo != null)
+                        inimigoAlvo.tomarDano(this, danoTotal * 2);
+                    Fluxo = Math.Max(0, Fluxo - danoTotal);
                 }
             }
         }
@@ -106,35 +106,66 @@ namespace Task_U.Core.Entities
         public override void Habilidade()
         {
             Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.WriteLine($"> [HABILIDADE] {Name} atira bolhas com suas mãos!");
-            Console.WriteLine($"> {Name}: Vai um banho gelado aí? Hahaha!");
-            Console.ResetColor();
-            int dano = Fluxo/10 * Mod;    
-            if(inimigoAlvo != null)
+            if (Fluxo > 0)
             {
-                inimigoAlvo.tomarDano(this,dano); 
-                inimigoAlvo.BuffAtk -= Mod; 
+                Console.WriteLine($"> [HABILIDADE] {Name} atira bolhas com suas mãos!");
+                Console.WriteLine($"> {Name}: Vai um banho gelado aí? Hahaha!");
+                Console.ResetColor();
+                int dano = Fluxo / 10 * Mod;
+                if (inimigoAlvo != null)
+                {
+                    inimigoAlvo.tomarDano(this, dano);
+                    Fluxo -= dano / 4;
+                }
+
+            }
+            else
+            {
+                Console.WriteLine($"> [FALHA] {Name} precisa de Fluxo para dar dano.");
+                Console.WriteLine($"> {Name}: Eu preciso de mais!");
+                Console.ResetColor();
+            }
+
+            if (inimigoAlvo != null)
+            {
+                inimigoAlvo.BuffAtk -= Math.Max(1, Mod * Fluxo / 100);
                 Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.WriteLine($"> [HABILIDADE] {Name} reduz o ataque de {inimigoAlvo.Name} em {Mod}!");
                 Console.WriteLine($"> {Name}: Sinta a pressão da maré!");
                 Console.ResetColor();
             }
-            
+
         }
 
         public override void Passiva()
         {
+            if (HpAtual >= HpMax && !escudoBolha)
+            {
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.WriteLine($"> [PASSIVA] {Name} criou um escudo de bolha em volta de si.");
+                Console.WriteLine($"> {Name}: Estou transbordando agora!");
+                Console.ResetColor();
+                Shield += HpMax / 10;
+                escudoBolha = true;
+            }
             if (Shield == 0 && escudoBolha == true)
             {
                 Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.WriteLine($"> [PASSIVA] O escudo bolha vai estourar!");
                 Console.WriteLine($"> {Name}: Cuidado com o respingo! Hahaha!");
                 Console.ResetColor();
-                if(inimigoAlvo != null)
-                inimigoAlvo.tomarDano(this, HpMax/10);
+                if (inimigoAlvo != null)
+                    inimigoAlvo.tomarDano(this, HpMax / 10);
                 escudoBolha = false;
             }
         }
-        
+
+        public override void Resetar()
+        {
+            Fluxo = 0;
+            escudoBolha = false;
+            base.Resetar();
+        }
+
     }
 }

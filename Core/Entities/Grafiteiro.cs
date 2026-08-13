@@ -19,7 +19,7 @@ namespace Task_U.Core
             int dano = AtkTotal();
             if (!Paint && QuantDmg > 0)
             {
-                dano = (AtkTotal() + BonusDMG) * QuantDmg;
+                dano = (AtkTotal() + BonusDMG) * (QuantDmg + 1) / 2;
                 QuantDmg = 0;
                 BonusDMG = 0;
                 Console.ForegroundColor = ConsoleColor.Red;
@@ -28,7 +28,7 @@ namespace Task_U.Core
             }
             else
             {
-                 Console.WriteLine($"{Name} causou {dano} de dano!");
+                Console.WriteLine($"{Name} causou {dano} de dano!");
             }
             return dano;
         }
@@ -46,8 +46,15 @@ namespace Task_U.Core
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine($"> [HABILIDADE:] PREPARANDO PINTURA!");
                 Console.ResetColor();
+                if (aliado != null && typeof(Apostador) == aliado.GetType())
+                {
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine($"> {aliado.Name}: Com um pouco de sorte!");
+                    Console.ResetColor();
+                    QuantDmg += 1;
+                }
             }
-            Paint = !Paint;  
+            Paint = !Paint;
         }
 
         public override void Passiva()
@@ -64,10 +71,10 @@ namespace Task_U.Core
                 else
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine($"> [PASSIVA] COLOCANDO TINTA! Camada {QuantDmg+1} (+{BonusDMG+ModTotal()} de dano na explosão)!");
+                    Console.WriteLine($"> [PASSIVA] COLOCANDO TINTA! Camada {QuantDmg + 1} (+{BonusDMG + ModTotal()} de dano na explosão)!");
                     Console.ResetColor();
                     BonusDMG += ModTotal();
-                    QuantDmg +=1; 
+                    QuantDmg += 1;
                 }
             }
             else
@@ -76,6 +83,14 @@ namespace Task_U.Core
                 Console.WriteLine($"> [PASSIVA] Sem tinta!");
                 Console.ResetColor();
             }
+        }
+
+        public override void Resetar()
+        {
+            BonusDMG = 0;
+            QuantDmg = 0;
+            Paint = false;
+            base.Resetar();
         }
     }
 }

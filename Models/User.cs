@@ -10,11 +10,13 @@ namespace Task_U.Models
     {
         public int Id { get; set; }
         public int Crystals { get; set; }
+        public int Bits { get; set; }
         public int PityLeg{ get; set; }
         public int PityEpic { get; set; }
 
         public DateTime lastLogin {get; set;}
         public DateTime LastBannerUpdate {get; set;}
+        public DateTime LastLojaUpdate {get; set;}
         public int? Slot1_PersonagemAtivoId { get; set; }
         public int? Slot2_PersonagemAtivoId { get; set; }
 

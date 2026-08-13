@@ -17,7 +17,11 @@ namespace Task_U.Core.Combat
         private TurnoInimigo turnoInimigo = new TurnoInimigo();
         public void Combate(User user, InventarioServices inventario, InimigoBase inimigo, List<PersonagemBase> equipe, AppDbContext context, AdventureService adventure)
         {
-            combateUI.Chamada(inimigo);
+            ConsoleKeyInfo escolha = combateUI.Chamada(inimigo);
+            if (escolha.KeyChar != '1')
+            {
+                return;
+            }
             inimigo.HpAtual = inimigo.HpMax;
             foreach (var personagem in equipe)
             {
@@ -29,27 +33,66 @@ namespace Task_U.Core.Combat
 
             }
             int turnoAtual = 1;
+            inimigo.BuffAtk = 0;
+            inimigo.BuffMod = 0;
+            inimigo.debuffRes = 1;
+            inimigo.BuffSpeed = 0;
+            foreach (var personagem in equipe.Where(x => x.HpAtual > 0))
+            {
+                personagem.VerificarNodes(context);
+                personagem.BuffAtk = 0;
+                personagem.BuffMod = 0;
+                personagem.BuffSpeed = 0;
+                personagem.debuffRes = 1;
+                personagem.inimigoAlvo = inimigo;
+            }
+
+            double tempoAcumulado = 0;
+            double tempoLimite = 100;
+
             while (equipe.Any(x => x.HpAtual > 0) && inimigo.HpAtual > 0)
             {
-                inimigo.BuffAtk = 0;
-                foreach (var personagem in equipe.Where(x => x.HpAtual > 0))
-                {
-                    personagem.BuffAtk = 0;
-                    personagem.BuffMod = 0;
-                    personagem.inimigoAlvo = inimigo;
-                }
 
-                foreach (var personagem in equipe.Where(x => x.HpAtual > 0))
+                var menorAvPlayer = equipe.Where(x => x.HpAtual > 0).OrderBy(x => x.AvAtual).FirstOrDefault();
+                if (menorAvPlayer != null && menorAvPlayer.AvAtual <= inimigo.AvAtual)
                 {
-                    turnoJogador.turno(combateUI, equipe, personagem, inimigo, turnoAtual, inventario, context);
+                    foreach (var personagem in equipe.Where(x => x.HpAtual > 0 && x.Name != menorAvPlayer.Name))
+                    {
+                        personagem.AvAtual = Math.Max(0, personagem.AvAtual - menorAvPlayer.AvAtual);
+                    }
+                    inimigo.AvAtual -= menorAvPlayer.AvAtual;
+                    tempoAcumulado += menorAvPlayer.AvAtual;
+                    menorAvPlayer.AvAtual = 10000 / menorAvPlayer.SpeedTotal();
+                    turnoJogador.turno(combateUI, equipe, menorAvPlayer, inimigo, turnoAtual, inventario, context);
                 }
-
-                if (inimigo.HpAtual > 0 && equipe.Any(p => p.HpAtual > 0))
+                else
                 {
+                    foreach (var personagem in equipe.Where(x => x.HpAtual > 0 && x.Name != inimigo.Name))
+                    {
+                        personagem.AvAtual = Math.Max(0, personagem.AvAtual - inimigo.AvAtual);
+                    }
+                    tempoAcumulado += inimigo.AvAtual;
+                    inimigo.AvAtual = 10000 / inimigo.SpeedTotal();
                     turnoInimigo.turno(combateUI, equipe, inimigo, turnoAtual, user);
                 }
 
-                turnoAtual++;
+                if (tempoAcumulado >= tempoLimite)
+                {
+                    inimigo.BuffAtk = 0;
+                    inimigo.BuffMod = 0;
+                    inimigo.BuffSpeed = 0;
+                    inimigo.debuffRes = 1;
+                    foreach (var personagem in equipe.Where(x => x.HpAtual > 0))
+                    {
+                        personagem.BuffAtk = 0;
+                        personagem.BuffMod = 0;
+                        personagem.BuffSpeed = 0;
+                        personagem.debuffRes = 1;
+                        personagem.inimigoAlvo = inimigo;
+                    }
+                    tempoAcumulado = 0;
+                    turnoAtual++;
+                }
             }
 
             if (inimigo.HpAtual <= 0)
@@ -63,22 +106,34 @@ namespace Task_U.Core.Combat
                 {
                     item = context.Itens.Find(inimigo.ItemDropId);
                     var reward = new ItemInventario();
-                    if(item != null)
+                    if (item != null)
                     {
                         reward.ItemId = item.Id;
                         reward.UserId = user.Id;
-                        context.InventarioItens.Add(reward); 
+                        context.InventarioItens.Add(reward);
                     }
                 }
                 combateUI.Vitoria(inimigo, item);
                 user.DerrotouInimigo = true;
                 adventure.AtualizarInimigo(context);
                 context.SaveChanges();
-            } else
+            }
+            else
             {
                 combateUI.Derrota(inimigo);
             }
-            
+
+            foreach (var personagem in equipe)
+            {
+                personagem.Resetar();
+                Item? item = personagem.itemEquipado();
+                if (item != null)
+                {
+                    item.Resetar();
+                }
+            }
+            inimigo.Resetar();
+
         }
     }
 }

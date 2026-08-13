@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Task_U.Core.StatusEffects;
 
 namespace Task_U.Core
 {
@@ -9,6 +10,8 @@ namespace Task_U.Core
     {
         private static readonly Random random = new Random();
         private int Analise;
+        private int coolDown;
+        private bool stunou;
 
         public override void tomarDano(string inimigo, int dano)
         {
@@ -33,7 +36,16 @@ namespace Task_U.Core
         }
         public override int Damage()
         {
-            Analise = Math.Min(10, Analise + 1);
+            if (inimigoAlvo != null && inimigoAlvo.status.OfType<Stun>().FirstOrDefault() == null)
+            {
+                Analise = Math.Min(10, Analise + 1);
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Blue;
+                Console.WriteLine($"> {Name}: Não consigo analisar um alvo incapacitado.");
+                Console.ResetColor();
+            }
             if (Analise == 10 && inimigoAlvo != null)
             {
                 Console.ForegroundColor = ConsoleColor.Blue;
@@ -49,10 +61,28 @@ namespace Task_U.Core
                     Console.WriteLine($"> {aliado.Name}: Eu... Não tava falando dele...");
                 }
                 Console.ResetColor();
-                inimigoAlvo.TurnoStun += 2;
-                inimigoAlvo.TurnoSilence += 4;
-                Console.WriteLine($"> {inimigoAlvo.Name} está atordoado por 2 turnos.");
-                Console.WriteLine($"> {inimigoAlvo.Name} está silenciado por 4 turnos.");
+                var stunExistente = inimigoAlvo.status.OfType<Stun>().FirstOrDefault();
+                if (stunExistente == null && stunou == false)
+                {
+                    inimigoAlvo.status.Add(new Stun("Stun", 1));
+                    stunou = true;
+                }
+                else if(stunExistente != null)
+                {
+                    stunExistente.Duration = 1;
+                    stunou = true;
+                }
+                var silenceEsistente = inimigoAlvo.status.OfType<Silence>().FirstOrDefault();
+                if (silenceEsistente == null)
+                {
+                    inimigoAlvo.status.Add(new Silence("Silence", 2));
+                }
+                else
+                {
+                    silenceEsistente.Duration = 2;
+                }
+                Console.WriteLine($"> {inimigoAlvo.Name} está atordoado por 1 turnos.");
+                Console.WriteLine($"> {inimigoAlvo.Name} está silenciado por 2 turnos.");
                 int danoFinal = AtkTotal() + Analise * 2 + inimigoAlvo.HpMax / 10;
                 Analise = 0;
                 Console.WriteLine($"> {Name} precisará recomçar sua análise.");
@@ -64,7 +94,7 @@ namespace Task_U.Core
         public override void Habilidade()
         {
             int chance = random.Next(0, 100);
-            if (chance < 10 + (Analise * 10) - 10)
+            if (chance < Analise * 10)
             {
                 if (Analise <= 5 && inimigoAlvo != null)
                 {
@@ -73,16 +103,43 @@ namespace Task_U.Core
                     Console.WriteLine($"> {Name}: Um resultado satisfatório.");
                     Console.ResetColor();
                     Console.WriteLine($"> {inimigoAlvo.Name} está silênciado por 2 turnos.");
-                    inimigoAlvo.TurnoSilence += 2;
+                    var silenceEsistente = inimigoAlvo.status.OfType<Silence>().FirstOrDefault();
+                    if (silenceEsistente == null)
+                    {
+                        inimigoAlvo.status.Add(new Silence("Silence", 2));
+                    }
+                    else
+                    {
+                        silenceEsistente.Duration = 2;
+                    }
                 }
                 else if (Analise > 5 && inimigoAlvo != null && aliado != null)
                 {
-                    Console.ForegroundColor = ConsoleColor.Blue;
-                    Console.WriteLine($"> [ALGEMAS DE SUPRESSÃO] {Name} atira algemas feitas de uma energia eletromagnética que imobiliza o alvo!");
-                    Console.WriteLine($"> {Name}: Considere-se preso!");
-                    Console.ResetColor();
-                    Console.WriteLine($"> {inimigoAlvo.Name} está atordoado por 2 turnos.");
-                    inimigoAlvo.TurnoStun += 2;
+                    var stunExistente = inimigoAlvo.status.OfType<Stun>().FirstOrDefault();
+                    if (stunExistente == null && stunou == false)
+                    {
+                        Console.WriteLine($"> [ALGEMAS DE SUPRESSÃO] {Name} atira algemas feitas de uma energia eletromagnética que imobiliza o alvo!");
+                        Console.WriteLine($"> {Name}: Considere-se preso!");
+                        Console.ResetColor();
+                        inimigoAlvo.status.Add(new Stun("Stun", 2));
+                        Console.WriteLine($"> {inimigoAlvo.Name} está atordoado por 2 turnos.");
+                        stunou = true;
+                    }
+                    else if (stunExistente != null)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Blue;
+                        Console.WriteLine($"O alvo já está imóvel!");
+                        Console.WriteLine($"> {Name}: Não posso prender o que já está preso...");
+                        Console.ResetColor();
+                    }
+                    else
+                    {
+                        Console.ForegroundColor = ConsoleColor.Blue;
+                        Console.WriteLine($"As algemas ainda estão recarregando");
+                        Console.WriteLine($"> {Name}: Preciso de energia para prender novamente...");
+                        Console.ResetColor();
+                    }
+
                     aliado.BuffAtk += 2 * Mod;
                     Console.ForegroundColor = ConsoleColor.Blue;
                     Console.WriteLine($"> [ENCORAJAMENTO] {Name} explica os pontos fracos do inimigo.");
@@ -144,8 +201,8 @@ namespace Task_U.Core
                     Console.WriteLine($"> {aliado.Name}: AH TÁ!");
                 }
                 Console.ResetColor();
-                Console.WriteLine($"> {inimigoAlvo.Name} agora dá -{Analise} de dano em ataques.");
-                inimigoAlvo.BuffAtk -= Analise;
+                Console.WriteLine($"> {inimigoAlvo.Name} agora dá -{inimigoAlvo.Atk *  Analise / 10} de dano em ataques.");
+                inimigoAlvo.BuffAtk -= inimigoAlvo.Atk/2 *  Analise / 10;
             }
             else if (inimigoAlvo != null && Analise < 5)
             {
@@ -155,14 +212,35 @@ namespace Task_U.Core
                 Console.ResetColor();
                 Analise++;
             }
-            if (inimigoAlvo != null && (inimigoAlvo.TurnoSilence > 0 || inimigoAlvo.TurnoStun > 0))
+            if (inimigoAlvo != null)
             {
-                Console.ForegroundColor = ConsoleColor.Blue;
-                Console.WriteLine($"> [PASSIVA] {Name} sabe onde atacar com o inimigo incapacitado.");
-                Console.WriteLine($"> {Name}: Uso de força autorizado.");
-                Console.ResetColor();
-                BuffAtk = inimigoAlvo.HpMax / 20;
+                var stunExistente = inimigoAlvo.status.OfType<Stun>().FirstOrDefault();
+                var silenceExistente = inimigoAlvo.status.OfType<Silence>().FirstOrDefault();
+                if (silenceExistente != null && silenceExistente.Duration > 0 || stunExistente != null && stunExistente.Duration > 0)
+                {
+                    Console.ForegroundColor = ConsoleColor.Blue;
+                    Console.WriteLine($"> [PASSIVA] {Name} sabe onde atacar com o inimigo incapacitado.");
+                    Console.WriteLine($"> {Name}: Uso de força autorizado.");
+                    Console.ResetColor();
+                    BuffAtk = inimigoAlvo.HpMax / 20;
+                }
             }
+
+            if (stunou == true && coolDown < 1)
+            {
+                coolDown += 1;
+            } else if(stunou == true && coolDown >= 2)
+            {
+                stunou = false;
+            }
+        }
+
+        public override void Resetar()
+        {
+            Analise = 0;
+            coolDown = 0;
+            stunou = false;
+            base.Resetar();
         }
     }
 }

@@ -95,5 +95,15 @@ namespace Task_U.Core
                 Console.ResetColor();
             }
         }
+        public override void Resetar()
+        { 
+            VoodoLife = 0;
+            VoodoDmg = 0;
+            VoodoDone = false;
+            Chances = 0;
+            VoodoReady = false;
+            calculou = false;
+            base.Resetar();
+        }
     }
 }

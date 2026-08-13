@@ -55,59 +55,115 @@ namespace Task_U.Services
                     }
                     var escolha = Console.ReadLine();
                     var escolhaInt = 0;
-                    if (!int.TryParse(escolha, out escolhaInt) || escolhaInt < 0 || escolhaInt > listaPersonagens.Count())
+                    if (!int.TryParse(escolha, out escolhaInt) || escolhaInt <= 0 || escolhaInt > listaPersonagens.Count())
                     {
                         Console.WriteLine(" >> Seleção cancelada ou inválida.");
                         return;
                     }
                     var personagemEscolhido = listaPersonagens[escolhaInt - 1];
+                    int indicePonto = personagemEscolhido.Desc.IndexOf(".");
+                    string resumoBio = personagemEscolhido.Desc.Substring(0, indicePonto + 1);
+
+                    string siglaRaridade = personagemEscolhido.Rarity switch
+                    {
+                        4 => "SSR",
+                        3 => "SR",
+                        _ => "SR"
+                    };
+                    string textoEsquerda = $" │ SELECIONADO: {personagemEscolhido.Name.ToUpper()}";
+                    string textoDireita = $"[{siglaRaridade}] │";
+                    int espacosNoMeio = 61 - textoEsquerda.Length - textoDireita.Length;
+                    string linhaTitulo = textoEsquerda + new string(' ', espacosNoMeio) + textoDireita;
+
                     Console.Clear();
                     Console.ForegroundColor = ConsoleColor.Cyan;
                     Console.WriteLine(" ┌──────────────────────────────────────────────────────────┐");
-                    Console.WriteLine($" │ SELECIONADO: {personagemEscolhido.Name.ToUpper().PadRight(44)}│");
+                    Console.WriteLine(linhaTitulo);
                     Console.WriteLine(" └──────────────────────────────────────────────────────────┘");
-                    Console.WriteLine($"[{personagemEscolhido.Desc}]");
+                    Console.WriteLine($"'[{resumoBio}]'");
                     Console.WriteLine($"────────────");
+                    Console.WriteLine("\n  STATUS DE COMBATE");
+                    Console.ForegroundColor = ConsoleColor.DarkGray;
+                    Console.WriteLine("  ┌──────────────────────────────────────────────────────────┐");
+
+                    string col1 = $"  VITALIDADE (HP): {personagemEscolhido.HpMax}".PadRight(29);
+                    string col2 = $"  ATAQUE (ATK):    {personagemEscolhido.Atk}".PadRight(29);
+                    string col3 = $"  VELOCIDADE (SPD):{personagemEscolhido.Speed}".PadRight(29);
+                    string col4 = $"  MODIFICADOR:     {personagemEscolhido.Mod}".PadRight(29);
+
+                    Console.Write("  │");
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.Write(col1);
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.Write(col2);
+                    Console.ForegroundColor = ConsoleColor.DarkGray;
+                    Console.WriteLine("│");
+                    Console.Write("  │");
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    Console.Write(col3);
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.Write(col4);
+                    Console.ForegroundColor = ConsoleColor.DarkGray;
+                    Console.WriteLine("│");
+                    Console.ForegroundColor = ConsoleColor.DarkGray;
+                    Console.WriteLine("  └──────────────────────────────────────────────────────────┘");
+                    Console.ResetColor();
+
+                    int indiceCol = personagemEscolhido.Desc.IndexOf("[");
+                    string skills = personagemEscolhido.Desc.Substring(indiceCol);
+
+                    Console.WriteLine($"────────────");
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    Console.WriteLine("\n  HABILIDADES");
+                    Console.ResetColor();
+                    Console.WriteLine();
+                    Console.WriteLine(skills);
+                    Console.ResetColor();
+                    Console.WriteLine();
                     Console.WriteLine("Confirma essa escolha?");
-                    Console.WriteLine("[1] Equipar no Slot 1| [2] - Equipar no Slot 2 |  [Qualquer Tecla] Para voltar");
+                    Console.WriteLine("[1] Equipar no Slot 1| [2] - Equipar no Slot 2 | [3] - Ler biografia | [Qualquer Tecla] Para voltar");
                     escolha = Console.ReadLine();
-                    if (escolha == "1")
+                    switch (escolha)
                     {
-                        if (personagemEscolhido.Id == user.Slot2_PersonagemAtivoId)
-                        {
-                            Console.WriteLine("Este personagem já está no Slot 2!");
-                            Console.ReadKey();
-                            return;
-                        }
-                        else
-                        {
-                            user.Slot1_PersonagemAtivo = personagemEscolhido;
-                            user.Slot1_PersonagemAtivoId = personagemEscolhido.Id;
-                            context.SaveChanges();
-                        }
+                        case "1":
+                            if (personagemEscolhido.Id == user.Slot2_PersonagemAtivoId)
+                            {
+                                Console.WriteLine("Este personagem já está no Slot 2!");
+                                Console.ReadKey();
+                            }
+                            else
+                            {
+                                user.Slot1_PersonagemAtivo = personagemEscolhido;
+                                user.Slot1_PersonagemAtivoId = personagemEscolhido.Id;
+                                context.SaveChanges();
+                                Console.WriteLine(" >> Personagem equipado no Slot 1 com sucesso!");
+                                Console.ReadKey();
+                            }
+                            break;
 
-                    }
-                    if (escolha == "2")
-                    {
-                        if (personagemEscolhido.Id == user.Slot1_PersonagemAtivoId)
-                        {
-                            Console.WriteLine("Este personagem já está no Slot 1!");
-                            Console.ReadKey();
-                            return;
-                        }
-                        else
-                        {
-                            user.Slot2_PersonagemAtivo = personagemEscolhido;
-                            user.Slot2_PersonagemAtivoId = personagemEscolhido.Id;
-                            context.SaveChanges();
-                        }
+                        case "2":
+                            if (personagemEscolhido.Id == user.Slot1_PersonagemAtivoId)
+                            {
+                                Console.WriteLine("Este personagem já está no Slot 1!");
+                                Console.ReadKey();
+                            }
+                            else
+                            {
+                                user.Slot2_PersonagemAtivo = personagemEscolhido;
+                                user.Slot2_PersonagemAtivoId = personagemEscolhido.Id;
+                                context.SaveChanges();
+                                Console.WriteLine(" >> Personagem equipado no Slot 2 com sucesso!");
+                                Console.ReadKey();
+                            }
+                            break;
 
-                    }
-                    else
-                    {
-                        return;
-                    }
+                        case "3":
+                            mostrarBio(personagemEscolhido);
+                            break;
 
+                        default:
+                            return; 
+                    }
                     break;
 
                 default:
@@ -152,7 +208,6 @@ namespace Task_U.Services
                 contador++;
             }
             Console.WriteLine(" ─────────────────────────────────────────────────────────────");
-            contador++;
         }
 
 
@@ -296,6 +351,26 @@ namespace Task_U.Services
                 }
             }
 
+        }
+
+        public void mostrarBio(PersonagemBase personagem)
+        {
+            string textoEsquerda = $" │ BIOGRAFIA DE {personagem.Name.ToUpper()}";
+            string textoDireita = $"│";
+            int espacosNoMeio = 61 - textoEsquerda.Length - textoDireita.Length;
+            string linhaTitulo = textoEsquerda + new string(' ', espacosNoMeio) + textoDireita;
+
+            int indexCol = personagem.Desc.IndexOf("[");
+            string resumoBio = personagem.Desc.Substring(0, indexCol);
+            Console.Clear();
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.WriteLine(" ┌──────────────────────────────────────────────────────────┐");
+            Console.WriteLine(linhaTitulo);
+            Console.WriteLine(" └──────────────────────────────────────────────────────────┘");
+            Console.WriteLine($"'{resumoBio}'");
+            Console.WriteLine($"────────────");
+            Console.WriteLine($"Pressione qualquer tecla para retornar...");
+            Console.ReadKey();
         }
     }
 }

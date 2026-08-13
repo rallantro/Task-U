@@ -12,13 +12,6 @@ namespace Task_U.Core.Combat
 
         public void turno(CombateUI combateUI, List<PersonagemBase> equipe, PersonagemBase personagem, InimigoBase inimigo, int x, InventarioServices inventario, AppDbContext context)
         {
-            if (personagem.TurnoStun > 0)
-            {
-                combateUI.ExibirMensagem($"> {personagem.Name} está atordoado e não pode agir!", ConsoleColor.Red);
-                combateUI.AguardarTecla();
-                personagem.TurnoStun--;
-                return;
-            }
 
             if (inimigo.HpAtual <= 0)
             {
@@ -28,8 +21,27 @@ namespace Task_U.Core.Combat
             {
                 return;
             }
-            combateUI.Cabecalho(equipe, inimigo, x);
+            combateUI.Cabecalho(equipe, inimigo, x, personagem.Name);
             personagem.Passiva();
+            personagem.aplicarEfeitos();
+            Item? item = personagem.itemEquipado();
+            if(item != null)
+            {
+                item.Effect(personagem);  
+            } 
+            if (personagem.HpAtual <= 0)
+            {
+                return;
+            }
+            
+            if (personagem.Stuneed)
+            {
+                combateUI.ExibirMensagem($"> {personagem.Name} está atordoado e não pode agir!", ConsoleColor.Red);
+                combateUI.AguardarTecla();
+                personagem.Stuneed = false;
+                return;
+            }
+
             combateUI.AguardarTecla();
             bool Atacou = false;
             bool UsouHabilidade = false;
@@ -41,12 +53,16 @@ namespace Task_U.Core.Combat
 
             while (MenuShow)
             {
-                combateUI.Cabecalho(equipe, inimigo, x);
+                combateUI.Cabecalho(equipe, inimigo, x, personagem.Name);
                 combateUI.ExibirAcoes(personagem, Atacou, UsouHabilidade, UsouItem);
                 switch (combateUI.EscolhaJogador(1, 4))
                 {
                     case 1:
-                        if (!Atacou)
+                        if (personagem.Blinded)
+                        {
+                            combateUI.ExibirMensagem($"> {personagem.Name}  foi cegado e não consegue realizar seu ataque!", ConsoleColor.Red);
+                        }
+                        else if (!Atacou)
                         {
                             int dano = personagem.Damage();
                             inimigo.tomarDano(personagem, dano);
@@ -55,14 +71,14 @@ namespace Task_U.Core.Combat
                         combateUI.AguardarTecla();
                         break;
                     case 2:
-                        if (personagem.TurnoSilence > 0)
+                        if (personagem.Silenced)
                         {
                             combateUI.ExibirMensagem($"> {personagem.Name} está silenciado e não pode usar habilidades!", ConsoleColor.Red);
-                            combateUI.AguardarTecla();
                         }
                         else if (!UsouHabilidade)
                         {
                             personagem.Habilidade();
+                            inimigo.aoUsarSkill(personagem);
                             UsouHabilidade = true;
                         }
                         combateUI.AguardarTecla();
@@ -80,13 +96,14 @@ namespace Task_U.Core.Combat
                 }
 
             }
-            personagem.TurnoSilence = Math.Max(0, personagem.TurnoSilence - 1);
+            personagem.Silenced = false;
+            personagem.Blinded = false;
         }
 
         public bool escolherItem(CombateUI combateUI, List<PersonagemBase> equipe, PersonagemBase personagem, InimigoBase inimigo, int x, InventarioServices inventario, AppDbContext context)
         {
             Console.Clear();
-            combateUI.Cabecalho(equipe, inimigo, x);
+            combateUI.Cabecalho(equipe, inimigo, x, personagem.Name);
             var consumiveis = new List<Item>();
             int contador = 1;
 

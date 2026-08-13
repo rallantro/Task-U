@@ -8,81 +8,135 @@ using Task_U.Services;
 using Task_U.Models;
 using Task_U.Data;
 using Task_U.Migrations;
+using Task_U.Core.StatusEffects;
 
 namespace Task_U.Core
 {
     public class PersonagemBase
     {
         public int Id { get; set; }
-        public required string Name {get; set;}
-        public required string Desc {get; set;}
-        public int Rarity {get; set;}
-        public int Atk {get; set;}
-        public int HpMax {get; set;}
+        public required string Name { get; set; }
+        public required string Desc { get; set; }
+        public int Rarity { get; set; }
+        public int Atk { get; set; }
+        public int HpMax { get; set; }
+
+        public int Speed {get; set;}
+
+        [NotMapped]
+        public double AvAtual {get; set;}
 
         private int _HpAtual;
-        
-        [NotMapped]
-        public int chanceAlvo {get; set;}
 
         [NotMapped]
-        public InimigoBase? inimigoAlvo {get; set;}
+        public int chanceAlvo { get; set; }
 
         [NotMapped]
-        public virtual int HpAtual {get { return _HpAtual; } set { _HpAtual = Math.Max(0, Math.Min(value, HpMax));}}
-        [NotMapped]
-        public int Shield {get; set;}
-        [NotMapped]
-        public int BuffAtk {get; set;}
+        public List<StatusEffect> status { get; set; } = new();
 
         [NotMapped]
-        public int BuffMod {get; set;}
+        public InimigoBase? inimigoAlvo { get; set; }
 
         [NotMapped]
-        public int TurnoStun {get; set;} =0;
+        public virtual int HpAtual { get { return _HpAtual; } set { _HpAtual = Math.Max(0, Math.Min(value, HpMax)); } }
+        [NotMapped]
+        public int Shield { get; set; }
+        [NotMapped]
+        public int BuffAtk { get; set; }
 
         [NotMapped]
-        public int TurnoSilence {get; set;} =0;
-        public int Mod {get; set;}
+        public int BuffMod { get; set; }
 
         [NotMapped]
-        public User? user {get; set;}
+        public int BuffSpeed { get; set; }
 
         [NotMapped]
-        public PersonagemBase? aliado {get; set;}
+        public int Nodes { get; set; }
+
+        [NotMapped]
+        public double debuffRes { get; set; } = 1;
+
+        [NotMapped]
+        public bool Stuneed { get; set; }
+
+        [NotMapped]
+        public bool Silenced { get; set; }
+
+        [NotMapped]
+        public bool Blinded { get; set; }
+
+        public int Mod { get; set; }
+
+        [NotMapped]
+        public User? user { get; set; }
+
+        [NotMapped]
+        public PersonagemBase? aliado { get; set; }
 
         public required string SummonQuote { get; set; }
 
-        public int ModTotal() {
-            Item? itemEquipado = null;
-
-            if(this == user?.Slot1_PersonagemAtivo) itemEquipado = user.Slot1_ItemAtivo;
-            else if(this == user?.Slot2_PersonagemAtivo) itemEquipado = user.Slot2_ItemAtivo;
-
-            if (itemEquipado != null && itemEquipado.Atr == 3)
-            {
-                return Math.Max(0,Mod + BuffMod + itemEquipado.Mod);
-            }
-            else
-            {
-                return Math.Max(0,Mod + BuffMod);   
-            }
-            
+        public void VerificarNodes(AppDbContext context)
+        {
+            var inventario = context.InventarioPersonagens.FirstOrDefault(x => x.PersonagemId == Id);
+            Nodes = inventario?.NodesNivel ?? 0;
         }
 
-        public int AtkTotal(){
-            Item? itemEquipado = null;
-
-            if(this == user?.Slot1_PersonagemAtivo) itemEquipado = user.Slot1_ItemAtivo;
-            else if(this == user?.Slot2_PersonagemAtivo) itemEquipado = user.Slot2_ItemAtivo;
-
-            if (itemEquipado != null && itemEquipado.Atr == 2)
+        public virtual void aplicarEfeitos()
+        {
+            foreach (var effect in status.ToList())
             {
-                return Math.Max(0,Mod + BuffAtk + itemEquipado.Mod);
+                effect.Aplicar(this);
+                if (effect.Duration == 0)
+                {
+                    status.Remove(effect);
+                }
+            }
+        }
+
+        public Item? itemEquipado()
+        {
+            if (this == user?.Slot1_PersonagemAtivo) return user.Slot1_ItemAtivo;
+            else if (this == user?.Slot2_PersonagemAtivo) return user.Slot2_ItemAtivo;
+            else return null;
+        }
+
+        public int ModTotal()
+        {
+            Item? item = itemEquipado();
+            if (item != null && item.Atr == 3)
+            {
+                return Math.Max(0, Mod + BuffMod + item.Mod);
             }
             else
             {
-                return Math.Max(0,Mod + BuffAtk);   
+                return Math.Max(0, Mod + BuffMod);
+            }
+
+        }
+
+        public int SpeedTotal()
+        {
+            Item? item = itemEquipado();
+            if (item != null && item.Atr == 4)
+            {
+                return Math.Max(1, Speed + BuffSpeed + item.Mod);
+            }
+            else
+            {
+                return Math.Max(1, Speed + BuffSpeed);
+            }
+        }
+
+        public int AtkTotal()
+        {
+            Item? item = itemEquipado();
+            if (item != null && item.Atr == 2)
+            {
+                return Math.Max(0, Atk + BuffAtk + item.Mod);
+            }
+            else
+            {
+                return Math.Max(0, Atk + BuffAtk);
             }
         }
 
@@ -93,8 +147,8 @@ namespace Task_U.Core
 
         public virtual void tomarDano(string inimigo, int dano)
         {
-            int danoTotal = Math.Max(0, dano - Shield);
-            int danoShield = Math.Min(Shield, dano);
+            int danoTotal = Math.Max(0, (int)Math.Ceiling(dano * debuffRes)  - Shield);
+            int danoShield = Math.Min(Shield, (int)Math.Ceiling(dano * debuffRes));
             Shield -= danoShield;
             HpAtual = Math.Max(0, HpAtual -= danoTotal);
             if (danoShield > 0 && danoTotal == 0)
@@ -109,17 +163,32 @@ namespace Task_U.Core
 
         public virtual void curar(string aliado, int cura)
         {
-            HpAtual = Math.Min(HpAtual + cura, HpMax);;
+            HpAtual = Math.Min(HpAtual + cura, HpMax); ;
         }
 
         public virtual void Habilidade()
         {
-                
+
         }
 
         public virtual void Passiva()
         {
-            
+
+        }
+
+        public virtual void Resetar()
+        {
+            BuffAtk = 0;
+            Silenced = false;
+            Stuneed = false;
+            Blinded = false;
+            Shield = 0;
+            BuffAtk = 0;
+            BuffMod = 0;
+            chanceAlvo = 50;
+            inimigoAlvo = null;
+            aliado = null;
+            status.Clear();
         }
     }
 }

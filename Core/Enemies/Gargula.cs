@@ -68,5 +68,11 @@ namespace Task_U.Core
                 reducao = Mod * 2;
             }
         }
+
+        public override void Resetar()
+        {
+            reducao = 0;
+            base.Resetar();
+        }
     }
 }

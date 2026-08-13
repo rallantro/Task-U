@@ -11,7 +11,7 @@ namespace Task_U.Core
         public override void Habilidade()
         {
             int useSkill = rand.Next(1, 101);
-            int vezes = rand.Next(2,Mod);
+            int vezes = rand.Next(2,5);
             if (useSkill > HabilidadeChance)
             {
                 Console.ForegroundColor = ConsoleColor.DarkBlue;
@@ -19,8 +19,7 @@ namespace Task_U.Core
                 Console.ResetColor();
                 for (int i = 0; i < vezes; i++)
                 {
-                    int chance = rand.Next(0, alvos.Count());
-                    PersonagemBase alvo = alvos[chance];
+                    PersonagemBase alvo = EscolherAlvo();
                     alvo.tomarDano(Name, Atk);
                 }
                 

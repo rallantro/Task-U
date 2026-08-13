@@ -22,19 +22,20 @@ namespace Task_U.Core
         public int Type {get; set;} //Tipo 1 é Consumível, Tipo 2 é de Modificador
         public int Atr {get; set;} //Define qual atributo fará o que. 1 - Hp, 2 - Atk, 3 - Mod
         public int Mod {get; set;}
+        public bool exclLoja { get; set;}
 
-        public virtual void Effect(){
+        public virtual void Effect(PersonagemBase personagem){
 
         }
 
-        public void Uso(PersonagemBase Usuario, AppDbContext context){
+        public virtual void Uso(PersonagemBase Usuario, AppDbContext context){
             if (Type == (int)ItemType.Consumivel)
             {
                 if(Atr == (int)Atributo.Hp)
                 {
                     Console.WriteLine($"{Usuario.Name} recuperou {Mod} pontos de vida!");
                     Usuario.curar(Name, Mod);
-                    var itemInv = context.InventarioItens.Where(x => x.ItemId == this.Id).FirstOrDefault();
+                    var itemInv = context.InventarioItens.Where(x => x.ItemId == Id).FirstOrDefault();
                     if(itemInv != null) context.InventarioItens.Remove(itemInv);
                     context.SaveChanges();
                 }
@@ -42,11 +43,16 @@ namespace Task_U.Core
                 {
                     Console.WriteLine($"{Usuario.Name} recebeu + {Mod} temporário!");
                     Usuario.BuffMod += Mod;
-                    var itemInv = context.InventarioItens.Where(x => x.ItemId == this.Id).FirstOrDefault();
+                    var itemInv = context.InventarioItens.Where(x => x.ItemId == Id).FirstOrDefault();
                     if(itemInv != null) context.InventarioItens.Remove(itemInv);
                     context.SaveChanges();   
                 }
             }
+        }
+
+        public virtual void Resetar()
+        {
+            
         }
     }
 }

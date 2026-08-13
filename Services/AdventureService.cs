@@ -23,7 +23,7 @@ namespace Task_U.Services
             {
                 var Sorte = rand.Next(0,100);
                 int Rarity = 1;
-                if (Sorte <= 4)
+                if (Sorte <= 10)
                 {
                     Rarity = 4;
                 } else if (Sorte <= 20)

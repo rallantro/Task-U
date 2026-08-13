@@ -16,8 +16,7 @@ namespace Task_U.Core
                 Console.ForegroundColor = ConsoleColor.DarkGreen;
                 Console.WriteLine($"> [CURTO-CIRCUITO!] {Name} causa um ataque elétrico com dano adicional!!");
                 Console.ResetColor();
-                int chance = rand.Next(0, alvos.Count());
-                PersonagemBase alvo = alvos[chance];
+                PersonagemBase alvo = EscolherAlvo();
                 alvo.tomarDano(Name, Mod);
             }
         }
@@ -33,6 +32,6 @@ namespace Task_U.Core
                 Console.ResetColor();
             }
         }
-        
+
     }
 }

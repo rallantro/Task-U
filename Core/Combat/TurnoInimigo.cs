@@ -14,17 +14,19 @@ namespace Task_U.Core.Combat
         private Random rand = new Random();
         public void turno(CombateUI combateUI, List<PersonagemBase> equipe, InimigoBase inimigo, int x, User user)
         {
-            combateUI.Cabecalho(equipe, inimigo, x);
+            combateUI.Cabecalho(equipe, inimigo, x, inimigo.Name);
 
-            if (inimigo.TurnoStun > 0)
+
+            inimigo.aplicarEfeitos();
+
+
+            if (inimigo.Stuneed)
             {
                 combateUI.ExibirMensagem($"> {inimigo.Name} está atordoado e não pode agir!", ConsoleColor.Red);
                 combateUI.AguardarTecla();
-                inimigo.TurnoStun--;
+                inimigo.Stuneed = false;
                 return;
             }
-
-            combateUI.TurnoInimigo(inimigo);
 
             inimigo.Passiva(user);
             var vivos = equipe.Where(p => p.HpAtual > 0).ToList();
@@ -32,8 +34,11 @@ namespace Task_U.Core.Combat
             {
                 return;
             }
+
+            combateUI.TurnoInimigo(inimigo);
+  
             inimigo.alvos = vivos;
-            if (inimigo.TurnoSilence > 0)
+            if (inimigo.Silenced)
             {
                 combateUI.ExibirMensagem($"> {inimigo.Name} está silenciado e não pode usar suas habilidades!", ConsoleColor.Yellow);
                 combateUI.AguardarTecla();
@@ -50,22 +55,11 @@ namespace Task_U.Core.Combat
             {
                 chanceTotal += personagem.chanceAlvo;
             }
-            int chance = rand.Next(0, chanceTotal);
-            PersonagemBase alvo = vivos.FirstOrDefault();
-            foreach (var personagem in vivos)
-            {
-                if (chance < personagem.chanceAlvo)
-                {
-                    alvo = personagem;
-                    break;
-
-                }
-                chance -= personagem.chanceAlvo;
-            }
+            PersonagemBase alvo = inimigo.EscolherAlvo();
             alvo.tomarDano(inimigo.Name, danoInimigo);
             combateUI.ExibirMensagem("\n [ Pressione qualquer tecla para o próximo turno...] ", ConsoleColor.White);
+            inimigo.Silenced = false;
             combateUI.AguardarTecla();
-            inimigo.TurnoSilence = Math.Max(0, inimigo.TurnoSilence-1);
         }
     }
 }

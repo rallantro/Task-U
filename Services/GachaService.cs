@@ -1,4 +1,4 @@
-#nullable disable
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -46,7 +46,7 @@ namespace Task_U.Models
             pityLeg++;
             pityEpic++;
 
-            int currentChance = (pityLeg >= 75) ? legChance + (5 * (pityLeg - 74)) : 10;
+            int currentChance = (pityLeg >= 75) ? legChance + (20 * (pityLeg - 74)) : 10;
 
             if (luckEvent)
             {
@@ -105,48 +105,9 @@ namespace Task_U.Models
                 Console.WriteLine("║" + new string(' ', (58 - t2.Length) / 2) + t2 + new string(' ', 58 - ((58 - t2.Length) / 2) - t2.Length) + "║");
                 Console.WriteLine("╚══════════════════════════════════════════════════════════╝");
                 Thread.Sleep(1000);
-
-                var ganhou = new PersonagemInventario();
-                var reward = banner.LegendPull(context);
-                ganhou.PersonagemId = reward.Id;
-                ganhou.UserId = 1;
-                context.InventarioPersonagens.Add(ganhou);
-
-                if (!string.IsNullOrEmpty(reward.SummonQuote))
-                {
-                    Console.ForegroundColor = ConsoleColor.White;
-                    Console.WriteLine("\n\n\n");
-                    string quote = $"\"{reward.SummonQuote}\"";
-                    int paddingQuote = (60 - quote.Length) / 2;
-
-                    if (paddingQuote > 0)
-                    {
-                        Console.WriteLine(new string(' ', paddingQuote) + quote);
-                    }
-                    else
-                    {
-                        Console.WriteLine("  " + quote);
-                    }
-
-                    Thread.Sleep(2000);
-                    Console.Clear();
-                }
-
-                Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.WriteLine("\n");
-                string nomeCentralizado = $"-- {reward.Name.ToUpper()} --";
-                Console.WriteLine(new string(' ', (60 - nomeCentralizado.Length) / 2) + nomeCentralizado);
-                string descricao = $"  \"{reward.Desc}\"";
-                Console.ForegroundColor = ConsoleColor.White;
-                foreach (char c in descricao)
-                {
-                    Console.Write(c);
-                    Thread.Sleep(10);
-                }
-                Console.WriteLine();
+                ganharPersonagem(user, context, banner, 4);
                 pityLeg = 0;
                 pityEpic = 0;
-                Console.ResetColor();
             }
             else if (number <= 60 || pityEpic == maxPityEpic)
             {
@@ -173,44 +134,7 @@ namespace Task_U.Models
                 Console.WriteLine("╚══════════════════════════════════════════════════════════╝");
                 Thread.Sleep(1000);
 
-                var ganhou = new PersonagemInventario();
-                var reward = banner.EpicPull(context);
-                ganhou.PersonagemId = reward.Id;
-                ganhou.UserId = 1;
-                context.InventarioPersonagens.Add(ganhou);
-
-                if (!string.IsNullOrEmpty(reward.SummonQuote))
-                {
-                    Console.ForegroundColor = ConsoleColor.White;
-                    Console.WriteLine("\n\n\n");
-                    string quote = $"\"{reward.SummonQuote}\"";
-                    int paddingQuote = (60 - quote.Length) / 2;
-
-                    if (paddingQuote > 0)
-                    {
-                        Console.WriteLine(new string(' ', paddingQuote) + quote);
-                    }
-                    else
-                    {
-                        Console.WriteLine("  " + quote);
-                    }
-
-                    Thread.Sleep(2000);
-                    Console.Clear();
-                }
-
-                Console.ForegroundColor = ConsoleColor.Magenta;
-                Console.WriteLine("\n");
-                string nomeCentralizado = $"-- {reward.Name.ToUpper()} --";
-                Console.WriteLine(new string(' ', (60 - nomeCentralizado.Length) / 2) + nomeCentralizado);
-                string descricao = $"  \"{reward.Desc}\"";
-                Console.ForegroundColor = ConsoleColor.White;
-                foreach (char c in descricao)
-                {
-                    Console.Write(c);
-                    Thread.Sleep(10);
-                }
-                Console.WriteLine();
+                ganharPersonagem(user, context, banner, 3);
                 pityEpic = 0;
             }
             else if (number <= 250)
@@ -223,7 +147,7 @@ namespace Task_U.Models
                     Console.Clear();
                     Console.WriteLine("\n\n\n");
                     Console.WriteLine(new string(' ', (60 - frame.Length) / 2) + frame);
-                    Thread.Sleep(200); 
+                    Thread.Sleep(200);
                 }
 
                 Console.Clear();
@@ -310,7 +234,113 @@ namespace Task_U.Models
             context.Users.Update(user);
 
             context.SaveChanges();
+            Console.ReadLine();
         }
+
+        private void ganharPersonagem(User user, AppDbContext context, BannerService banner, int rarity)
+        {
+            var ganhou = new PersonagemInventario();
+            var reward = rarity == 3 ? banner.EpicPull(context) : banner.LegendPull(context);
+            PersonagemInventario? old = context.InventarioPersonagens.FirstOrDefault(p => p.UserId == user.Id && p.PersonagemId == reward.Id);
+            if (old == null)
+            {
+                ganhou.PersonagemId = reward.Id;
+                ganhou.UserId = 1;
+                ganhou.Quantidade = 1;
+                context.InventarioPersonagens.Add(ganhou);
+                if (!string.IsNullOrEmpty(reward.SummonQuote))
+                {
+                    Console.ForegroundColor = ConsoleColor.White;
+                    Console.WriteLine("\n\n\n");
+                    string quote = $"\"{reward.SummonQuote}\"";
+                    int paddingQuote = (60 - quote.Length) / 2;
+
+                    if (paddingQuote > 0)
+                    {
+                        Console.WriteLine(new string(' ', paddingQuote) + quote);
+                    }
+                    else
+                    {
+                        Console.WriteLine("  " + quote);
+                    }
+
+                    Thread.Sleep(2000);
+                    Console.Clear();
+                }
+
+                Console.ForegroundColor = reward.Rarity == 3 ? ConsoleColor.Magenta : ConsoleColor.Yellow;
+                Console.WriteLine("\n");
+                string nomeCentralizado = $"-- {reward.Name.ToUpper()} --";
+                Console.WriteLine(new string(' ', (60 - nomeCentralizado.Length) / 2) + nomeCentralizado);
+                string descricao = $"  \"{reward.Desc}\"";
+                Console.ForegroundColor = ConsoleColor.White;
+                EscreverComGlitch(descricao);
+                Console.WriteLine();
+            }
+            else if (old.Quantidade < 6)
+            {
+                old.Quantidade++;
+                Console.Clear();
+                Console.ForegroundColor = reward.Rarity == 3 ? ConsoleColor.Magenta : ConsoleColor.Yellow;
+                Console.WriteLine("\n\n");
+                Console.WriteLine("  [>>] NODE EM PROCESSO DE LIBERAÇÃO!");
+                Console.ForegroundColor = ConsoleColor.DarkGray;
+                Console.WriteLine("  ─────────────────────────────────────────────────────────────");
+
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine($"  Sigilo de <{reward.Name.ToUpper()}> detectada no banco.");
+                Console.WriteLine("  Iniciando protocolo de Recompilação de Núcleo...");
+                Thread.Sleep(800);
+
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine($"\n  >> STATUS: NODE {old.Quantidade - 1} DESBLOQUEADO."); // Mostra o nível da constelação
+                Console.ForegroundColor = ConsoleColor.DarkGray;
+                Console.WriteLine("  Poder do Sigilo otimizado com novos pacotes de dados.");
+                Console.WriteLine("  ─────────────────────────────────────────────────────────────");
+                Console.ResetColor();
+                Thread.Sleep(1500);
+            }
+            else
+            {
+                int bitsGanhos = reward.Rarity == 3 ? 25 : 200;
+                user.Bits += bitsGanhos;
+                Console.Clear();
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("\n\n");
+                Console.WriteLine("  [!] SIGILO DUPLICADO DETECTADO");
+                Console.ForegroundColor = ConsoleColor.DarkGray;
+                Console.WriteLine("  ─────────────────────────────────────────────────────────────");
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine($"  O Módulo <{reward.Name.ToUpper()}> já atingiu a estabilidade máxima.");
+                Console.WriteLine($"  Iniciando protocolo de decomposição de excesso...");
+                Thread.Sleep(800);
+
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.WriteLine("\n  >> CONVERSÃO CONCLUÍDA: +" + bitsGanhos + " BITS ADICIONADOS.");
+                Console.ForegroundColor = ConsoleColor.DarkGray;
+                Console.WriteLine("  ─────────────────────────────────────────────────────────────");
+                Console.ResetColor();
+                Thread.Sleep(1500);
+
+            }
+            Console.ResetColor();
+        }
+        private void EscreverComGlitch(string texto)
+        {
+            string caracteres = "$#@&%█▓▒░";
+            Random rand = new Random();
+
+            char[] glitchFrame = texto.Select(c => c == ' ' ? ' ' : caracteres[rand.Next(caracteres.Length)]).ToArray();
+            string frameStr = new string(glitchFrame);
+
+
+            Console.Write("\r" + frameStr);
+            Thread.Sleep(40); 
+
+            Console.Write("\r" + texto);
+            Console.WriteLine();
+        }
+
     }
 
 }

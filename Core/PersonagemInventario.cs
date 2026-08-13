@@ -10,5 +10,7 @@ namespace Task_U.Core
         public int Id { get; set; }
         public int UserId { get; set; }
         public int PersonagemId { get; set; }
+        public int Quantidade {get; set;}
+        public int NodesNivel {get; set;}
     }
 }
