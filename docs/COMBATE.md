@@ -2,7 +2,7 @@
 
 ## Visão Geral
 
-O combate é estruturado como um RPG de turnos alternados. O jogador controla até dois personagens simultaneamente contra um inimigo gerado dinamicamente. Cada batalha exige planejamento no uso de habilidades, itens e gerenciamento de recursos.
+O combate é estruturado como um RPG de turnos alternados definidos pela **velocidade** dos personagens e inimigos. O jogador controla até dois personagens simultaneamente contra um inimigo gerado dinamicamente. Cada batalha exige planejamento no uso de habilidades, itens e gerenciamento de recursos.
 
 ---
 
@@ -12,7 +12,7 @@ A lógica de combate está organizada na pasta `Core/Combat` e é composta por q
 
 | Classe | Responsabilidade |
 |--------|------------------|
-| `CombateEngine` | Orquestra o loop da batalha, inicializando e finalizando o combate. |
+| `CombateEngine` | Orquestra o loop da batalha,  gerenciando a fila de ações pelo AV e finalizando o combate. |
 | `TurnoJogador` | Gerencia a sequência de ações do jogador para cada personagem vivo. |
 | `TurnoInimigo` | Gerencia a sequência de ações do inimigo. |
 | `CombateUI` | Responsável por toda a exibição e entrada do usuário durante o combate. |
@@ -21,17 +21,24 @@ A lógica de combate está organizada na pasta `Core/Combat` e é composta por q
 
 ## Fluxo da Batalha
 
-A cada turno, o `CombateEngine` executa as seguintes etapas:
+O `CombateEngine` executa o seguinte loop:
 
 1. **Inicialização**  
    - Exibe a introdução do inimigo (`CombateUI.Chamada`).  
-   - Prepara os personagens da equipe: restaura HP ao máximo, define o aliado (se houver), define `chanceAlvo` inicial (50% para cada).
+   - Restaura HP máximo dos personagens, define `chanceAlvo` inicial (50% cada) e o aliado.  
+   - Reseta `AvAtual` para cada entidade (calculado como `10000 / SpeedTotal()`).  
+   - Define `tempoAcumulado = 0` e `tempoLimite = 100`.
 
-2. **Turno do Jogador**  
-   - Cada personagem da equipe com HP > 0 executa suas ações (ver seção *Turno do Jogador*).
+2. **Seleção do Próximo Ação**  
+   - Obtém a entidade (personagem ou inimigo) com o menor `AvAtual` (entre os vivos).  
+   - Subtrai esse AV de todos os outros (para manter a fila).  
+   - Acumula o tempo em `tempoAcumulado`.  
+   - Se a entidade for um personagem, executa `TurnoJogador.turno()`.  
+   - Se for o inimigo, executa `TurnoInimigo.turno()`.  
+   - Após a ação, o AV da entidade que agiu é resetado para `10000 / SpeedTotal()`.
 
-3. **Turno do Inimigo**  
-   - Se o inimigo ainda estiver vivo, executa suas ações (ver seção *Turno do Inimigo*).
+3. **Verificação de Rodada Global**  
+   - Se `tempoAcumulado >= 100`, todos os buffs/debuffs (Atk, Mod, Speed, Res) são resetados, `tempoAcumulado` é zerado e o `turnoAtual` (rodada) é incrementado.
 
 4. **Verificação de Fim**  
    - Se a equipe ou o inimigo tiver HP ≤ 0, o combate termina e as recompensas são aplicadas.
@@ -49,60 +56,75 @@ Cada personagem possui os seguintes atributos dinâmicos:
 - `Shield` – absorve dano antes do HP.
 - `BuffAtk` – bônus temporário no ataque.
 - `BuffMod` – bônus temporário no modificador.
-- `TurnoStun` – número de turnos atordoado (impede ações).
-- `TurnoSilence` – número de turnos silenciado (impede habilidades).
+- `BuffSpeed` – bônus temporário na velocidade.
+- `debuffRes` – redutor temporário de resistência (multiplicador).
+- `TurnoStun` – número de turnos atordoado (impede ações).  
+- `TurnoSilence` – número de turnos silenciado (impede habilidades).  
+- `Blinded` – (booleano) impede o ataque básico no turno atual.
+- `AvAtual` – valor atual de avanço (usado na fila de ação).
 
 ### Passivas
 - **Jogador:** Executada no início do turno do personagem (`PersonagemBase.Passiva()`).
 - **Inimigo:** Executada antes da habilidade e ataque do inimigo (`InimigoBase.Passiva(User)`).
 
 ### Habilidades
-- Cada personagem possui uma habilidade especial (`Habilidade()`), que pode ser usada uma vez por turno, a menos que esteja silenciado.
+- Cada personagem possui uma habilidade especial (`Habilidade()`), que pode ser usada uma vez por turno, a menos que esteja silenciado (`Silenced`).
 - Habilidades podem causar dano, curar, aplicar status ou conceder buffs/debuffs.
+
+### Itens Equipados
+- No início do turno do personagem, se houver um item equipado, seu método `Effect(personagem)` é executado automaticamente (ex.: regeneração passiva, bônus de atributo).
 
 ---
 
 ## Turno do Jogador
 
-Para cada personagem da equipe que ainda está vivo:
+Para cada personagem da equipe que ainda está vivo e tem o menor AV:
 
 1. **Verificação de Stun**  
-   Se `TurnoStun > 0`, o personagem perde o turno. O contador é decrementado ao final.
+   Se `Stuneed` for `true`, o inimigo perde o turno e o flag é resetado.
 
 2. **Exibição do Estado**  
-   A interface mostra o status da equipe e do inimigo.
+   A interface mostra o status da equipe e do inimigo  e a **ordem prevista das próximas ações** (simulação com AV).
 
-3. **Execução da Passiva**  
+3. **Aplicação de Efeitos**  
+   `aplicarEfeitos()` é chamado para decrementar contadores de stun, silence, entre outros efeitos de estado.
+
+4. **Execução da Passiva**  
    A passiva do personagem é ativada.
 
-4. **Menu de Ações**  
+5. **Menu de Ações**  
    O jogador escolhe entre as opções (cada ação pode ser usada apenas uma vez por turno):
    - **1 – Ataque Básico:** Causa dano ao inimigo baseado em `Damage()`.  
    - **2 – Habilidade Especial:** Executa `Habilidade()`. Bloqueada se `TurnoSilence > 0`.  
    - **3 – Item:** Exibe lista de itens consumíveis; ao selecionar, o efeito é aplicado e o item é removido do inventário.  
    - **4 – Encerrar Turno:** Finaliza as ações do personagem.
 
-5. **Fim do Turno**  
-   O contador de `TurnoSilence` é decrementado.
+6. **Fim do Turno**  
+    Os flags `Silenced` e `Blinded` são resetados para `false`.
 
 ---
 
 ## Turno do Inimigo
 
-1. **Verificação de Stun**  
-   Se `TurnoStun > 0`, o inimigo perde o turno. O contador é decrementado.
+Quando o inimigo tem o menor AV:
 
-2. **Execução da Passiva**  
+1. **Verificação de Stun**  
+   Se `Stuneed` for `true`, o inimigo perde o turno e o flag é resetado.
+
+2. **Aplicação de Efeitos**  
+   `aplicarEfeitos()` é chamado.
+
+3. **Execução da Passiva**  
    A passiva do inimigo é ativada.
 
-3. **Habilidade**  
+4. **Habilidade**  
    Se não estiver silenciado, o inimigo pode usar sua habilidade especial, baseada em `HabilidadeChance` (probabilidade definida por inimigo). Habilidades inimigas podem causar dano, aplicar status, etc.
 
-4. **Ataque**  
+5. **Ataque**  
    O inimigo causa dano a um alvo. O alvo é selecionado usando pesos de `chanceAlvo` dos personagens vivos. Quanto maior o peso, maior a chance de ser atacado.
 
-5. **Fim do Turno**  
-   Decrementa os contadores de Stun e Silence.
+6. **Fim do Turno**  
+   O flag `Silenced` é resetado para `false`.
 
 ---
 
@@ -110,11 +132,14 @@ Para cada personagem da equipe que ainda está vivo:
 
 | Efeito | Descrição |
 |--------|-----------|
-| **Stun** | Impede qualquer ação no turno. O contador diminui ao final do turno. |
-| **Silence** | Impede o uso de habilidades, mas permite ataques básicos e itens. |
+| **Stun** | Impede qualquer ação no turno. O flag `Stuneed` é resetado ao final do turno |
+| **Silence** | Impede o uso de habilidades, mas permite ataques básicos e itens. O flag é resetado ao final do turno. |
+| **Blind** | Impede o ataque básico, mas permite habilidades e itens. Resetado ao final do turno. |
 | **Shield** | Absorve dano antes do HP. O dano excedente atinge o HP. |
-| **BuffAtk** | Aumento temporário no dano do ataque básico. |
-| **BuffMod** | Aumento temporário no modificador, afetando habilidades e cálculos de cura. |
+| **BuffAtk** | Aumento temporário no dano do ataque básico (resetado a cada rodada global). |
+| **BuffMod** | Aumento temporário no modificador, afetando habilidades e cálculos de cura (resetado a cada rodada global). |
+| **BuffSpeed** | Aumento temporário na velocidade (resetado a cada rodada global). |
+| **debuffRes** | Redução temporária de resistência (resetado a cada rodada global). |
 
 ---
 
@@ -156,7 +181,7 @@ Quando o inimigo é derrotado:
 2. O jogador recebe cristais (`CrystalDrop`).
 3. Se `ItemDropId` for definido, o item é adicionado ao inventário.
 4. O campo `DerrotouInimigo` do usuário é marcado como `true`.
-5. `AdventureService.AtualizarInimigo()` é chamado para gerar o próximo inimigo.
+5. O sistema de Aventura é chamado para gerar o próximo inimigo.
 
 Se a equipe for derrotada:
 - A mensagem de derrota é exibida e o jogador retorna ao menu principal.
