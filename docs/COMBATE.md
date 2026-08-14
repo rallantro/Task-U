@@ -130,18 +130,23 @@ Quando o inimigo tem o menor AV:
 
 ## Status e Efeitos
 
-| Efeito | Descrição |
-|--------|-----------|
-| **Stun** | Impede qualquer ação no turno. O flag `Stuneed` é resetado ao final do turno |
-| **Silence** | Impede o uso de habilidades, mas permite ataques básicos e itens. O flag é resetado ao final do turno. |
-| **Blind** | Impede o ataque básico, mas permite habilidades e itens. Resetado ao final do turno. |
-| **Shield** | Absorve dano antes do HP. O dano excedente atinge o HP. |
-| **BuffAtk** | Aumento temporário no dano do ataque básico (resetado a cada rodada global). |
-| **BuffMod** | Aumento temporário no modificador, afetando habilidades e cálculos de cura (resetado a cada rodada global). |
-| **BuffSpeed** | Aumento temporário na velocidade (resetado a cada rodada global). |
-| **debuffRes** | Redução temporária de resistência (resetado a cada rodada global). |
+ Efeitos temporários aplicados durante o combate, que duram um determinado número de turnos (`Duration`). Cada turno, o método `Aplicar()` é chamado e, ao final da execução, a duração é decrementada. Quando `Duration` chega a 0, o efeito expira (ou é removido). Os efeitos podem ser **Benéficos** (`isBeneficial = true`) ou **Maléficos**.
 
----
+- **Efeitos de Controle (Crowd Control)**:
+  - **Stun**: Impede o alvo de agir completamente em seu turno (perde a ação).
+  - **Silence**: Impede o alvo de usar habilidades especiais, limitando-o a ataques básicos ou ações físicas.
+  - **Blind** (Cegueira): Aplica penalidades de precisão ao alvo (definido pela flag `Blinded`).
+
+- **Buffs e Debuffs de Atributos** (Aplicados via `Mod` ou valores específicos):
+  - **BonusDMG** / **DebuffDMG**: Aumenta ou reduz o valor do `BuffAtk` (ataque) do alvo em um valor fixo por turno.
+  - **BonusMOD**: Aumenta o modificador geral (`BuffMod`) do alvo em um valor fixo por turno.
+  - **BuffRes**: Reduz o modificador de resistência a debuffs (`debuffRes`) do alvo, **diminuindo** o dano mágico/debuff que ele sofre (efeito defensivo).
+  - **DebuffRes**: Aumenta o modificador de resistência a debuffs (`debuffRes`) do alvo, **aumentando** o dano mágico/debuff que ele sofre (efeito ofensivo).
+
+- **Efeitos de Sustentação e Dano ao Longo do Tempo (HoT / DoT)**:
+  - **Regeneração (HealFixedStack)**: Restaura uma quantidade **fixa** de HP (`Mod`) ao alvo no início de cada turno.
+  - **Veneno de Valor Fixo (PoisonFixedStack)**: Causa dano **fixo** (`Mod`) ao alvo no início de cada turno.
+  - **Veneno Baseado na Vida (PoisonMaxStack)**: Causa dano **percentual** sobre a vida máxima do alvo (calculado como `HpMax * (Mod / 100)`), sendo mais eficaz contra inimigos com grande reserva de HP.
 
 ## Cálculo de Dano e Cura
 

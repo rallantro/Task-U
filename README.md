@@ -1,5 +1,5 @@
 # Task-u
-![Versão](https://img.shields.io/badge/version-1.0.0-blue?style=for-the-badge)
+![Versão](https://img.shields.io/badge/version-1.4.8-blue?style=for-the-badge)
 ![.NET 10](https://img.shields.io/badge/.NET%2010-512BD4?style=for-the-badge&logo=dotnet&logoColor=white)
 ![EF Core](https://img.shields.io/badge/EF%20Core-SQLite-003B57?style=for-the-badge&logo=sqlite&logoColor=white)
 ![Mantido](https://img.shields.io/badge/Mantido-Sim-brightgreen?style=for-the-badge)
@@ -31,13 +31,26 @@ O projeto demonstra competências em:
 
 - **Tarefas:** Geração diária de tarefas principais e side quests; conclusão concede Cristais e pode ativar eventos de sorte.
 - **Gacha:** Sistema com raridades (Comum, Raro, Épico, Lendário), pity (soft/hard) e banners rotativos.
-- **Combate:** Batalhas por turnos contra inimigos gerados dinamicamente, com habilidades especiais, status (stun, silêncio) e uso de itens consumíveis.
+- **Combate:** Batalhas por turnos contra inimigos gerados dinamicamente, com habilidades especiais, efeitos de estado e uso de itens consumíveis.
 - **Inventário:** Gerenciamento de personagens e itens, com dois slots de equipamento que afetam atributos de combate.
 - **Persistência:** Dados salvos em SQLite via EF Core, garantindo continuidade entre sessões.
 
 ---
 
 ## Como Executar
+
+## Execução Rápida
+
+Se preferir não configurar o ambiente de desenvolvimento, você pode baixar a versão compilada do jogo na seção **Releases** do repositório.
+
+[Baixar Task-U v1.4.8](https://github.com/rallantro/Task-U/releases/latest)
+
+| Plataforma | Instruções |
+|------------|------------|
+| Windows | Extraia o arquivo `.zip` e execute `Task-U.exe`. |
+| Linux | Extraia o arquivo `.zip`, conceda permissão de execução (`chmod +x Task-U`) e execute `./Task-U`. |
+
+> O banco de dados SQLite (`gacha_database.db`) já está incluso com os dados base para iniciar o jogo imediatamente.
 
 ### Pré-requisitos
 
@@ -69,19 +82,6 @@ O projeto demonstra competências em:
    ```bash
    dotnet run
    ```
-
-## Execução Rápida
-
-Se preferir não configurar o ambiente de desenvolvimento, você pode baixar a versão compilada do jogo na seção **Releases** do repositório.
-
-[Baixar Task-U v1.0.0](https://github.com/rallantro/Task-U/releases/latest)
-
-| Plataforma | Instruções |
-|------------|------------|
-| Windows | Extraia o arquivo `.zip` e execute `Task-U.exe`. |
-| Linux | Extraia o arquivo `.zip`, conceda permissão de execução (`chmod +x Task-U`) e execute `./Task-U`. |
-
-> O banco de dados SQLite (`gacha_database.db`) já está incluso com os dados base para iniciar o jogo imediatamente.
 ---
 
 ## Arquitetura
@@ -89,54 +89,65 @@ Se preferir não configurar o ambiente de desenvolvimento, você pode baixar a v
 O Task-u foi estruturado em camadas para separar responsabilidades e facilitar a manutenção. A organização do código reflete a divisão entre lógica de domínio, serviços de negócio, persistência e interface com o usuário.
 
 ```
-Task-u/
+Task-U/
+├── Core/                            # Lógica central e entidades de domínio
+│   ├── Combat/                      # Módulo e fluxo de combate
+│   │   ├── CombateEngine.cs         # Orquestração principal da batalha
+│   │   ├── CombateUI.cs             # Interface de usuário do combate
+│   │   ├── TurnoJogador.cs          # Lógica das ações do jogador
+│   │   └── TurnoInimigo.cs          # IA e ações dos inimigos
+│   ├── Entities/                    # Heróis/Personagens jogáveis (Apostador, Bárbaro, etc.)
+│   ├── Enemies/                     # Inimigos do jogo (Aranha, Banshee, Oni, etc.)
+│   ├── Itens/                       # Definição e comportamentos de itens
+│   │   ├── Boss/                    # Recompensas de chefes
+│   │   └── Loja/                    # Itens compráveis
+│   ├── StatusEffects/               # Sistema de efeitos de status (Buffs/Debuffs)
+│   │   ├── Status/                  # Efeitos específicos (Poison, Stun, Silence, etc.)
+│   │   └── StatusEffect.cs          # Classe base para status
+│   ├── PersonagemBase.cs            # Classe base dos sigilos
+│   ├── InimigoBase.cs               # Classe base dos inimigos
+│   ├── Item.cs                      # Modelo base de item
+│   ├── PersonagemInventario.cs      # Relacionamento de personagens do usuário
+│   └── ItemInventario.cs            # Relacionamento do inventário de itens
 │
-├── Core/                           # Lógica central e entidades de domínio
-│   ├── PersonagemBase.cs           # Classe base dos personagens
-│   ├── InimigoBase.cs              # Classe base dos inimigos
-│   ├── Item.cs                     # Modelo de item (usado também em Models)
-│   ├── PersonagemInventario.cs     # Relação usuário-personagem
-│   ├── ItemInventario.cs           # Relação usuário-item
-│   ├── Combat/                     # Módulo de combate
-│   │   ├── CombateEngine.cs        # Orquestração da batalha
-│   │   ├── CombateUI.cs            # Interface do combate
-│   │   ├── TurnoJogador.cs         # Lógica do turno do jogador
-│   │   └── TurnoInimigo.cs         # Lógica do turno do inimigo
-│   ├── Entities/                   # Personagens específicos (heróis)
-│   │   ├── Apostador.cs
-│   │   ├── Barbaro.cs
-│   │   └── ...
-│   └── Enemies/                    # Inimigos específicos
-│       ├── Banshee.cs
-│       ├── Fada.cs
-│       └── ...
+├── Models/                          # Entidades de persistência do EF Core
+│   ├── User.cs                      # Dados e perfil do jogador
+│   ├── Tarefa.cs / BaseTarefas.cs   # Tarefas ativas e diárias
+│   ├── SideQuest.cs                 # Missões secundárias
+│   ├── Banner.cs                    # Banners do sistema Gacha
+│   ├── Loja.cs                      # Estado da loja de itens
+│   └── Config.cs                    # Configurações do sistema
 │
-├── Models/                         # Entidades de persistência (EF Core)
-│   ├── User.cs                     # Dados do jogador
-│   ├── Tarefa.cs                   # Tarefas ativas do dia
-│   ├── BaseTarefas.cs              # Modelo de tarefas diárias
-│   ├── SideQuest.cs                # Missões secundárias
-│   ├── Banner.cs                   # Banner semanal
-│   └── ...
+├── Services/                        # Lógica de negócio da aplicação
+│   ├── TarefaService.cs             # Gerenciamento e conclusão de tarefas
+│   ├── GachaService.cs              # Sistema de invocações e pity
+│   ├── BannerService.cs             # Rotações de banners
+│   ├── CombatService.cs             # Fachada para o loop de combate
+│   ├── AdventureService.cs          # Geração de encontros e inimigos
+│   ├── InventarioServices.cs        # Gestão do inventário
+│   ├── LojaService.cs               # Sistema de compras
+│   ├── UpdateService.cs             # Atualizações de estado do sistema
+│   └── CreateService.cs             # Serviço auxiliar
 │
-├── Data/                           # Contexto do EF Core
-│   └── AppDbContext.cs             # DbContext e configurações
+├── Data/                            # Camada de banco de dados
+│   └── AppDbContext.cs              # Mapeamento e contexto do EF Core
 │
-├── Services/                       # Lógica de negócio
-│   ├── TarefaService.cs            # Regeneração e conclusão de tarefas
-│   ├── GachaService.cs             # Sorteios e pity
-│   ├── BannerService.cs            # Rotação e rate-up
-│   ├── InventarioServices.cs       # Gerenciamento de inventário
-│   ├── AdventureService.cs         # Geração de inimigos
-│   ├── CombatService.cs            # Fachada para o combate
-│   └── CreateService.cs            # (Auxiliar, usado para testes)
+├── Migrations/                      # Histórico de migrações do EF Core
+│   └── ...                          # (Arquivos de migração do banco)
 │
-├── Migrations/                     # Migrações geradas pelo EF Core
+├── docs/                            # Documentação e assets do projeto
+│   ├── COMBATE.md                   # Regras e mecânicas de combate
+│   ├── PERSONAGENS.md               # Detalhes e atributos das entidades
+│   └── img/                         # GIFs e imagens demonstrativas
 │
-├── Program.cs                      # Loop principal e menu
-├── gacha_database.db               # Banco de dados SQLite (gerado)
-├── Task-u.csproj                   # Arquivo do projeto
-└── README.md
+├── Program.cs                       # Ponto de entrada e menu principal
+├── gacha_database.db                # Banco de dados SQLite
+├── Task-U.csproj                    # Configuração do projeto .NET
+├── Task-U.sln                       # Arquivo de solução
+├── README.md                        # Documentação principal
+├── LICENSE                          # Licença do repositório
+├── icone.ico                        # Ícone da aplicação
+└── .gitignore                       # Filtros de arquivos para o Git
 ```
 
 A separação em camadas permite que a lógica de negócio (Services) seja independente da persistência (Data) e das definições de domínio (Core). O combate foi isolado no submódulo `Core/Combat`, facilitando manutenção e correção de bugs.
@@ -192,7 +203,7 @@ O Task-u utiliza um banco de dados SQLite local (`gacha_database.db`) gerado aut
 | `BaseTarefas`    | Modelo de tarefas que serão geradas diariamente. |
 | `SideQuests`     | Missões secundárias que aparecem aleatoriamente a cada dia. |
 | `Tarefas`        | Tarefas ativas do dia (criadas a partir das tabelas acima). |
-| `Personagens`    | Todos os personagens disponíveis no jogo (heróis). |
+| `Personagens`    | Todos os personagens disponíveis no jogo (sigilos). |
 | `Itens`          | Itens consumíveis e equipáveis. |
 | `Inimigos`       | Inimigos que podem ser enfrentados. |
 
@@ -216,9 +227,80 @@ VALUES ('Meditar', 'Faça 10 minutos de meditação.', 1, 0);
 
 - O banco já contém um usuário padrão com ID = 1, alguns personagens, itens e inimigos.
 - Se você desejar reiniciar o progresso, basta excluir o arquivo `gacha_database.db` e executar `dotnet ef database update` novamente. Isso criará um novo banco com os dados iniciais definidos nas migrações e nos seeders (se houver).
-- A quantidade de cristais dada por tarefa é equivalente a dificuldade da tarefa vezes 2.
+- A quantidade de cristais dada por tarefa é equivalente a dificuldade da tarefa vezes 2. Ou 3, em casos especiais.
 
 ---
+
+## Serviço de Atualização (UpdateService)
+
+### Visão Geral
+
+O `UpdateService` é responsável por verificar a versão atual do jogo armazenada no banco de dados e, se necessário, aplicar uma sequência de patches para atualizar o banco e a configuração para a versão mais recente. Isso garante que a estrutura de dados, novos conteúdos e correções sejam aplicados de forma controlada e progressiva, mesmo que o usuário esteja saltando várias versões.
+
+O serviço é invocado durante a inicialização do jogo, antes de qualquer outra operação, para assegurar que o banco esteja consistente com a versão do código em execução.
+
+---
+
+### Componentes Principais
+
+| Classe / Método | Responsabilidade |
+|----------------|------------------|
+| `UpdateService` | Contém a lógica de verificação e aplicação de patches. |
+| `Verify()`     | Método público que compara a versão atual do banco com a versão esperada e dispara a atualização se necessário. |
+| `UpdateVersion()` | Método privado que orquestra a aplicação sequencial dos patches entre a versão antiga e a nova. |
+| `supportVersions` | Lista de patches disponíveis, cada um com nome, versão e uma ação (`Action<AppDbContext>`) que executa as alterações necessárias. |
+| `Config` (tabela) | Armazena no banco a versão atual (campo `Value`) e o nome da versão (`Name`). |
+
+---
+
+## Fluxo de Atualização
+
+1. **Inicialização**  
+   O jogo chama `UpdateService.Verify(context, ActualVersion)`, onde `ActualVersion` é a versão do código em execução (definida em uma constante, ex.: `"1.4.8"`).
+
+2. **Verificação da Versão Atual**  
+   - Tenta buscar o registro `Config` com `Id = 1` no banco.  
+   - Se não existir, cria um novo registro com a versão base (`"1.4.8"`) e o nome `"Os Tempos Caídos"`.
+
+3. **Comparação**  
+   - Compara a `Value` do registro encontrado com a `Value` da versão atual (`ActualVersion`).  
+   - Se forem iguais, nada é feito.  
+   - Se diferentes, chama `UpdateVersion()` para aplicar os patches.
+
+4. **Aplicação de Patches**  
+   - Obtém a versão antiga (do banco) e a versão alvo (atual).  
+   - Localiza a posição da versão antiga na lista `supportVersions`.  
+   - Se a versão antiga não estiver na lista, lança uma exceção informando que a atualização não é suportada (exige reinstalação a partir de uma versão mínima).  
+   - Itera sobre os patches a partir da posição seguinte até o final da lista.  
+   - Para cada patch:  
+     - Exibe uma mensagem no console.  
+     - Executa a `Action` associada (que modifica o `DbContext`).  
+     - Atualiza o registro `Config` com o novo `Name` e `Value`.  
+     - Salva as alterações no banco (`SaveChanges`).  
+   - Após todos os patches, exibe uma mensagem de conclusão e aguarda um breve momento antes de continuar.
+
+5. **Pós‑atualização**  
+   - O jogo prossegue normalmente com o banco já na versão mais recente.
+
+---
+
+## Estrutura da Lista de Patches
+
+A lista `supportVersions` é uma tupla contendo:
+
+- `name` – Nome descritivo da versão (ex.: `"Os Tempos Caídos"`).  
+- `version` – String da versão (ex.: `"1.4.8"`).  
+- `action` – Um delegate `Action<AppDbContext>` que contém as alterações SQL/EF Core a serem aplicadas para migrar o banco para aquela versão.
+
+**Exemplo da lista:**
+
+```csharp
+List<(string name, string version, Action<AppDbContext>)> supportVersions = new()
+{
+    ("Os Tempos Caídos", "1.4.8", UpdatePatch_1_4_8),
+    // futuros patches serão adicionados aqui, em ordem crescente
+};
+```
 
 ## Sistema de Tarefas
 
@@ -260,33 +342,51 @@ As tarefas concluídas são marcadas como `IsDone = true` e permanecem visíveis
 
 O sistema de invocação (*gacha*) do Task-u é baseado em probabilidades com mecanismos de garantia (*pity*) para equilibrar a experiência do jogador. 
 
+---
+
+## Componentes Principais
+
+A lógica de gacha está distribuída em duas classes principais:
+
+| Classe | Responsabilidade |
+|--------|------------------|
+| `Gacha` | Gerencia o fluxo completo de um pull, incluindo sorteio, animações, pity, obtenção do resultado e persistência. |
+| `BannerService` | Mantém o banner semanal ativo (rate‑up), seleciona os personagens em destaque e fornece métodos para sortear personagens épicos/lendários respeitando o rate‑up. |
+
+---
+
 ### Raridades e Probabilidades Base
 
 | Raridade | Nome (Código) | Probabilidade Base |
 |----------|---------------|-------------------|
-| 1        | Comum (C)     | 75% (números 1–750) |
-| 2        | Raro (R)      | 15% (números 751–900) |
-| 3        | Épico (SR)    | 9% (números 901–990) |
-| 4        | Lendário (SSR)| 1% (números 991–1000) |
+| 1        | Comum (C)     | 75% |
+| 2        | Raro (R)      | 19% |
+| 3        | Épico (SR)    | 5% |
+| 4        | Lendário (SSR)| 1% |
 
 Os sorteios são realizados por um gerador de números aleatórios que define um valor entre 1 e 1000. A raridade obtida é determinada por faixas fixas, exceto nos casos garantidos pelo sistema de *pity*.
 
-Os pulls Comuns (C) e Raros (R) dão ao jogador um item de equivalente raridade, já os pulls Épicos (SR) e Lendários (SRR) dão ao jogador um personagem.
+Os pulls Comuns (C) e Raros (R) dão ao jogador um item de equivalente raridade, já os pulls Épicos (SR) e Lendários (SSR) dão ao jogador um personagem.
 
 ### Pity
 
 O pity é um contador que assegura a obtenção de itens de alta raridade após um número determinado de tentativas sem sucesso. Existem dois pitys independentes:
 
-- **Pity Épico (maxPityEpic = 10):**  
-  Se o jogador realizar 10 pulls consecutivos sem obter um personagem Épico (SR) ou Lendário (SSR), o décimo pull será garantidamente um Épico (ou Lendário, caso o pity de Lendário também seja acionado).
+- **Pity Épico (`maxPityEpic = 10`)**  
+  Se o jogador realizar 10 pulls consecutivos sem obter um personagem Épico (SR) ou Lendário (SSR), o décimo pull será garantidamente um Épico (a menos que o pity Lendário também seja acionado, o que tem prioridade).  
+  Após obter um Épico ou Lendário, este pity é resetado para 0.
 
-- **Pity Lendário (maxPityLeg = 100):**  
+- **Pity Lendário (`maxPityLeg = 100`)**  
   Se o jogador realizar 100 pulls consecutivos sem obter um Lendário, o centésimo pull será garantidamente um Lendário.  
-  **Soft Pity:** A partir do 75º pull sem Lendário, a chance de obtê-lo aumenta progressivamente:  
-  - 75º pull: 10% + (5 * 1) = 15%  
-  - 76º pull: 10% + (5 * 2) = 20%  
+  **Soft Pity:** a partir do 75º pull sem Lendário, a chance de obtê-lo aumenta progressivamente:  
+  - 75º pull: 10 + (20 * (75 – 74)) = 10 + 20 = 30
+  - 76º pull: 10 + (20 * 2) = 50  
+  - 77º pull: 10 + (20 * 3) = 70
   - ...  
-  - 99º pull: 10% + (5 * 25) = 135% (efetivamente garantido antes do hard pity).
+  - 89º pull: 10 + (20 * 15) = 310 (31% de chance)
+  O pity Lendário é resetado para 0 sempre que um Lendário é obtido.
+
+Ambos os pitys são armazenados no usuário (`PityEpic` e `PityLeg`) e são incrementados a cada pull, independentemente do resultado.
 
 ### Evento de Sorte (Luck Event)
 
@@ -308,15 +408,62 @@ Essa lógica foi feita para incentivar o usuário a guardar seus cristais, reali
 
 ### Fluxo de um Pull
 
-Quando o usuário realiza um *desejo*, o `gachaService` realiza o seguinte fluxo:
+Quando o usuário realiza um *desejo*, o `gachaService` realiza o seguinte fluxo, caso o usuário tenha *cristais o suficiente*:
 
-1. Ele verifica se o pity Lendário atingiu o soft pity ou o hard pity para ajustar a chance.
-2. Gera um número aleatório e compara com a chance ajustada.
-3. Se for Lendário: chama `BannerService.LegendPull()` – que decide se será rate-up (50%) ou aleatório.
-4. Se for Épico: chama `BannerService.EpicPull()` – mesma lógica de rate-up, porém para um personagem épico.
-5. Se for Raro ou Comum: obtém um item correspondente das tabelas `Itens`.
-6. Por fim, atualiza pitys, adiciona o item/personagem ao inventário, decrementa cristais e persiste no banco.
+1. **Custo e Incremento dos Pitys**  
+   - Decrementa **10 cristais** do usuário.  
+   - Incrementa `pityLeg` e `pityEpic` em 1.
 
+2. **Cálculo da Chance Lendária**  
+   - Chance base = `legChance` (10).  
+   - Se `pityLeg >= 75`, aplica soft pity: `currentChance = 10 + (20 * (pityLeg - 74))`.  
+   - Se `luckEvent` estiver ativo, dobra `currentChance` e desativa o evento.
+
+3. **Exibição da Animação de Suspense**  
+   - Mostra uma sequência de frames com pontos e círculos, pausando para criar expectativa.
+
+4. **Sorteio**  
+   Um número aleatório é gerado (1 a 1000). 
+
+5. **Resultados possíveis:**  
+
+   - **Lendário (SSR):**  
+     Se o número for ≤ chance calculada (inicia-se com 1%) **ou** pity Lendário = 100.  
+     Você vê uma explosão dourada, ouve uma frase especial do personagem e ganha um sigilo lendário.  
+     *Ambos os pitys são zerados.*
+
+   - **Épico (SR):**  
+     Se o número for  menor ou igual a 60 **ou** pity Épico = 10.  
+     Efeito roxo, frase e um personagem épico.  
+     *Apenas o pity Épico é zerado.*
+
+   - **Raro (R):**  
+     Se o número for menor ou igual a 250.  
+     Você ganha um item raro (não personagem).  
+     Sem alteração nos pitys.
+
+   - **Comum (C):**  
+     Qualquer número acima de 250.  
+     Ganha um item comum.  
+     Sem alteração nos pitys.
+
+6. **Personagens repetidos – o sistema de Nodes (Constelações):**  
+   Quando você tira um personagem que já possui, acontece o seguinte:
+
+   - Se você tem **menos de 6 cópias** dele, a quantidade aumenta em 1.  
+     Isso desbloqueia um **Node** (nível de constelação), que fortalece passivamente o personagem em batalhas futuras.  
+     A cada nova cópia, um novo Node é liberado – até o máximo de 6.
+
+   - Se você já tem **6 cópias** (todos os Nodes liberados), a cópia extra é automaticamente **convertida em Bits**:  
+     - Lendário → **200 Bits**  
+     - Épico → **25 Bits**  
+     Bits são uma moeda especial usada na **Loja de Bits**.
+
+7. **Progresso de garantia exibido.**  
+   No final, você vê quantos pulls faltam para o próximo pity garantido de cada raridade.
+
+8. **Tudo é salvo.**  
+   Os pitys atualizados, os novos itens/personagens no inventário e os Bits (se houver) vão direto para o banco de dados.
 ### Demonstração de Pull:
 
 ![Gacha](./docs/img/demoPull.gif)
@@ -328,7 +475,7 @@ Quando o usuário realiza um *desejo*, o `gachaService` realiza o seguinte fluxo
 ### Observações Técnicas
 
 - Os pitys são armazenados por usuário (`User.PityLeg` e `User.PityEpic`) e são resetados quando um pull da raridade correspondente é obtido.
-- O cálculo de soft pity é dinâmico: `chance = legChance + (5 * (pityLeg - 74))` para pityLeg ≥ 75.
+- O cálculo de soft pity é dinâmico: `chance = legChance + (20 * (pityLeg - 74))` para pityLeg ≥ 75.
 - O banner é recalculado apenas quando a data da última atualização ultrapassa 7 dias, garantindo que o mesmo banner permaneça ativo durante a semana.
 - O sistema utiliza `EF.Functions.Random()` no banco para selecionar itens/personagens aleatórios quando o rate-up não é escolhido.
 
@@ -341,11 +488,11 @@ O sistema de inventário do Task-u gerencia dois tipos de recursos: **personagen
 Os personagens obtidos no gacha são adicionados ao inventário do jogador. Eles podem ser equipados em dois slots de equipe (Slot 1 e Slot 2), que determinam quem participa dos combates. Apenas personagens equipados podem ser usados em batalha.
 
 - **Equipamento:** Através do menu `1 - Ver Status > 1 - Ver Personagens > 2 - Trocar Personagem Ativo`, é possível selecionar um personagem disponível para ocupar um dos slots.  
-- **Duplicatas:** Personagens repetidos são armazenados como cópias adicionais. (No futuro, planeja-se fazer um sistema de ascensão ou melhoria nos personagens com base nas cópias adicionais.)
+- **Nodes:** Personagens repetidos são armazenados como cópias adicionais. Essas cópias adicionais são convertidas em **Nodes**, pontos de progressão que liberam melhorias nas habilidades. 
 
 #### Personagens Disponíveis
 
-O jogo conta atualmente com **12 personagens** distribuídos entre as raridades Épico (SR) e Lendário (SSR). Cada personagem possui habilidades únicas, passivas e estilos de combate distintos, que incentivam diferentes estratégias durante as batalhas.
+O jogo conta atualmente com **21 personagens** distribuídos entre as raridades Épico (SR) e Lendário (SSR). Cada personagem possui habilidades únicas, passivas e estilos de combate distintos, que incentivam diferentes estratégias durante as batalhas.
 
 Para descrições detalhadas, citações de invocação e mecânicas específicas, consulte o arquivo:  **[PERSONAGENS.md](./docs/PERSONAGENS.md)**
 
@@ -374,11 +521,35 @@ O valor do bônus é definido pelo campo `Mod` do item.
 
 - **Itens consumíveis:** Durante o turno de um personagem, o jogador pode optar por usar um item. Uma lista de itens consumíveis disponíveis é exibida; ao selecionar um, o efeito é aplicado imediatamente (ex.: cura de HP) e o item é removido do inventário.  
 - **Itens equipáveis:** São equipados no menu principal e seus efeitos são calculados automaticamente em cada ação do personagem (dano, cura, etc.). A fórmula de `AtkTotal()` e `ModTotal()` já considera os bônus dos itens equipados.
+- **Itens Especiais:** Itens de raridade superior possuem efeitos especiais que podem ser usados em combate. Itens Épicos ou superior possuem passivas e efeitos próprios que são utilizados de acordo com o seu tipo: 
+```
+Consumível: Efeito especial ao utilizar no combate
+Equipável: Efeito passivo especial durante o combate
+```
+
+> OBS: Certos itens possuem a função ``Resetar()`` para reiniciar o estado dos efeitos passivos entre combates.
 
 ### Gerenciamento no Menu
 
 - **Ver Inventário:** Acessado via `1 - Ver Status`. Permite visualizar todos os personagens e itens obtidos, incluindo quantidades.  
 - **Trocar Equipamentos:** Através da opção de inventário, é possível equipar personagens nos slots de equipe e itens nos slots de item. O sistema impede que o mesmo personagem seja equipado em ambos os slots simultaneamente.
+
+### Loja de Bits
+
+A **Loja de Bits** é um mercado mensal onde o usuário pode gastar a moeda especial obtida ao converter cópias repetidas de personagens (ou por outros meios futuros). A cada mês, a loja é renovada automaticamente com um estoque aleatório de personagens (SR e SSR) e itens (raros e épicos), todos com preços em **Bits**. Alguns itens podem aparecer com **desconto** (preço menor que o padrão), indicado por um "↓%" na listagem.
+
+- A loja é atualizada no **primeiro acesso de cada mês** (baseado em `LastLojaUpdate`).
+- São sorteados de 2 a metade dos personagens SR disponíveis, podendo aparecer um SSR com **10% de chance**.
+- Itens com `exclLoja = true` (exclusivos da loja) também são sorteados em quantidade similar, todos custando **75 Bits**.
+- Personagens SR custam **200 Bits** (ou menos se estiverem em promoção); SSR custam **1000 Bits** (não entram em promoção).
+
+| Tipo      | Preço Base | Promoção       |
+|-----------|------------|----------------|
+| Personagem SR | 200 Bits | 25–50% off |
+| Personagem SSR| 1000 Bits | Não |
+| Item (qualquer) | 75 Bits | Não |
+
+Você pode comprar cada item **apenas uma vez por mês**. Ao adquirir um personagem já possuído, ele se converte em um **Node** (como no gacha), e se já estiver no nível máximo (6 cópias), você ganha Bits de volta; a compra é definitiva.
 
 ### Persistência
 
@@ -399,17 +570,37 @@ Essa estrutura permite consultas eficientes e mantém a integridade referencial 
 
 O combate é estruturado como um RPG de turnos alternados, onde o jogador controla até dois personagens contra um inimigo gerado dinamicamente. 
 
+### Velocidade
+
+O sistema de turnos funciona através do **Avanço (Action Value – AV)** para decidir a ordem das ações. Cada personagem e inimigo tem um `AvAtual` que começa em `10000 / SpeedTotal()` no início do combate. Quem tiver o **menor AV** age primeiro. Após agir, o AV daquele combatente é **resetado** para o mesmo valor (baseado na velocidade atual), enquanto os demais mantêm seus AVs – o que faz com que combatentes mais rápidos ajam com mais frequência.
+
+A velocidade total é calculada somando os bônus de itens, buffs temporários (`BuffSpeed`) e habilidades passivas. Um personagem com o dobro da velocidade de outro age aproximadamente o dobro de vezes no mesmo intervalo.
+
+| Velocidade | AV Inicial | Turnos a cada 100 unidades |
+|------------|------------|----------------------------|
+| 100        | 100        | ~1,0                       |
+| 150        | 66,7       | ~1,5                       |
+| 200        | 50         | ~2,0                       |
+
+**Exemplo prático:**  
+- Personagem A: Speed = 200 → AV = 50  
+- Personagem B: Speed = 100 → AV = 100  
+- Inimigo: Speed = 80 → AV = 125  
+
+Ordem inicial: A (50), B (100), Inimigo (125). Após A agir, seu AV volta a 50, então ele agirá novamente antes de B e do inimigo – mantendo uma cadência mais alta. Isso torna a velocidade um atributo valioso para suporte e dano sustentado.
+
 ### Fluxo Básico
 
 1. **Inicialização** – O inimigo é apresentado e os personagens da equipe são preparados (HP restaurado, aliados definidos).
-2. **Turno do Jogador** – Cada personagem pode realizar uma ação por turno: ataque básico, habilidade especial ou usar um item. Ações podem ser bloqueadas por efeitos de stun ou silêncio.
-3. **Turno do Inimigo** – O inimigo executa sua passiva, habilidade (se disponível) e um ataque direcionado a um alvo com base em pesos de agressividade.
-4. **Fim do Combate** – A batalha termina quando a equipe ou o inimigo chega a 0 HP. Vitórias concedem cristais e, ocasionalmente, itens.
+2. **Cálculo dos Turnos** - Seguindo o sistema de velocidade, os turnos são calculados para decidir a ordem do combate.
+3. **Turno do Jogador** – Cada personagem pode realizar uma ação por turno: ataque básico, habilidade especial ou usar um item. Ações podem ser bloqueadas por efeitos de stun, cegueira ou silêncio.
+4. **Turno do Inimigo** – O inimigo executa sua passiva, habilidade (se disponível) e um ataque direcionado a um alvo com base em pesos de agressividade.
+5. **Fim do Combate** – A batalha termina quando a equipe ou o inimigo chega a 0 HP. Vitórias concedem cristais e, ocasionalmente, itens.
 
 ### Mecânicas Principais
 
-- **Status**: Stun (perde turno), Silence (impede habilidades), Shield (absorve dano), Buffs temporários.
-- **Passivas e Habilidades**: Cada personagem (herói e inimigo) possui habilidades únicas que alteram o fluxo do combate. Além disso, cada personagem e inimigo possui uma passiva única, que é utilizada no início de cada turno próprio. 
+- **Status**: Stun (perde turno), Silence (impede habilidades), Shield (absorve dano), Buffs e Debuffs temporários.
+- **Passivas e Habilidades**: Cada personagem (aliado e inimigo) possui habilidades únicas que alteram o fluxo do combate. Além disso, cada personagem e inimigo possui uma passiva única, que é utilizada no início de cada turno próprio. 
 - **Alvos**: O inimigo escolhe alvos com base em `chanceAlvo` (peso que pode ser modificado por habilidades). O jogador sempre ataca o inimigo, mas habilidades de suporte podem mirar aliados.
 
 Para uma descrição detalhada de todas as mecânicas, classes envolvidas e lógica de geração de inimigos, consulte: **[COMBATE.md](./docs/COMBATE.md)**
@@ -430,10 +621,10 @@ Todos os dias, ao realizar o primeiro login após a meia-noite, um novo inimigo 
 
 | Raridade | Chance |
 |----------|--------|
-| Comum (1) | 50%    |
+| Comum (1) | 48%    |
 | Raro (2)  | 30%    |
-| Épico (3) | 16%    |
-| Lendário (4)| 4%    |
+| Épico (3) | 12%    |
+| Lendário (4)| 10%    |
 
 Após definir a raridade, um inimigo específico daquela classe é selecionado aleatoriamente entre os disponíveis no banco de dados e atribuído ao campo `User.InimigoId`.
 
@@ -460,7 +651,7 @@ Este projeto é um trabalho pessoal voltado para estudo e portfólio. Feedbacks,
 ### Como contribuir
 
 - **Bugs e melhorias:** Caso encontre algum erro ou tenha uma ideia de refatoração, fique à vontade para abrir uma *Issue* ou enviar um *Pull Request*. Todos os PRs passarão por revisão antes do merge.
-- **Novos personagens:** Se tiver uma sugestão de herói, habilidade ou passiva, abra uma *Issue* com a tag `suggestion` utilizando o modelo abaixo:
+- **Novos personagens:** Se tiver uma sugestão de sigilo, habilidade ou passiva, abra uma *Issue* com a tag `suggestion` utilizando o modelo abaixo:
   - Nome
   - Raridade
   - Habilidades e Passivas
@@ -475,16 +666,15 @@ Caso queira sugerir um personagem, pode seguir o formato utilizado em `PERSONAGE
 
 ## Desenvolvimento Futuro
 
-- **Ascensão de Personagens:** Cópias repetidas de um mesmo personagem concederão bônus de atributos ou habilidades.
-- **Expansão do Sistema de Itens:** Implementar itens consumíveis com efeitos variados (buff de ataque, escudo temporário, remoção de status) e ampliar os tipos de itens equipáveis.
 - **Expansão de Conteúdo:** Novos inimigos e personagens com mecânicas distintas.
+- **Reformulação no Sistema de Tarefas:** O sistema atual requer que o usuário crie-as através do SQL, e torna quase impossível uma dinamização e criação de missões específicas.
 - **Interface Melhorada:** Possível migração para uma interface gráfica simples (Windows Forms ou Terminal.Gui).
+
 
 ---
 
 ### Limitações Conhecidas
 
-- **Itens Consumíveis:** Atualmente, apenas itens de cura e buff temporário de modificador estão implementados. Suporte para outros efeitos (buff de ataque, escudo, etc.) está planejado para versões futuras.
 - **Usuário Único:** O jogo foi desenvolvido com um único usuário fixo (ID = 1) para simplificar a lógica. Uma versão futura poderá implementar múltiplos perfis.
 
 ---
