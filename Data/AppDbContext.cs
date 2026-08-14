@@ -45,6 +45,8 @@ namespace Task_U.Data
             modelBuilder.Entity<Atacante>();
             modelBuilder.Entity<Bennu>();
             modelBuilder.Entity<Priest>();
+            modelBuilder.Entity<Scribe>();
+            modelBuilder.Entity<Fire>();
             modelBuilder.Entity<TechGoblin>();
             modelBuilder.Entity<Oni>();
             modelBuilder.Entity<DragaoEgito>();
