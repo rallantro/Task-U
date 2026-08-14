@@ -25,6 +25,8 @@ namespace Task_U.Data
 
         public DbSet<InimigoBase> Inimigos { get; set; }
 
+        public DbSet<Config> Config { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Moon>();

@@ -7,7 +7,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Task_U.Services;
 using Task_U.Models;
 using Task_U.Data;
-using Task_U.Migrations;
 using Task_U.Core.StatusEffects;
 
 namespace Task_U.Core

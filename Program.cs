@@ -10,7 +10,8 @@ using Task_U.Services;
 using Task_U.Data;
 using System.Diagnostics;
 
-
+Config version = new Config { Name = "Os Tempos Caídos", Value = "1.4.8" };
+UpdateService update = new UpdateService();
 Gacha gacha = new Gacha();
 BannerService banner = new BannerService();
 TarefaService service = new TarefaService();
@@ -20,15 +21,28 @@ AdventureService adventure = new AdventureService();
 LojaService loja = new LojaService();
 using var context = new AppDbContext();
 
+try
+{
+    update.Verify(context, version);
+}
+catch (Exception ex)
+{
+    Console.ForegroundColor = ConsoleColor.Red;
+    Console.WriteLine($"Erro ao atualizar o banco de dados: {ex.Message}");
+    Console.WriteLine("O jogo será encerrado para evitar corrupção de dados.");
+    Console.WriteLine("Precione qualquer tecla para encerrar...");
+    Console.ResetColor();
+    Console.ReadKey();
+    return;
+}
+
 var user = context.Users.Include(u => u.Slot1_PersonagemAtivo).Include(u => u.Slot2_PersonagemAtivo).Include(u => u.Slot1_ItemAtivo).FirstOrDefault(u => u.Id == 1);
 adventure.AtualizarInimigo(context);
 banner.AtualizarBanner(context);
 service.AtualizarTarefas();
-adventure.AtualizarInimigo(context);
 loja.atualizarLoja(context);
 
-CreateService create = new CreateService();
-//create.CreateCharacter(context);
+
 
 
 
@@ -172,7 +186,7 @@ while (MenuShow)
         case "5":
             loja.exibirLoja(context);
             Console.ReadLine();
-        break;
+            break;
 
         case "6":
             var equipe = new List<PersonagemBase>();
