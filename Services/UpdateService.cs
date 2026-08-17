@@ -28,11 +28,11 @@ namespace Task_U.Services
 
             if (oldVersion.Value != ActualVersion.Value)
             {
-                UpdateVersion(oldVersion, context, ActualVersion);
+                UpdateVersion(oldVersion, context);
             }
         }
 
-        public void UpdateVersion(Config oldVersion, AppDbContext context, Config Actual)
+        public void UpdateVersion(Config oldVersion, AppDbContext context)
         {
             Console.Clear();
             Console.WriteLine("=================================");
@@ -42,6 +42,7 @@ namespace Task_U.Services
             var version = context.Config.Find(1) ?? baseConfig;
             List<(string name, string version, Action<AppDbContext> action)> supportVersions = new List<(string name, string, Action<AppDbContext>)>{
                 {("Os Tempos Caídos","1.4.8", UpdatePatch_1_4_8)},
+                {("A Brasa Ardente","1.6.0", UpdatePatch_1_6_0)}
             };
             int oldPostion = supportVersions.FindIndex(x => x.version == oldVersion.Value);
             if (oldPostion == -1)
@@ -60,7 +61,6 @@ namespace Task_U.Services
             }
             Console.WriteLine("Atualização concluída! Iniciando o jogo...");
             Thread.Sleep(1500);
-
         }
 
         static void UpdatePatch_1_4_8(AppDbContext context)

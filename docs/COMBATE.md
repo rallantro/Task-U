@@ -202,21 +202,22 @@ No primeiro login após a meia-noite, um novo inimigo é gerado com as seguintes
 
 | Raridade | Chance |
 |----------|--------|
-| Comum (1) | 50% |
-| Raro (2)  | 30% |
-| Épico (3) | 16% |
-| Lendário (4)| 4% |
+| Comum (1) | 48%    |
+| Raro (2)  | 30%    |
+| Épico (3) | 12%    |
+| Lendário (4)| 10%    |
 
-Após definir a raridade, um inimigo específico é sorteado aleatoriamente entre os disponíveis no banco.
+Após definir a raridade, um inimigo específico daquela classe é selecionado aleatoriamente entre os disponíveis no banco de dados e atribuído ao campo `User.InimigoId`.
 
 ### Evolução Pós-Derrota
-Quando o jogador derrota um inimigo:
 
-- Se derrotado tinha raridade **1 ou 2**: novo inimigo aumenta em 0 ou 1 (50% cada).
-- Se derrotado era **3 (Épico)**: 10% de chance de evoluir para Lendário, 90% de permanecer Épico.
-- Se derrotado era **4 (Lendário)**: raridade reinicia para 1 (Comum).
+Quando o jogador derrota um inimigo (sinalizado por `User.DerrotouInimigo = true`), o próximo inimigo gerado segue uma lógica de **progressão de dificuldade**:
 
-Em todos os casos, o inimigo é sorteado aleatoriamente dentro da raridade resultante.
+- Se o inimigo derrotado tinha raridade **1 (Comum) ou 2 (Raro)**, o novo inimigo terá raridade aumentada em 0 ou 1 (50% de chance para cada).
+- Se o inimigo derrotado tinha raridade **3 (Épico)**, o novo inimigo tem 10% de chance de evoluir para Lendário (raridade 4) e 90% de chance de permanecer Épico.
+- Se o inimigo derrotado era **Lendário (4)**, a raridade é reiniciada para Comum (raridade 1).
+
+Em todos os casos, o novo inimigo é sorteado aleatoriamente dentro da raridade resultante.
 
 ---
 

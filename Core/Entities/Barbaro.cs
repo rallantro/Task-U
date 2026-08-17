@@ -14,12 +14,14 @@ namespace Task_U.Core
         private int defesa { get; set; }
         private static readonly Random random = new Random();
         public int BaseAtk { get; private set; }
+        private double modificador;
+        private bool berserk = false;
 
         public override int Damage()
         {
-            var dano = AtkTotal() + BaseAtk;
-            Console.WriteLine($"{Name} causou {dano} de dano!");
-            return AtkTotal() + BaseAtk;
+            modificador = Nodes >= 3 ? 0.07 : 0.05; 
+            int furiaBonus = (int)Math.Ceiling(furia * modificador * ModTotal());
+            return AtkTotal() + BaseAtk + furiaBonus;
         }
 
         public override void tomarDano(string inimigo, int dano)
@@ -29,7 +31,8 @@ namespace Task_U.Core
             int danoShield = Math.Min(Shield, (int)(dano * debuffRes));
             Shield -= danoShield;
             int danoReal = Math.Max(0, danoTotal - defesa);
-            furia += 1;
+            modificador = Nodes >= 1 ? 0.65 : 0.5;
+            furia = Math.Min(55, (int)Math.Ceiling(danoReal * modificador));
             HpAtual = Math.Max(0, HpAtual -= danoReal);
             if (danoShield > 0 && danoTotal == 0)
             {
@@ -47,7 +50,17 @@ namespace Task_U.Core
                 {
                     Console.WriteLine($"{inimigo} atacou {Name} e causou {danoTotal} de dano!");  
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine($"> [PASSIVA] {Name} resiste ao ataque, recebendo apenas {danoReal} de dano!");
+                    if (danoReal < danoTotal)
+                    {
+                        Console.WriteLine($"> [PASSIVA] {Name} resiste ao ataque, recebendo apenas {danoReal} de dano!");   
+                    }
+                    if (Nodes == 6 && HpAtual <= 0 && !berserk)
+                    {
+                        HpAtual = 1;
+                        berserk = true;
+                        furia = 55;
+                    }
+                    
                     Console.ResetColor(); 
                 }
             }
@@ -57,38 +70,43 @@ namespace Task_U.Core
         {
 
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine($"> [HABILIDADE] {Name} entra na frente dos inimigos!");
+            Console.WriteLine($"> [HABILIDADE] {Name} entra na frente dos inimigos enquanto consome sua fúria!");
             Console.ResetColor();
-
             chanceAlvo = 450;
             Console.WriteLine($"> {Name} tem 90% de chance de ser alvo dos ataques inimigos.");
-
-            if (HpAtual > 4)
-            {
-                HpAtual -= 4;
-                BaseAtk += 5;
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine($"> [HABILIDADE:] A fúria de {Name} aumenta! +{5} de ATK neste turno pelo custo de {4} pontos de vida");
-                Console.ResetColor();
-            }
+            int diferenca = furia - (int)Math.Ceiling(furia * 0.45);
+            modificador = Nodes >= 2 ? 0.38 : 0.45;
+            furia -= (int)Math.Ceiling(furia * modificador);
+            curar("consumo de fúria", diferenca);
         }
 
         public override void Passiva()
         {
-            BaseAtk = (HpMax - HpAtual) * ModTotal() / 4;
+            modificador = Nodes >= 5 ? 0.4 : 0.25;
+            BaseAtk = (int)Math.Ceiling((HpMax - HpAtual) * ModTotal() * modificador);
             if (BaseAtk > 0)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine($"> [PASSIVA] A fúria de {Name} aumenta! (+{BaseAtk} de ATK)");
                 Console.ResetColor();
             }
-            defesa = Math.Min(15, furia * Mod / 2);
+            modificador = Nodes >= 4 ? 45 : 35;
+            defesa = Math.Min((int)modificador, furia * ModTotal());
             if (defesa > 0)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine($"> [PASSIVA] A fúria de {Name} a deixa mais resistente! (Resiste à {defesa} do dano recebido)");
                 Console.ResetColor();
             }
+        }
+
+        public override void Resetar()
+        {
+            berserk = false;
+            furia = 0;
+            defesa = 0;
+            BaseAtk = 0;
+            base.Resetar();
         }
 
     }

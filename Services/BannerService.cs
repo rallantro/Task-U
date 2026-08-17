@@ -31,7 +31,7 @@ namespace Task_U.Services
                 atualBanner.LegId = rateUpLeg.Id;
                 atualBanner.EpicId = rateUpEpic.Id;
                 context.banners.Update(atualBanner);
-                user.LastBannerUpdate = DateTime.Now.Date; 
+                user.LastBannerUpdate = DateTime.Now.Date;
                 context.SaveChanges();
             }
             else

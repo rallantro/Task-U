@@ -10,15 +10,10 @@ using Task_U.Services;
 using Task_U.Data;
 using System.Diagnostics;
 
-Config version = new Config { Name = "Os Tempos Caídos", Value = "1.4.8" };
+
+
+Config version = new Config { Name = "A Brasa Ardente", Value = "1.6.0" };
 UpdateService update = new UpdateService();
-Gacha gacha = new Gacha();
-BannerService banner = new BannerService();
-TarefaService service = new TarefaService();
-CombatService combat = new CombatService();
-InventarioServices inventario = new InventarioServices();
-AdventureService adventure = new AdventureService();
-LojaService loja = new LojaService();
 using var context = new AppDbContext();
 
 try
@@ -36,16 +31,19 @@ catch (Exception ex)
     return;
 }
 
+Gacha gacha = new Gacha();
+BannerService banner = new BannerService();
+TarefaService service = new TarefaService();
+CombatService combat = new CombatService();
+InventarioServices inventario = new InventarioServices();
+AdventureService adventure = new AdventureService();
+LojaService loja = new LojaService();
+
 var user = context.Users.Include(u => u.Slot1_PersonagemAtivo).Include(u => u.Slot2_PersonagemAtivo).Include(u => u.Slot1_ItemAtivo).FirstOrDefault(u => u.Id == 1);
 adventure.AtualizarInimigo(context);
 banner.AtualizarBanner(context);
 service.AtualizarTarefas();
 loja.atualizarLoja(context);
-
-
-
-
-
 
 
 bool MenuShow = true;
@@ -177,6 +175,7 @@ while (MenuShow)
             {
                 gacha.Pull(banner);
                 x++;
+                Console.WriteLine($"{num - x}/{num} pulls restantes.");
             }
             context.Entry(user).Reload();
             Console.WriteLine("\n >> Invocação finalizada.");

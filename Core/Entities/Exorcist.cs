@@ -159,6 +159,7 @@ namespace Task_U.Core.Entities
                             {
                                 int indice = inimigoAlvo.status.FindIndex(x => x.Name == "Fraqueza Espiritual");
                                 inimigoAlvo.status[indice].Duration = Math.Max(acumulo, 1);
+                                inimigoAlvo.debuffRes += 1;
                             }
                             else
                             {
@@ -206,7 +207,7 @@ namespace Task_U.Core.Entities
                         Console.WriteLine($"> [PASSIVA] {Name} purifica a energia negativa em seu aliado");
                         Console.WriteLine($"> {Name}: SAI DO {aliado.Name.ToUpper()}, ENERGIA RUIM!");
                         Console.ResetColor();
-                        int indexAlly = random.Next(aliado.status.Count);
+                        int indexAlly = random.Next(debuffsAlly.Count);
                         var efeito = debuffsAlly[indexAlly];
                         int realIndex = aliado.status.IndexOf(efeito);
                         Console.WriteLine($"> {Name} purificou {aliado.Name}, retirando {status[realIndex].Name}.");
@@ -233,7 +234,7 @@ namespace Task_U.Core.Entities
                         Console.WriteLine($"> [PASSIVA] {Name} purifica a energia negativa em si mesmo");
                         Console.WriteLine($"> {Name}: AH! VAI DE RETO! SAI DE MIM COISA RUIM!");
                         Console.ResetColor();
-                        int index = random.Next(status.Count);
+                        int index = random.Next(debuffs.Count);
                         var efeito = debuffs[index];
                         int realIndex = status.IndexOf(efeito);
                         Console.WriteLine($"> {Name} se purificou, retirando {status[realIndex].Name}.");

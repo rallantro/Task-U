@@ -18,7 +18,7 @@ namespace Task_U.Core.StatusEffects
             var debuffs = personagem.status.Where(x => x.isBeneficial == false).ToList();
             foreach (var debuff in debuffs)
             {
-                personagem.status.Remove(debuff);
+                debuff.Duration = 0;
                 Console.WriteLine($"> [{Name.ToUpper()}] Purificou {debuff.Name} de {personagem.Name}!");
             }
         }
