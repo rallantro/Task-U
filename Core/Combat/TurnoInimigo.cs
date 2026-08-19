@@ -36,7 +36,7 @@ namespace Task_U.Core.Combat
             }
 
             combateUI.TurnoInimigo(inimigo);
-  
+
             inimigo.alvos = vivos;
             if (inimigo.Silenced)
             {
@@ -56,7 +56,15 @@ namespace Task_U.Core.Combat
                 chanceTotal += personagem.chanceAlvo;
             }
             PersonagemBase alvo = inimigo.EscolherAlvo();
-            alvo.tomarDano(inimigo.Name, danoInimigo);
+            if (inimigo.Blinded)
+            {
+                combateUI.ExibirMensagem($"> {inimigo.Name} está cego e não consegue atacar!", ConsoleColor.Red);
+                combateUI.AguardarTecla();
+            }
+            else
+            {
+                alvo.tomarDano(inimigo.Name, danoInimigo);
+            }
             combateUI.ExibirMensagem("\n [ Pressione qualquer tecla para o próximo turno...] ", ConsoleColor.White);
             inimigo.Silenced = false;
             combateUI.AguardarTecla();
