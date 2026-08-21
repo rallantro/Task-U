@@ -10,6 +10,7 @@ using Task_U.Services;
 using Task_U.Core.Entities;
 using Task_U.Core.Enemies;
 using Task_U.Core.Itens;
+using System.Linq.Expressions;
 
 namespace Task_U.Services
 {
@@ -69,7 +70,30 @@ namespace Task_U.Services
         }
         static void UpdatePatch_1_6_0(AppDbContext context)
         {
-            //Mudanças do Patch
+            var jax = context.Personagens.FirstOrDefault(x => x.Name == "Jax");
+            if (jax == null)
+            {
+                jax = new Grafiteiro
+                {
+                    Name = "Jax",
+                    Atk = 12,
+                    HpMax = 300,
+                    Mod = 6,
+                    Speed = 85,
+                    Desc = "Jax é um adolescente de pele clara e cabelos espetados em um tom de vermelho vibrante, combinando com seus olhos cor de âmbar que brilham com travessura. Ele ostenta um estilo Y2K com calças cargo largas, um cinto de utilidades cheio de sprays e uma camisa oversized vermelha, sempre exibindo um sorriso descontraído enquanto desliza com seu skate pelas ruas. \r\n[Habilidade: Muralha de Tinta] Jax usa tinta acumulada para: Explosão (dano massivo), Debuff (cegueira) ou Buff (Ataque e Velocidade para si e aliado).\r\n[Passiva: Camadas de Tinta] No modo de pintura, acumula camadas a cada turno. Se ultrapassar o limite, explode automaticamente no próximo ataque, causando um dano massivo.",
+                    SummonQuote = "Minha arte logo vai fazer KABOM!"
+                };
+                context.Personagens.Add(jax);
+            }
+            else
+            {
+                jax.Desc = "Jax é um adolescente de pele clara e cabelos espetados em um tom de vermelho vibrante, combinando com seus olhos cor de âmbar que brilham com travessura. Ele ostenta um estilo Y2K com calças cargo largas, um cinto de utilidades cheio de sprays e uma camisa oversized vermelha, sempre exibindo um sorriso descontraído enquanto desliza com seu skate pelas ruas. \r\n[Habilidade: Muralha de Tinta] Jax usa tinta acumulada para: Explosão (dano massivo), Debuff (cegueira) ou Buff (Ataque e Velocidade para si e aliado).\r\n[Passiva: Camadas de Tinta] No modo de pintura, acumula camadas a cada turno. Se ultrapassar o limite, explode automaticamente no próximo ataque, causando um dano massivo.";
+                jax.Atk = 12;
+                jax.HpMax = 300;
+                jax.Mod = 6;
+                jax.Speed = 105;
+            }
+            context.SaveChanges();
         }
     }
 }

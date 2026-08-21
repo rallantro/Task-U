@@ -16,7 +16,10 @@ namespace Task_U.Services
             using var context = new AppDbContext();
             var hoje = DateTime.Now.DayOfWeek;
             var user = context.Users.Find(1);
-
+            if (user == null)
+            {
+                throw new Exception("Erro crítico! O usuário não foi encontrado, seu banco de dados pode estar corrompido, por favor procure contatar o suporte.");
+            }
             if (user.lastLogin.Date < DateTime.Now.Date)
             {
                 var TarefasDoDia = context.BaseTarefas.Where(t => (DayOfWeek)t.DiaSemana == hoje).ToList();
@@ -56,6 +59,10 @@ namespace Task_U.Services
         {
             using var context = new AppDbContext();
             var user = context.Users.Find(1);
+            if (user == null)
+            {
+                throw new Exception("Erro crítico! O usuário não foi encontrado, seu banco de dados pode estar corrompido, por favor procure contatar o suporte.");
+            }
 
             Console.Clear();
             Console.ForegroundColor = ConsoleColor.Cyan;
@@ -128,6 +135,7 @@ namespace Task_U.Services
 
         public void ConcluirTarefa(int TarefaId, Gacha gacha)
         {
+
             using var context = new AppDbContext();
             if (context.Tarefas.FirstOrDefault(x => x.Id == TarefaId) == null)
             {
@@ -138,7 +146,10 @@ namespace Task_U.Services
             }
             var tarefa = context.Tarefas.Find(TarefaId);
             var user = context.Users.Find(1);
-
+            if (user == null)
+            {
+                throw new Exception("Erro crítico! O usuário não foi encontrado, seu banco de dados pode estar corrompido, por favor procure contatar o suporte.");
+            }
             if (tarefa != null && !tarefa.IsDone)
             {
                 if (tarefa.Dif >= 6)

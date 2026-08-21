@@ -37,6 +37,10 @@ namespace Task_U.Models
             using var context = new AppDbContext();
             int number = random.Next(1, 1001);
             var user = context.Users.Find(1);
+            if (user == null)
+            {
+                throw new Exception("Erro crítico! O usuário não foi encontrado, seu banco de dados pode estar corrompido, por favor procure contatar o suporte.");
+            }
 
             user.Crystals -= 10;
 
@@ -335,7 +339,7 @@ namespace Task_U.Models
 
 
             Console.Write("\r" + frameStr);
-            Thread.Sleep(40); 
+            Thread.Sleep(40);
 
             Console.Write("\r" + texto);
             Console.WriteLine();

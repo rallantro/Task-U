@@ -132,6 +132,10 @@ namespace Task_U.Core
         public virtual PersonagemBase EscolherAlvo()
         {
             int chanceTotal = 0;
+            if(alvos == null || alvos.Count == 0)
+            {
+                throw new Exception("Erro desconhecido. O inimigo não conseguiu ver nenhum alvo na equipe. Contate o suporte.");
+            }
             foreach (var personagem in alvos)
             {
                 chanceTotal += personagem.chanceAlvo;
@@ -145,7 +149,7 @@ namespace Task_U.Core
                 }
                 chance -= personagem.chanceAlvo;
             }
-            return alvos.FirstOrDefault();
+            return alvos[0];
         }
 
         public virtual void aoUsarSkill(PersonagemBase personagem)
