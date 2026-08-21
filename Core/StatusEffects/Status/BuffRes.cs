@@ -16,6 +16,9 @@ namespace Task_U.Core.StatusEffects
             
             if (Duration > 0)
             {
+                Console.ForegroundColor = ConsoleColor.Blue;
+                Console.WriteLine($"{personagem.Name} foi afetado por {Name}! (recebe -{modificador * 100}% de dano)");
+                Console.ResetColor();
                 personagem.debuffRes -= modificador;
                 Duration -= 1;
             }  
@@ -25,6 +28,9 @@ namespace Task_U.Core.StatusEffects
         {
             if (Duration > 0)
             {
+                Console.ForegroundColor = ConsoleColor.Blue;
+                Console.WriteLine($"{personagem.Name} foi afetado por {Name}! (recebe -{modificador * 100}% de dano)");
+                Console.ResetColor();
                 personagem.debuffRes -= modificador;
                 Duration -= 1;
             }  
