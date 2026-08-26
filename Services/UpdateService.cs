@@ -79,7 +79,7 @@ namespace Task_U.Services
                     Atk = 12,
                     HpMax = 300,
                     Mod = 6,
-                    Speed = 85,
+                    Speed = 105,
                     Desc = "Jax é um adolescente de pele clara e cabelos espetados em um tom de vermelho vibrante, combinando com seus olhos cor de âmbar que brilham com travessura. Ele ostenta um estilo Y2K com calças cargo largas, um cinto de utilidades cheio de sprays e uma camisa oversized vermelha, sempre exibindo um sorriso descontraído enquanto desliza com seu skate pelas ruas. \r\n[Habilidade: Muralha de Tinta] Jax usa tinta acumulada para: Explosão (dano massivo), Debuff (cegueira) ou Buff (Ataque e Velocidade para si e aliado).\r\n[Passiva: Camadas de Tinta] No modo de pintura, acumula camadas a cada turno. Se ultrapassar o limite, explode automaticamente no próximo ataque, causando um dano massivo.",
                     SummonQuote = "Minha arte logo vai fazer KABOM!"
                 };
