@@ -156,7 +156,13 @@ namespace Task_U.Core
             }
             else
             {
-                Console.WriteLine($"{inimigo} atacou {Name} e causou {danoTotal} de dano!");
+                string danoOg = $"";
+                if (debuffRes != 1)
+                {
+                    danoOg = $" (dano original: {dano - Shield})";
+                }
+                Console.WriteLine($"{inimigo} atacou {Name} e causou {danoTotal} de dano{danoOg}!");
+                
             }
         }
 

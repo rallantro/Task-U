@@ -81,13 +81,11 @@ namespace Task_U.Core.Combat
                     inimigo.BuffAtk = 0;
                     inimigo.BuffMod = 0;
                     inimigo.BuffSpeed = 0;
-                    inimigo.debuffRes = 1;
                     foreach (var personagem in equipe.Where(x => x.HpAtual > 0))
                     {
                         personagem.BuffAtk = 0;
                         personagem.BuffMod = 0;
                         personagem.BuffSpeed = 0;
-                        personagem.debuffRes = 1;
                         personagem.inimigoAlvo = inimigo;
                     }
                     tempoAcumulado = 0;

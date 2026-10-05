@@ -11,29 +11,44 @@ namespace Task_U.Core.StatusEffects
     public class DebuffRes : StatusEffect
     {
         private double modificador;
+        private bool aplicado = false;
         public override void Aplicar(PersonagemBase personagem)
         {
             
             if (Duration > 0)
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine($"{personagem.Name} foi afetado por {Name}! (recebe +{modificador * 100}% de dano)");
-                Console.ResetColor();
+                if (!aplicado)
+                {
+                    personagem.debuffRes += modificador;
+                    aplicado = true;
+                    Console.WriteLine($"{personagem.Name} recebeu {Name}! (+{modificador * 100:F1}% de dano)");
+                }
+                Duration--;
+            }
+            else if (aplicado)
+            {
                 personagem.debuffRes += modificador;
-                Duration -= 1;
-            }  
+                aplicado = false;
+            }
         }
 
         public override void Aplicar(InimigoBase personagem)
         {
             if (Duration > 0)
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine($"{personagem.Name} foi afetado por {Name}! (recebe +{modificador * 100}% de dano)");
-                Console.ResetColor();
+                if (!aplicado)
+                {
+                    personagem.debuffRes += modificador;
+                    aplicado = true;
+                    Console.WriteLine($"{personagem.Name} recebeu {Name}! (+{modificador * 100:F1}% de dano)");
+                }
+                Duration--;
+            }
+            else if (aplicado)
+            {
                 personagem.debuffRes += modificador;
-                Duration -= 1;
-            }  
+                aplicado = false;
+            }
         }
 
         [SetsRequiredMembers]

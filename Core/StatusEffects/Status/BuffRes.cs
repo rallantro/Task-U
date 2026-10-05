@@ -11,36 +11,59 @@ namespace Task_U.Core.StatusEffects
     public class BuffRes : StatusEffect
     {
         private double modificador;
+        private bool aplicado = false;
         public override void Aplicar(PersonagemBase personagem)
         {
-            
+
             if (Duration > 0)
             {
+                if (!aplicado)
+                {
+                    personagem.debuffRes -= modificador;
+                    aplicado = true;
+                }
+                Duration--;
+
                 Console.ForegroundColor = ConsoleColor.Blue;
-                Console.WriteLine($"{personagem.Name} foi afetado por {Name}! (recebe -{modificador * 100}% de dano)");
+                Console.WriteLine($"{personagem.Name} recebeu {Name}! (-{modificador * 100:F2}% de dano)");
                 Console.ResetColor();
-                personagem.debuffRes -= modificador;
-                Duration -= 1;
-            }  
+
+                if (Duration == 0 && aplicado)
+                {
+                    personagem.debuffRes += modificador;
+                    aplicado = false;
+                }
+            }
         }
 
         public override void Aplicar(InimigoBase personagem)
         {
             if (Duration > 0)
             {
-                Console.ForegroundColor = ConsoleColor.Blue;
-                Console.WriteLine($"{personagem.Name} foi afetado por {Name}! (recebe -{modificador * 100}% de dano)");
-                Console.ResetColor();
-                personagem.debuffRes -= modificador;
-                Duration -= 1;
-            }  
+                if (!aplicado)
+                {
+                    personagem.debuffRes -= modificador;
+                    aplicado = true;
+                    Console.ForegroundColor = ConsoleColor.Blue;
+                    Console.WriteLine($"{personagem.Name} recebeu {Name}! (-{modificador * 100:F2}% de dano)");
+                    Console.ResetColor();
+                }
+                Duration--;
+
+                if (Duration == 0 && aplicado)
+                {
+                    personagem.debuffRes += modificador;
+                    aplicado = false;
+                }
+            }
+
         }
 
         [SetsRequiredMembers]
         public BuffRes(string name, int duration, double mod) : base(name, duration, null)
         {
-           modificador = mod; 
-           isBeneficial = true;
+            modificador = mod;
+            isBeneficial = true;
         }
     }
 }
