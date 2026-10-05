@@ -106,7 +106,12 @@ namespace Task_U.Core
                 {
                     Console.WriteLine($"{inimigo.Name} atacou {Name} e destruiu seu escudo!");
                 }
-                Console.WriteLine($"{inimigo.Name} atacou {Name} e causou {danoTotal} de dano!");
+                string danoOg = $"";
+                if (debuffRes != 1)
+                {
+                    danoOg = $" (dano original: {dano - Shield})";
+                }
+                Console.WriteLine($"{inimigo} atacou {Name} e causou {danoTotal} de dano{danoOg}!");
             }
         }
 
@@ -132,7 +137,7 @@ namespace Task_U.Core
         public virtual PersonagemBase EscolherAlvo()
         {
             int chanceTotal = 0;
-            if(alvos == null || alvos.Count == 0)
+            if (alvos == null || alvos.Count == 0)
             {
                 throw new Exception("Erro desconhecido. O inimigo não conseguiu ver nenhum alvo na equipe. Contate o suporte.");
             }

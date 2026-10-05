@@ -53,7 +53,12 @@ namespace Task_U.Core.Entities
             else if (Fluxo < 60)
             {
                 HpAtual -= danoTotal;
-                Console.WriteLine($"{inimigo} atacou {Name} e causou {danoTotal} de dano!");
+                string danoOg = $"";
+                if (debuffRes != 1)
+                {
+                    danoOg = $"(dano original: {dano - Shield})";
+                }
+                Console.WriteLine($"{inimigo} atacou {Name} e causou {danoTotal} de dano {danoOg}!");
                 Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.WriteLine($"> [PASSIVA] {Name} recebeu {newFluxo}% de fluxo pelo dano recebido! (Fluxo total: {Fluxo}%)");
                 Console.WriteLine($"> {Name}: Ei isso doeu!");
@@ -64,7 +69,12 @@ namespace Task_U.Core.Entities
                 if (aliado != null && (aliado.Name == "Jax" || aliado.Name == "Lurios"))
                 {
                     HpAtual -= danoTotal / 2;
-                    Console.WriteLine($"{inimigo} atacou {Name} e causou {danoTotal / 2} de dano!");
+                    string danoOg = $"";
+                    if (debuffRes != 1)
+                    {
+                        danoOg = $" (dano original: {dano - Shield})";
+                    }
+                    Console.WriteLine($"{inimigo} atacou {Name} e causou {danoTotal / 2} de dano{danoOg}!");
                     Console.ForegroundColor = ConsoleColor.Cyan;
                     Console.WriteLine($"> [PASSIVA] O fluxo de {Name} está cheio! Ele vai estourar!");
                     Console.WriteLine($"> {Name}: Explosão de bolhas! Ploc, ploc, POW!!");

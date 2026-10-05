@@ -35,7 +35,7 @@ namespace Task_U.Core
                 int custo = (int)Math.Ceiling(HpAtual * modificador);
                 HpAtual = HpAtual - custo;
                 modificador = Nodes >= 3 ? ModTotal() / (ModTotal() + 3.54) : ModTotal() / (ModTotal() + 5.37);
-                var buffRes = new BuffRes("Campo Putrefe", 3, modificador);
+                var buffRes = new BuffRes("Campo Putrefe", 4, modificador);
 
                 Console.ForegroundColor = ConsoleColor.Magenta;
                 Console.WriteLine($"> [CAMPO PUTREFE] {Name} corta o próprio pano e deixa a alma escorrer como fumaça.");
@@ -45,13 +45,17 @@ namespace Task_U.Core
 
                 if (aliado != null)
                 {
-                    aliado.status.Add(buffRes);
+                    modificador = Nodes >= 3 ? ModTotal() / (ModTotal() + 3.54) : ModTotal() / (ModTotal() + 5.37);
+                    BuffRes buffResAl = new BuffRes("Campo Putrefe", 4, modificador);
+                    buffResAl.Aplicar(aliado);
+                    aliado.status.Add(buffResAl);
                     Console.ForegroundColor = ConsoleColor.Magenta;
                     Console.WriteLine($"> [VÍNCULO DE ALMA] {Name} estende a mão e toca a sombra de {aliado.Name}.");
                     Console.WriteLine($"> {Name}: Eu seguro sua alma... prometo que não vou deixar ela cair.");
                     Console.WriteLine($"> {aliado.Name} recebeu {buffRes.Name}. (Recebe -{modificador * 100:F1}% de dano por 3 turnos)");
                     Console.ResetColor();
                 }
+                buffRes.Aplicar(this);
                 status.Add(buffRes);
                 cd = Nodes >= 2 ? 4 : 5;
             }

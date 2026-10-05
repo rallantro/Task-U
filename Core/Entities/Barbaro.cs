@@ -19,7 +19,7 @@ namespace Task_U.Core
 
         public override int Damage()
         {
-            modificador = Nodes >= 3 ? 0.07 : 0.05; 
+            modificador = Nodes >= 3 ? 0.07 : 0.05;
             int furiaBonus = (int)Math.Ceiling(furia * modificador * ModTotal());
             return AtkTotal() + BaseAtk + furiaBonus;
         }
@@ -48,11 +48,16 @@ namespace Task_U.Core
                 }
                 else
                 {
-                    Console.WriteLine($"{inimigo} atacou {Name} e causou {danoTotal} de dano!");  
+                    string danoOg = $"";
+                    if (debuffRes != 1)
+                    {
+                        danoOg = $" (dano original: {dano - Shield})";
+                    }
+                    Console.WriteLine($"{inimigo} atacou {Name} e causou {danoTotal} de dano{danoOg}!");
                     Console.ForegroundColor = ConsoleColor.Red;
                     if (danoReal < danoTotal)
                     {
-                        Console.WriteLine($"> [PASSIVA] {Name} resiste ao ataque, recebendo apenas {danoReal} de dano!");   
+                        Console.WriteLine($"> [PASSIVA] {Name} resiste ao ataque, recebendo apenas {danoReal} de dano!");
                     }
                     if (Nodes == 6 && HpAtual <= 0 && !berserk)
                     {
@@ -60,8 +65,8 @@ namespace Task_U.Core
                         berserk = true;
                         furia = 55;
                     }
-                    
-                    Console.ResetColor(); 
+
+                    Console.ResetColor();
                 }
             }
         }
