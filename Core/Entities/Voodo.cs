@@ -5,104 +5,54 @@ using System.Threading.Tasks;
 using Task_U.Services;
 using Task_U.Models;
 using Task_U.Data;
+using Task_U.Core.StatusEffects;
 
 namespace Task_U.Core
 {
     public class Voodo : PersonagemBase
     {
-        private int VoodoLife;
-        private bool VoodoDone;
-        private int VoodoDmg;
-        private bool VoodoReady;
-        private int Chances;
-        private bool calculou;
+        private int cd;
 
         public override int Damage()
         {
-            if (VoodoReady)
-            {
-                int dano = Atk + ((ModTotal() + VoodoDmg) * 2);
-                VoodoLife = 0;
-                VoodoDmg = 0;
-                VoodoDone = false;
-                VoodoReady = false;
-                Console.ForegroundColor = ConsoleColor.Magenta;
-                Console.WriteLine($"> É hora da retrubição... {Name}: 'Toda dor volta para o dono.' ({dano} de dano causado)");
-                Console.ResetColor();
-                return dano;
-            }
-            else
-            {
-                Console.WriteLine($"{Name} causou {Atk} de dano!");
-            }
-            return Atk;
+            double modificador = Nodes >= 5 ? 0.64 : 0.52;
+            int cura = (int)Math.Ceiling(AtkTotal() * modificador);
+            HpAtual = Math.Min(HpAtual + cura, HpMax);
+            return base.Damage();
         }
 
         public override void Habilidade()
         {
-            if (VoodoLife > HpAtual)
+            if (HpAtual > 1 && cd == 0)
             {
-                int interHp = HpAtual;
-                HpAtual = VoodoLife;
-                VoodoLife = interHp;  
-                Console.ForegroundColor = ConsoleColor.Magenta;
-                Console.WriteLine($"> [HABILIDADE] {Name}: 'O boneco está mais vivo que eu agora.' (Vínculos alterados)");
-                Console.WriteLine($"> [HABILIDADE] Agora {Name} está com {HpAtual} pontos de vida.");
-                Console.ResetColor(); 
+                double modificador = Nodes >= 4 ? 0.12 : 0.24;
+                HpAtual = HpAtual - (int)Math.Ceiling(HpAtual * modificador);
+                modificador = Nodes >= 3 ? ModTotal() / (ModTotal() + 3.54) : ModTotal() / (ModTotal() + 5.37);
+                var buffRes = new BuffRes("Campo Putrefe", 3, modificador);
+                if(aliado != null)
+                {
+                    aliado.status.Add(buffRes);
+                }
+                status.Add(buffRes);
+                cd = Nodes >= 2 ? 4 : 5;
             }
-            else
-            {
-                Console.ForegroundColor = ConsoleColor.Magenta;
-                Console.WriteLine($"> [HABILIDADE] {Name}: 'Não... eu ainda não sofri o bastante.'");
-                Console.WriteLine($"{Name} não pode substituir sua vida por uma inferior em seu boneco.");
-                Console.ResetColor();
-            } 
         }
 
         public override void Passiva()
         {
-            if (!calculou)
+            if (status.Any(x => x.Name == "Campo Putrefe"))
             {
-                Chances = 3;
-                Console.ForegroundColor = ConsoleColor.Magenta;
-                Console.WriteLine($"> [PASSIVA] {Name} possui {Chances} chances de vincular sua alma com o seu boneco voodo.");
-                Console.ResetColor();
-                calculou = true;
+                double modificador = Nodes >= 1 ? 0.05 : 0.02;
+                int cura = (int)Math.Ceiling(HpMax * modificador);
+                HpAtual = Math.Min(HpAtual + cura, HpMax);
             }
-            if (!VoodoDone)
+            if (cd > 0)
             {
-                VoodoLife = HpAtual;
-                Console.ForegroundColor = ConsoleColor.Magenta;
-                Console.WriteLine($"> [PASSIVA] {Name} sussurrou sua vida para o boneco. {VoodoLife} pontos de vida armazenados.");
-                Console.ResetColor();
-                VoodoDone = true;
-            }
-            if (HpAtual <= VoodoLife/5 && Chances > 0)
-            {
-                VoodoDmg = VoodoLife - HpAtual + ModTotal();
-                HpAtual = VoodoLife * 2/3;
-                VoodoReady = true;
-                Chances--;
-                Console.ForegroundColor = ConsoleColor.Magenta;
-                Console.WriteLine($"> [PASSIVA] {Name}: 'O boneco ainda tem fôlego... e eu também.' (Vínculo consumido. Restam {Chances})");
-                Console.WriteLine($"> [PASSIVA] {Name} agora está com {HpAtual} de pontos de vida.");
-                Console.ResetColor();
-            }
-            if (Chances == 0)
-            {
-                Console.ForegroundColor = ConsoleColor.Magenta;
-                Console.WriteLine($"> [PASSIVA] O boneco de {Name} apodreceu. O [Espasmo Cadavérico] não pode mais ser invocado");
-                Console.ResetColor();
+                cd--;
             }
         }
         public override void Resetar()
-        { 
-            VoodoLife = 0;
-            VoodoDmg = 0;
-            VoodoDone = false;
-            Chances = 0;
-            VoodoReady = false;
-            calculou = false;
+        {
             base.Resetar();
         }
     }

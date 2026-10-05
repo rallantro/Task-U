@@ -162,7 +162,7 @@ namespace Task_U.Core
 
         public virtual void curar(string aliado, int cura)
         {
-            HpAtual = Math.Min(HpAtual + cura, HpMax); ;
+            HpAtual = Math.Min(HpAtual + cura, HpMax);
         }
 
         public virtual void Habilidade()
