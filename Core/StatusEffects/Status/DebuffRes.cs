@@ -14,21 +14,25 @@ namespace Task_U.Core.StatusEffects
         private bool aplicado = false;
         public override void Aplicar(PersonagemBase personagem)
         {
-            
+
             if (Duration > 0)
             {
                 if (!aplicado)
                 {
                     personagem.debuffRes += modificador;
                     aplicado = true;
-                    Console.WriteLine($"{personagem.Name} recebeu {Name}! (+{modificador * 100:F1}% de dano)");
                 }
                 Duration--;
-            }
-            else if (aplicado)
-            {
-                personagem.debuffRes += modificador;
-                aplicado = false;
+
+                Console.ForegroundColor = ConsoleColor.Blue;
+                Console.WriteLine($"{personagem.Name} recebeu {Name}! (-{modificador * 100:F2}% de dano)");
+                Console.ResetColor();
+
+                if (Duration == 0 && aplicado)
+                {
+                    personagem.debuffRes -= modificador;
+                    aplicado = false;
+                }
             }
         }
 
@@ -40,21 +44,25 @@ namespace Task_U.Core.StatusEffects
                 {
                     personagem.debuffRes += modificador;
                     aplicado = true;
-                    Console.WriteLine($"{personagem.Name} recebeu {Name}! (+{modificador * 100:F1}% de dano)");
                 }
                 Duration--;
-            }
-            else if (aplicado)
-            {
-                personagem.debuffRes += modificador;
-                aplicado = false;
+
+                Console.ForegroundColor = ConsoleColor.Blue;
+                Console.WriteLine($"{personagem.Name} recebeu {Name}! (-{modificador * 100:F2}% de dano)");
+                Console.ResetColor();
+
+                if (Duration == 0 && aplicado)
+                {
+                    personagem.debuffRes -= modificador;
+                    aplicado = false;
+                }
             }
         }
 
         [SetsRequiredMembers]
         public DebuffRes(string name, int duration, double mod) : base(name, duration, null)
         {
-           modificador = mod; 
+            modificador = mod;
         }
     }
 }
