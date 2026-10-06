@@ -24,6 +24,8 @@ namespace Task_U.Core.Entities
                 Console.WriteLine($"> {Name}: O que é impuro se dissolve na transparência...");
                 Console.ResetColor();
                 var debuff = new DebuffRes("Rito da Nascente", 1, modificador);
+                inimigoAlvo.status.Add(debuff);
+                debuff.Aplicar(inimigoAlvo);
             }
             return base.Damage();
         }
@@ -76,7 +78,7 @@ namespace Task_U.Core.Entities
             var shieldEfect = new PriestShield("Cúpula de Orvalho", 1, modificador);
             modificador = Nodes >= 1 ? 5 : 4;
 
-            int ganho = (int)Math.Round(Mod * modificador * (1 - (Shield / Mod * modificador)));
+            int ganho = (int)Math.Round(ModTotal() * modificador * (1 - (Shield / (ModTotal() * modificador))));
             Shield += Math.Max(0, ganho);
             if (!status.Any(x => x.Name == "Cúpula de Orvalho"))
             {
@@ -84,7 +86,7 @@ namespace Task_U.Core.Entities
             }
             if (aliado != null)
             {
-                ganho = (int)Math.Round(Mod * modificador * (1 - (aliado.Shield / Mod * modificador)));
+                ganho = (int)Math.Round(ModTotal() * modificador * (1 - (aliado.Shield / (ModTotal() * modificador))));
                 aliado.Shield += Math.Max(0, ganho);
                 if (!aliado.status.Any(x => x.Name == "Cúpula de Orvalho"))
                 {
