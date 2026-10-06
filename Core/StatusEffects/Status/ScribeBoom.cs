@@ -55,6 +55,7 @@ namespace Task_U.Core.StatusEffects
                     }
                     var deRes = new DebuffRes("Laçada Gélida", Math.Max(time, 1), Res);
                     personagem.status.Add(deRes);
+                    deRes.Aplicar(personagem);
                     Console.ForegroundColor = ConsoleColor.Blue;
                     Console.WriteLine($"[LAÇADA GÉLIDA] {personagem.Name} está exposto ao fluxo do tempo! O choque o enfraqueceu!");
                     Console.ResetColor();

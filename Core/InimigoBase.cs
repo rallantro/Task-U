@@ -111,7 +111,7 @@ namespace Task_U.Core
                 {
                     danoOg = $" (dano original: {dano - Shield})";
                 }
-                Console.WriteLine($"{inimigo} atacou {Name} e causou {danoTotal} de dano{danoOg}!");
+                Console.WriteLine($"{inimigo.Name} atacou {Name} e causou {danoTotal} de dano{danoOg}!");
             }
         }
 

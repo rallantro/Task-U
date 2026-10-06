@@ -159,11 +159,11 @@ namespace Task_U.Core.Entities
                             {
                                 int indice = inimigoAlvo.status.FindIndex(x => x.Name == "Fraqueza Espiritual");
                                 inimigoAlvo.status[indice].Duration = Math.Max(acumulo, 1);
-                                inimigoAlvo.debuffRes += 1;
                             }
                             else
                             {
                                 inimigoAlvo.status.Add(Res);
+                                Res.Aplicar(inimigoAlvo);
                             }
                             Console.WriteLine($"> {inimigoAlvo.Name} recebeu {Res.Name}. (Recebe +{1 * 100}% de dano por {Res.Duration} turno(s))");
 
