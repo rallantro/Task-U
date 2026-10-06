@@ -17,7 +17,7 @@ namespace Task_U.Core.Entities
         public override void aplicarEfeitos()
         {
             int chance = random.Next(1, 101);
-            if (chance > 50 || pity >= 3)
+            if (chance > 50 && pity < 3)
             {
                 Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.WriteLine($"> {Name}: Ahhhh! Quanta energia negativa!");
@@ -93,7 +93,7 @@ namespace Task_U.Core.Entities
                             if (aliado.status.Any(x => x.Name == "Cura Espiritual"))
                             {
                                 int indice = aliado.status.FindIndex(x => x.Name == "Cura Espiritual");
-                                aliado.status[indice].Mod = ModTotal() + 4;
+                                aliado.status[indice].Mod = (int)Math.Ceiling(ModTotal() * 5.28);
                                 aliado.status[indice].Duration = 1;
                             }
                             else
@@ -171,7 +171,7 @@ namespace Task_U.Core.Entities
                             if (inimigoAlvo.status.Any(x => x.Name == "Pressão Espiritual"))
                             {
                                 int indice = inimigoAlvo.status.FindIndex(x => x.Name == "Pressão Espiritual");
-                                inimigoAlvo.status[indice].Mod = Math.Max(acumulo * ModTotal(), 1);
+                                inimigoAlvo.status[indice].Mod = Math.Max((int)Math.Ceiling(acumulo * ModTotal() * 3.24), 1);
                                 inimigoAlvo.status[indice].Duration = Math.Max(acumulo, 1);
                             }
                             else
@@ -210,7 +210,7 @@ namespace Task_U.Core.Entities
                         int indexAlly = random.Next(debuffsAlly.Count);
                         var efeito = debuffsAlly[indexAlly];
                         int realIndex = aliado.status.IndexOf(efeito);
-                        Console.WriteLine($"> {Name} purificou {aliado.Name}, retirando {status[realIndex].Name}.");
+                        Console.WriteLine($"> {Name} purificou {aliado.Name}, retirando {aliado.status[realIndex].Name}.");
                         aliado.status.RemoveAt(realIndex);
 
                         var buff = new BonusDMG("Fortalecimento Espiritual", 2, Atk);

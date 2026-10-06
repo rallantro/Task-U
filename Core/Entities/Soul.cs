@@ -40,11 +40,11 @@ namespace Task_U.Core
         }
         public override void Passiva()
         {
-            acumulo = Math.Min(5, acumulo + 1);
+            acumulo = Math.Min(7, acumulo + 1);
             Console.ForegroundColor = ConsoleColor.Red;
-            if (acumulo < 10)
+            if (acumulo < 7)
             {
-                Console.WriteLine($"[PASSIVA: PRESENÇA TRANQUILA]: {Name} acalma o ambiente ao redor em {acumulo*10}%");    
+                Console.WriteLine($"[PASSIVA: PRESENÇA TRANQUILA]: {Name} acalma o ambiente ao redor em {acumulo * 10}%");
             }
             else
             {
@@ -55,16 +55,14 @@ namespace Task_U.Core
             {
                 int bonus = (int)Math.Ceiling(aliado.AtkTotal() * acumulo / 10.0);
                 var buff = new BonusDMG("Sorte do Educado", 1, bonus);
-                if (aliado.status.Any(x => x.Name == "Sorte do Educado"))
+                var existing = aliado.status.FirstOrDefault(x => x.Name == "Sorte do Educado");
+                if (existing != null)
                 {
-
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine($"[PASSIVA: AURA DA HOSPIDALIDADE ETERNA]: {Name} continua fortalecendo os educados ao seu redor.");
                     Console.ResetColor();
-                    Console.WriteLine($"{aliado.Name} teve a duração de {buff.Name} estendida em + 1 turno. (+ {bonus} de dano bônus)");
-
-                    int index = aliado.status.IndexOf(buff);
-                    aliado.status[index].Duration = 1;
+                    Console.WriteLine($"{aliado.Name} teve a duração de {buff.Name} renovada. (+ {bonus} de dano bônus)");
+                    existing.Duration = 1;
                 }
                 else
                 {
@@ -80,22 +78,23 @@ namespace Task_U.Core
             {
                 int bonus = (int)Math.Ceiling(AtkTotal() * acumulo / 10.0);
                 var buff = new BonusDMG("Sorte do Educado", 1, (int)Math.Ceiling(AtkTotal() * acumulo / 10.0));
-                if (status.Any(x => x.Name == "Sorte do Educado"))
+                var existing = status.FirstOrDefault(x => x.Name == "Sorte do Educado");
+                if (existing != null)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine($"[PASSIVA: AURA DA HOSPIDALIDADE ETERNA]: {Name} continua fortalecendo ao único educado... Ele mesmo.");
                     Console.ResetColor();
-                    Console.WriteLine($"{Name} teve a duração de {buff.Name} estendida em + 1 turno. (+ {bonus} de dano bônus)");
-
-                    int index = status.IndexOf(buff);
-                    status[index].Duration = 1;
+                    Console.WriteLine($"{Name} teve a duração de {buff.Name} renovada. (+ {bonus} de dano bônus)");
+                    existing.Duration = 1;
                 }
+
+
                 else
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine($"[PASSIVA: AURA DA HOSPIDALIDADE ETERNA]: {Name} cria uma aura de fortalecimento aos educados... Ele.");
                     Console.ResetColor();
-                    Console.WriteLine($"{Name} teve a duração de {buff.Name} estendida em + 1 turno. (+ {bonus} de dano bônus)");
+                    Console.WriteLine($"{Name} teve a duração de {buff.Name} renovada. (+ {bonus} de dano bônus)");
                     status.Add(buff);
                 }
 
