@@ -27,17 +27,17 @@ namespace Task_U.Core.Combat
                 inimigo.Stuneed = false;
                 return;
             }
-
-            inimigo.Passiva(user);
             var vivos = equipe.Where(p => p.HpAtual > 0).ToList();
             if (vivos.Count() == 0)
             {
                 return;
             }
 
-            combateUI.TurnoInimigo(inimigo);
+
 
             inimigo.alvos = vivos;
+            inimigo.Passiva(user);
+            combateUI.TurnoInimigo(inimigo);
             if (inimigo.Silenced)
             {
                 combateUI.ExibirMensagem($"> {inimigo.Name} está silenciado e não pode usar suas habilidades!", ConsoleColor.Yellow);
