@@ -207,12 +207,11 @@ namespace Task_U.Core.Entities
                     inimigoAlvo.tomarDano(this, dano);
                     Console.ForegroundColor = ConsoleColor.Green;
                     Console.WriteLine($"> {Name}: Nada pessoal, são apenas negócios.");
+                    Console.WriteLine($"[ACERTO DE CONTAS] {Name} Expõe um ponto fraco, deixando o inimigo vunerável!");
                     Console.ResetColor();
-                    inimigoAlvo.status.Add(new DebuffRes("Exposto", 2, 0.3));
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine($"[ACERTO DE CONTAS] {Name} Expõe um ponto fraco, deixando o inimigo vunerável! (+30% de dano)");
-                    Console.WriteLine($"> {Name}: Vulnerável e lento. Meu tipo favorito de alvo.");
-                    Console.ResetColor();
+                    var debuffRes = new DebuffRes("Exposto", 2, 0.3);
+                    debuffRes.Aplicar(inimigoAlvo);
+                    inimigoAlvo.status.Add(debuffRes);
                 }
                 pilhagem -= Nodes >= 3 ? pilhagem / 2 : pilhagem;
                 coolDown = 1;

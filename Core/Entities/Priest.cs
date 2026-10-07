@@ -23,9 +23,9 @@ namespace Task_U.Core.Entities
                 Console.WriteLine($"> [RITO DA NASCENTE] canaliza a água pesada contra {inimigoAlvo.Name}. (Recebe +{modificador * 100}% de dano)");
                 Console.WriteLine($"> {Name}: O que é impuro se dissolve na transparência...");
                 Console.ResetColor();
-                var debuff = new DebuffRes("Rito da Nascente", 1, modificador);
-                inimigoAlvo.status.Add(debuff);
+                var debuff = new DebuffRes("Rito da Nascente", 2, modificador);
                 debuff.Aplicar(inimigoAlvo);
+                inimigoAlvo.status.Add(debuff);
             }
             return base.Damage();
         }

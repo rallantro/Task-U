@@ -59,8 +59,23 @@ namespace Task_U.Core
                 status.Add(buffRes);
                 cd = Nodes >= 2 ? 4 : 5;
             }
+            else if (HpAtual <= 1)
+            {
+                 Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"> A vida de {Name} está muito baixa para desgastar sua alma.");
+                Console.WriteLine($"> {Name}: Eu não consigo... Cortar mais...");
+                Console.ResetColor();
+            }
+            else if (cd > 0)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"> A habilidade [CAMPO PUTREFE] ainda está em tempo de recarga. ({cd} turnos restantes)");
+                Console.WriteLine($"> {Name}: Eu preciso... De tempo...");
+                Console.ResetColor();
 
-            if (Nodes >= 6 && aliado != null && aliado.HpAtual <= 0 && !Usou)
+            }
+
+            if (Nodes >= 6 && aliado != null && aliado.HpAtual <= 0 && !Usou && HpAtual > HpMax/4)
             {
                 int diff = HpAtual - (int)Math.Ceiling(HpAtual * 0.50);
                 HpAtual = diff;

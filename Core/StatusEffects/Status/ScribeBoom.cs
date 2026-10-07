@@ -53,7 +53,8 @@ namespace Task_U.Core.StatusEffects
                         }
                         Console.WriteLine($"O franzido criogêncio explodiu em {Name} e causou {danoTotal} de dano!");
                     }
-                    var deRes = new DebuffRes("Laçada Gélida", Math.Max(time, 1), Res);
+                    var deRes = new DebuffRes("Laçada Gélida", Math.Max(time, 2), Res);
+                    deRes.Aplicar(personagem);
                     personagem.status.Add(deRes);
                     deRes.Aplicar(personagem);
                     Console.ForegroundColor = ConsoleColor.Blue;

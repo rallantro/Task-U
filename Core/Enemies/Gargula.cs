@@ -11,21 +11,26 @@ namespace Task_U.Core
         private int reducao;
         public override void tomarDano(PersonagemBase inimigo, int dano)
         {
-            
-            int danoTotal = Math.Max(0, dano - Shield - reducao);
-            int danoShield = Math.Min(Shield, dano - reducao);
+            int danoTotal = (int)Math.Max(0, Math.Ceiling(dano * debuffRes) - Shield - reducao);
+            int danoShield = Math.Min(Shield, (int)Math.Max(0, Math.Ceiling(dano * debuffRes) - reducao));
             Shield -= danoShield;
             HpAtual -= danoTotal;
             if (danoShield > 0 && danoTotal == 0)
             {
                 Console.WriteLine($"{Name} bloqueou completamente o ataque de {inimigo.Name} com seu escudo!");
             }
-            else if(danoTotal <= reducao)
+            else if (danoTotal <= reducao)
             {
                 Console.WriteLine($"{Name} bloqueou completamente o ataque de {inimigo.Name} com sua pele dura!");
-            }else
+            }
+            else
             {
-                Console.WriteLine($"{inimigo.Name} atacou {Name} e causou {danoTotal} de dano!");
+                string danoOg = $"";
+                if (debuffRes != 1)
+                {
+                    danoOg = $" (dano original: {dano - Shield})";
+                }
+                Console.WriteLine($"{inimigo.Name} atacou {Name} e causou {danoTotal} de dano{danoOg}!");
             }
         }
 
@@ -39,21 +44,21 @@ namespace Task_U.Core
                 Console.ResetColor();
                 Shield = Mod;
             }
-            else if(useSkill <= HabilidadeChance*2)
+            else if (useSkill <= HabilidadeChance * 2)
             {
                 Console.ForegroundColor = ConsoleColor.DarkCyan;
                 Console.WriteLine($"> [SARAIVADA DE PLASMA!] {Name} Libera uma rajada de plasma atingindo toda a equipe!");
                 Console.ResetColor();
                 foreach (var personagem in alvos)
                 {
-                    personagem.tomarDano(Name, Mod/2);
+                    personagem.tomarDano(Name, Mod / 2);
                 }
             }
         }
 
         public override void Passiva(User user)
         {
-            if (HpAtual >= HpMax/4)
+            if (HpAtual >= HpMax / 4)
             {
                 Console.ForegroundColor = ConsoleColor.DarkCyan;
                 Console.WriteLine($"> [CASCA GROSSA] {Name} é imune a ataques menores que {Mod}!");

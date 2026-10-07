@@ -63,7 +63,8 @@ namespace Task_U.Core.Entities
                 Console.ResetColor();
                 inimigoAlvo.tomarDano(this, (int)Math.Ceiling(ModTotal() * 0.75 * Runes));
                 double modificador = Nodes >= 1 ? 0.28 : 0.13;
-                var Res = new DebuffRes("Laçada Gélida Menor", 1, modificador);
+                var Res = new DebuffRes("Laçada Gélida Menor", 2, modificador);
+                Res.Aplicar(inimigoAlvo);
                 inimigoAlvo.status.Add(Res);
                 Console.WriteLine($"{inimigoAlvo.Name} recebeu {Res.Name}. (Recebe +{Res.Mod * 100}% de dano por {Res.Duration} turno(s))");
             }

@@ -154,7 +154,7 @@ namespace Task_U.Core.Entities
 
                         if (inimigoAlvo != null)
                         {
-                            var Res = new DebuffRes("Fraqueza Espiritual", Math.Max(acumulo, 1), 1);
+                            var Res = new DebuffRes("Fraqueza Espiritual", Math.Max(acumulo, 2), 1);
                             if (inimigoAlvo.status.Any(x => x.Name == "Fraqueza Espiritual"))
                             {
                                 int indice = inimigoAlvo.status.FindIndex(x => x.Name == "Fraqueza Espiritual");
@@ -162,8 +162,8 @@ namespace Task_U.Core.Entities
                             }
                             else
                             {
-                                inimigoAlvo.status.Add(Res);
                                 Res.Aplicar(inimigoAlvo);
+                                inimigoAlvo.status.Add(Res);
                             }
                             Console.WriteLine($"> {inimigoAlvo.Name} recebeu {Res.Name}. (Recebe +{1 * 100}% de dano por {Res.Duration} turno(s))");
 
