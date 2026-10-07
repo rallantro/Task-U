@@ -13,8 +13,8 @@ namespace Task_U.Core
 
         public override void tomarDano(PersonagemBase inimigo, int dano)
         {
-            int danoTotal = Math.Max(0, dano - Shield);
-            int danoShield = Math.Min(Shield, dano);
+            int danoTotal = (int)Math.Max(0, Math.Ceiling(dano * debuffRes) - Shield);
+            int danoShield = Math.Min(Shield, (int)Math.Max(0, Math.Ceiling(dano * debuffRes)));
             Shield -= danoShield;
             HpAtual -= danoTotal;
             if (danoShield > 0 && danoTotal == 0)
@@ -33,7 +33,12 @@ namespace Task_U.Core
                     Console.WriteLine($"> {Name}: Meu precioso!");
                     Console.ResetColor();
                 }
-                Console.WriteLine($"{inimigo.Name} atacou {Name} e causou {danoTotal} de dano!");
+                string danoOg = $"";
+                if (debuffRes != 1)
+                {
+                    danoOg = $" (dano original: {dano - Shield})";
+                }
+                Console.WriteLine($"{inimigo.Name} atacou {Name} e causou {danoTotal} de dano{danoOg}!");
                 Console.ForegroundColor = ConsoleColor.DarkBlue;
                 Console.WriteLine($"> {Name}: Prrrrrriiii!!!!!");
                 Console.ResetColor();
