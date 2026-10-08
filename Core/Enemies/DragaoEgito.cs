@@ -15,7 +15,7 @@ namespace Task_U.Core.Enemies
         private int oldHp;
         private bool dormencia = false;
         private int contador;
-        private string display_name = "";
+        private string display_name = "Anomalia Sombria";
 
         public override int Damage()
         {
@@ -156,7 +156,9 @@ namespace Task_U.Core.Enemies
         public override void Passiva(User user)
         {
             display_name = (fase == 1) ? "APEP" : Name;
-            if (HpAtual <= HpMax * 0.3)
+            if (alvos == null || alvos.Count == 0)
+                return;
+            if (HpAtual <= HpMax * 0.3 && fase != 1)
             {
                 fase = 1;
                 ConsoleColor[] coresGlitch = { ConsoleColor.DarkGray, ConsoleColor.Black, ConsoleColor.Gray, ConsoleColor.DarkMagenta };
