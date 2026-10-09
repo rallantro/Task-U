@@ -11,6 +11,7 @@ namespace Task_U.Core.StatusEffects
     public class PoisonMaxStack : StatusEffect
     {
 
+        private double modificador;
         public override void Aplicar(PersonagemBase personagem)
         {
             if (Duration > 0)
@@ -22,7 +23,7 @@ namespace Task_U.Core.StatusEffects
                 Console.WriteLine($"{personagem.Name} tomou {dano} de dano de {Name}!");
                 personagem.HpAtual -= dano;
                 Duration -= 1;
-            }  
+            }
         }
 
         public override void Aplicar(InimigoBase personagem)
@@ -36,13 +37,13 @@ namespace Task_U.Core.StatusEffects
                 Console.WriteLine($"{personagem.Name} tomou {dano} de dano de {Name}!");
                 personagem.HpAtual -= dano;
                 Duration -= 1;
-            }  
+            }
         }
 
         [SetsRequiredMembers]
-        public PoisonMaxStack(string name, int duration, int mod) : base(name, duration, mod)
+        public PoisonMaxStack(string name, int duration, double mod) : base(name, duration, null)
         {
-            
+            modificador = mod;
         }
     }
 }
