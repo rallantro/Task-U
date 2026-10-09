@@ -122,7 +122,9 @@ namespace Task_U.Core
 
         public virtual int SpeedTotal()
         {
-            return Math.Max(1, Speed + BuffSpeed);
+            int bonusEffects = status.OfType<BonusSPD>().Sum(s => s.Mod ?? 0);
+            int debuff = status.OfType<DebuffSPD>().Sum(s => s.Mod ?? 0);
+            return Math.Max(1, Speed + BuffSpeed + bonusEffects - debuff);
         }
         public virtual void Habilidade()
         {
@@ -165,6 +167,7 @@ namespace Task_U.Core
         public virtual void Resetar()
         {
             BuffAtk = 0;
+            BuffSpeed = 0;
             Silenced = false;
             Blinded = false;
             Stuneed = false;

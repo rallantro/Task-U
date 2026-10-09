@@ -20,10 +20,10 @@ namespace Task_U.Core
         public int Atk { get; set; }
         public int HpMax { get; set; }
 
-        public int Speed {get; set;}
+        public int Speed { get; set; }
 
         [NotMapped]
-        public double AvAtual {get; set;}
+        public double AvAtual { get; set; }
 
         private int _HpAtual;
 
@@ -113,17 +113,13 @@ namespace Task_U.Core
 
         }
 
-        public int SpeedTotal()
+        public virtual int SpeedTotal()
         {
             Item? item = itemEquipado();
-            if (item != null && item.Atr == 4)
-            {
-                return Math.Max(1, Speed + BuffSpeed + item.Mod);
-            }
-            else
-            {
-                return Math.Max(1, Speed + BuffSpeed);
-            }
+            int bonusItem = (item != null && item.Atr == 4) ? item.Mod : 0;
+            int bonusEffects = status.OfType<BonusSPD>().Sum(s => s.Mod ?? 0);
+            int debuff = status.OfType<DebuffSPD>().Sum(s => s.Mod ?? 0);
+            return Math.Max(1, Speed + BuffSpeed + bonusItem + bonusEffects - debuff);
         }
 
         public int AtkTotal()
@@ -146,7 +142,7 @@ namespace Task_U.Core
 
         public virtual void tomarDano(string inimigo, int dano)
         {
-            int danoTotal = Math.Max(0, (int)Math.Ceiling(dano * debuffRes)  - Shield);
+            int danoTotal = Math.Max(0, (int)Math.Ceiling(dano * debuffRes) - Shield);
             int danoShield = Math.Min(Shield, (int)Math.Ceiling(dano * debuffRes));
             Shield -= danoShield;
             HpAtual = Math.Max(0, HpAtual -= danoTotal);
@@ -162,7 +158,7 @@ namespace Task_U.Core
                     danoOg = $" (dano original: {dano - Shield})";
                 }
                 Console.WriteLine($"{inimigo} atacou {Name} e causou {danoTotal} de dano{danoOg}!");
-                
+
             }
         }
 
@@ -184,6 +180,7 @@ namespace Task_U.Core
         public virtual void Resetar()
         {
             BuffAtk = 0;
+            BuffSpeed = 0;
             Silenced = false;
             Stuneed = false;
             Blinded = false;
