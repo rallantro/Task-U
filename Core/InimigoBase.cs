@@ -120,7 +120,7 @@ namespace Task_U.Core
             return Math.Max(0, Atk + BuffAtk);
         }
 
-        public int SpeedTotal()
+        public virtual int SpeedTotal()
         {
             return Math.Max(1, Speed + BuffSpeed);
         }
