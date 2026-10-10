@@ -46,7 +46,7 @@ namespace Task_U.Core.Entities
                 AplicarChama();
             }
             AplicarChama();
-            modificador = Nodes >= 3 ? 0.98 : 0.78;
+            modificador = Nodes >= 3 ? 2.1 : 1.78;
             Carga = Math.Min(100, Carga + Math.Ceiling((AtkTotal() + ModTotal()) * 0.5 * modificador));
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine($"> (Clímax Ígneo: {Carga}/100)");
