@@ -56,6 +56,7 @@ namespace Task_U.Data
             modelBuilder.Entity<Mumia>();
             modelBuilder.Entity<DronEscaravelho>();
             modelBuilder.Entity<Fada>();
+            modelBuilder.Entity<FenrirF>();
             modelBuilder.Entity<FadaRa>();
             modelBuilder.Entity<Gargula>();
             modelBuilder.Entity<Banshee>();
@@ -72,9 +73,11 @@ namespace Task_U.Data
             modelBuilder.Entity<AdagaDeVidro>();
             modelBuilder.Entity<MoedaDaSorte>();
             modelBuilder.Entity<AnkhBronze>();
+            modelBuilder.Entity<presaFernir>();
             modelBuilder.Entity<CapaMesquinha>();
             modelBuilder.Entity<LuvaImpiedosa>();
             modelBuilder.Entity<AmpulhetaAreia>();
+            modelBuilder.Entity<resquicioDragao>();
 
             base.OnModelCreating(modelBuilder);
         }
