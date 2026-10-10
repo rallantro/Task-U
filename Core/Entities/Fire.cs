@@ -97,6 +97,7 @@ namespace Task_U.Core.Entities
                 string falaSorteada = conjuntoFalas[rand.Next(conjuntoFalas.Length)];
                 Console.WriteLine($"> {Name}: {falaSorteada}");
             }
+            Console.ResetColor();
             return base.Damage() + bonus;
         }
 
