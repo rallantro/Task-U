@@ -16,7 +16,7 @@ namespace Task_U.Core.StatusEffects
         {
             if (Duration > 0)
             {
-                int dano = (int)Math.Ceiling(personagem.HpMax * Mod.Value / 100.0);
+                int dano = (int)Math.Ceiling(personagem.HpMax * modificador / 100.0);
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine($"{personagem.Name} está envenenado!");
                 Console.ResetColor();
@@ -30,7 +30,7 @@ namespace Task_U.Core.StatusEffects
         {
             if (Duration > 0)
             {
-                int dano = (int)Math.Ceiling(personagem.HpMax * Mod.Value / 100.0);
+                int dano = (int)Math.Ceiling(personagem.HpMax * modificador / 100.0);
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine($"{personagem.Name} está envenenado!");
                 Console.ResetColor();
