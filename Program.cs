@@ -12,7 +12,7 @@ using System.Diagnostics;
 
 
 
-Config version = new Config { Name = "Os Tempos Caídos", Value = "1.4.8" };
+Config version = new Config { Name = "A Brasa Ardente", Value = "1.6.0" };
 UpdateService update = new UpdateService();
 using var context = new AppDbContext();
 
