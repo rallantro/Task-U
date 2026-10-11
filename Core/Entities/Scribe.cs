@@ -66,7 +66,7 @@ namespace Task_U.Core.Entities
                 var Res = new DebuffRes("Laçada Gélida Menor", 2, modificador);
                 Res.Aplicar(inimigoAlvo);
                 inimigoAlvo.status.Add(Res);
-                Console.WriteLine($"{inimigoAlvo.Name} recebeu {Res.Name}. (Recebe +{Res.Mod * 100}% de dano por {Res.Duration} turno(s))");
+                Console.WriteLine($"{inimigoAlvo.Name} recebeu {Res.Name}. (Recebe +{modificador * 100}% de dano por {Res.Duration} turno(s))");
             }
         }
         public override void Resetar()
