@@ -50,11 +50,6 @@ namespace Task_U.Core.Combat
 
             int danoInimigo = inimigo.Damage();
 
-            int chanceTotal = 0;
-            foreach (var personagem in vivos)
-            {
-                chanceTotal += personagem.chanceAlvo;
-            }
             PersonagemBase alvo = inimigo.EscolherAlvo();
             if (inimigo.Blinded)
             {
