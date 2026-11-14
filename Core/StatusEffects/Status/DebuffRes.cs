@@ -10,7 +10,7 @@ namespace Task_U.Core.StatusEffects
 {
     public class DebuffRes : StatusEffect
     {
-        private double modificador;
+        public double modificador;
         private bool aplicado = false;
         public override void Aplicar(PersonagemBase personagem)
         {

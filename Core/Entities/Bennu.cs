@@ -37,6 +37,7 @@ namespace Task_U.Core.Entities
                 CooldownAtual += 2;
                 HpAtual = (int)Math.Ceiling(HpMax * 0.3);
                 ressucitou = true;
+                return;
             }
             base.tomarDano(inimigo, dano);
         }
