@@ -195,6 +195,32 @@ namespace Task_U.Services
                 voodo.SummonQuote = "Espero que isso seja mais divertido que os mortos.";
             }
 
+            var vampiro = context.Personagens.FirstOrDefault(x => x.Name == "Valentine");
+            if (vampiro == null)
+            {
+                vampiro = new Vampire
+                {
+                    Name = "Valentine",
+                    Atk = 15,
+                    HpMax = 200,
+                    Mod = 5,
+                    Rarity = 4,
+                    Speed = 115,
+                    Desc = "Valentine é um jovem de 18 anos com uma presença magnética e perigosa, ostentando cabelos negros curtos com mechas vermelhas e olhos escarlates que brilham no escuro. Ele veste um conjunto tático urbano com um sobretudo de couro preto e detalhes em metal, carregando diversos frascos de contenção presos a um arnês no peito, onde armazena o sangue que manipula com precisão cirúrgica. \r\n[Habilidade: Transfusão Visceral] Valentine usa o sangue de seu aliado para fortalecer a equipe. Ele drena uma fração da vida atual do aliado, convertendo o sangue em SangueStack, e concede a si e ao aliado o buff \"Fervor Sanguíneo\", um bônus de ataque que escala com o SangueStack acumulado. Cada uso incrementa o contador de Frenesi. Sem aliado, a habilidade falha.\r\n[Passiva: Êxtase do Hemomante] Ao atacar, Valentine canaliza a agonia ao seu redor para aumentar seu dano. Se estiver sozinho ou saudável demais, ele golpeia as próprias veias para garantir um ataque devastador. Após 5 drenagens, Valentine entra em Frenesi por 3 turnos, consumindo o sangue do aliado para multiplicar drasticamente o dano e converter parte do golpe em cura, dividida entre si e o aliado. Ao fim do Frenesi, o SangueStack é resetado.",
+                    SummonQuote = "Meu sangue ou o seu? Ah, que tal os dois?"
+                };
+                context.Personagens.Add(vampiro);
+            }
+            else
+            {
+                vampiro.Desc = "Valentine é um jovem de 18 anos com uma presença magnética e perigosa, ostentando cabelos negros curtos com mechas vermelhas e olhos escarlates que brilham no escuro. Ele veste um conjunto tático urbano com um sobretudo de couro preto e detalhes em metal, carregando diversos frascos de contenção presos a um arnês no peito, onde armazena o sangue que manipula com precisão cirúrgica. \r\n[Habilidade: Transfusão Visceral] Valentine usa o sangue de seu aliado para fortalecer a equipe. Ele drena uma fração da vida atual do aliado, convertendo o sangue em SangueStack, e concede a si e ao aliado o buff \"Fervor Sanguíneo\", um bônus de ataque que escala com o SangueStack acumulado. Cada uso incrementa o contador de Frenesi. Sem aliado, a habilidade falha.\r\n[Passiva: Êxtase do Hemomante] Ao atacar, Valentine canaliza a agonia ao seu redor para aumentar seu dano. Se estiver sozinho ou saudável demais, ele golpeia as próprias veias para garantir um ataque devastador. Após 5 drenagens, Valentine entra em Frenesi por 3 turnos, consumindo o sangue do aliado para multiplicar drasticamente o dano e converter parte do golpe em cura, dividida entre si e o aliado. Ao fim do Frenesi, o SangueStack é resetado.";
+                vampiro.Atk = 15;
+                vampiro.HpMax = 200;
+                vampiro.Mod = 5;
+                vampiro.Speed = 115;
+                vampiro.SummonQuote = "Meu sangue ou o seu? Ah, que tal os dois?";
+            }
+
             // ============ NOVOS PERSONAGENS ============
 
             var scribe = context.Personagens.FirstOrDefault(x => x.Name == "Rimla");
