@@ -43,7 +43,7 @@ O projeto demonstra competências em:
 
 Se preferir não configurar o ambiente de desenvolvimento, você pode baixar a versão compilada do jogo na seção **Releases** do repositório.
 
-[Baixar Task-U v1.4.8](https://github.com/rallantro/Task-U/releases/latest)
+[Baixar Task-U v1.6.0](https://github.com/rallantro/Task-U/releases/latest)
 
 | Plataforma | Instruções |
 |------------|------------|
