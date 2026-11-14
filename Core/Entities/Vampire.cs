@@ -34,12 +34,12 @@ namespace Task_U.Core.Entities
             if (!Frenesi)
             {
 
-                modificador = Nodes >= 3 ? 1.88 : 1.58;
+                modificador = Nodes >= 3 ? 1.88 : 1.28;
 
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine($"> {Name}: Ahhhh! Como eu queria ter um pouco mais de sangue...");
                 Console.ResetColor();
-                int dano = (int)Math.Ceiling(vidaPerdida * AtkTotal() * 0.03);
+                int dano = (int)Math.Ceiling(vidaPerdida * AtkTotal() * 0.03 * modificador);
                 if (Nodes >= 6)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;

@@ -13,7 +13,7 @@ namespace Task_U.Core.StatusEffects
     {
         private double Res;
         private int Dmg;
-        private int time;
+        private int time = 1;
         private bool Node;
         public override void Aplicar(InimigoBase personagem)
         {
@@ -56,11 +56,10 @@ namespace Task_U.Core.StatusEffects
                     var deRes = new DebuffRes("Laçada Gélida", Math.Max(time, 2), Res);
                     deRes.Aplicar(personagem);
                     personagem.status.Add(deRes);
-                    deRes.Aplicar(personagem);
                     Console.ForegroundColor = ConsoleColor.Blue;
                     Console.WriteLine($"[LAÇADA GÉLIDA] {personagem.Name} está exposto ao fluxo do tempo! O choque o enfraqueceu!");
                     Console.ResetColor();
-                    Console.WriteLine($"{personagem.Name} recebeu {deRes.Name}. (Recebe +{deRes.Mod * 100}% de dano por {deRes.Duration} turno(s))");
+                    Console.WriteLine($"{personagem.Name} recebeu {deRes.Name}. (Recebe +{deRes.modificador * 100}% de dano por {deRes.Duration} turno(s))");
                 }
                 Duration--;
                 time++;
