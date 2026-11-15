@@ -64,8 +64,12 @@ namespace Task_U.Core
                     int totalPercent = alvo.status.OfType<PoisonMaxStack>().Sum(p => p.Mod.Value);
                     Console.WriteLine($"{alvo.Name} agora está envenenado, com um envenenamento maior! ({totalPercent}% da vida máxima por turno)");
 
-                    PersonagemBase alvoStun = alvos.Where(x => !x.status.Any(x => x is Stun)).OrderByDescending(x => x.status.Count(a => a.Name.Contains("Envenenamento"))).FirstOrDefault();
-                    if (alvoStun != null && alvoStun.status.Count(x => x.Name.Contains("Envenenamento")) > 3)
+                    PersonagemBase? alvoStun = alvos
+                        .Where(x => x != null && x.status != null && !x.status.Any(s => s is Stun))
+                        .OrderByDescending(x => x.status != null ? x.status.Count(a => a.Name.Contains("Envenenamento")) : 0)
+                        .FirstOrDefault();
+
+                    if (alvoStun != null && alvoStun.status != null && alvoStun.status.Count(x => x.Name.Contains("Envenenamento")) > 3)
                     {
                         var stun = new Stun("Stun", 2);
                         alvoStun.status.Add(stun);
@@ -76,8 +80,6 @@ namespace Task_U.Core
                     }
                 }
             }
-
-
         }
 
         public override void Passiva(User user)
