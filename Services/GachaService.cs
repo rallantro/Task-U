@@ -185,6 +185,11 @@ namespace Task_U.Models
                     int pad = (60 - desc.Length) / 2;
                     Console.WriteLine(new string(' ', pad) + desc);
                 }
+                int bitsGanhos = random.Next(1,5) * 3;
+                user.Bits += bitsGanhos;
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.WriteLine("\n  >> BÔNUS DE BITS: +" + bitsGanhos + " BITS ADICIONADOS.");
+
 
             }
             else
@@ -216,6 +221,10 @@ namespace Task_U.Models
                     int pad = (60 - desc.Length) / 2;
                     Console.WriteLine(new string(' ', pad) + desc);
                 }
+                int bitsGanhos = 1;
+                user.Bits += bitsGanhos;
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.WriteLine("\n  >> BÔNUS DE BITS: +" + bitsGanhos + " BITS ADICIONADOS.");
 
             }
             Console.ForegroundColor = ConsoleColor.DarkGray;
@@ -251,6 +260,8 @@ namespace Task_U.Models
                 ganhou.PersonagemId = reward.Id;
                 ganhou.UserId = 1;
                 ganhou.Quantidade = 1;
+                ganhou.AmizadeCheck = false;
+                ganhou.AmizadeNivel = 0;
                 context.InventarioPersonagens.Add(ganhou);
                 if (!string.IsNullOrEmpty(reward.SummonQuote))
                 {
@@ -284,6 +295,8 @@ namespace Task_U.Models
             else if (old.Quantidade < 6)
             {
                 old.Quantidade++;
+                int bitsGanhos = reward.Rarity == 3 ? 5 : 20;
+                user.Bits += bitsGanhos;
                 Console.Clear();
                 Console.ForegroundColor = reward.Rarity == 3 ? ConsoleColor.Magenta : ConsoleColor.Yellow;
                 Console.WriteLine("\n\n");
@@ -297,7 +310,9 @@ namespace Task_U.Models
                 Thread.Sleep(800);
 
                 Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.WriteLine($"\n  >> STATUS: NODE {old.Quantidade - 1} DESBLOQUEADO."); // Mostra o nível da constelação
+                Console.WriteLine($"\n  >> STATUS: NODE {old.Quantidade - 1} DESBLOQUEADO."); 
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.WriteLine("\n  >> BÔNUS DE BITS: +" + bitsGanhos + " BITS ADICIONADOS.");
                 Console.ForegroundColor = ConsoleColor.DarkGray;
                 Console.WriteLine("  Poder do Sigilo otimizado com novos pacotes de dados.");
                 Console.WriteLine("  ─────────────────────────────────────────────────────────────");
