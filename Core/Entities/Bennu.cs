@@ -50,10 +50,10 @@ namespace Task_U.Core.Entities
                 Console.ResetColor();
 
                 double porcentagem = Nodes >= 2 ? 0.4 : 0.3;
-                var Res = new BuffRes("Proteção em Chamas", 2, porcentagem);
+                var Res = new BuffRes("Proteção das Chamas", 3, porcentagem);
+                Res.Aplicar(this);
                 status.Add(Res);
-                
-                Console.WriteLine($"> {Name} Recebe -{(1 - porcentagem) * 100}% de dano.");
+                Console.WriteLine($"> {Name} Recebe -{porcentagem * 100}% de dano.");
 
                 porcentagem = Nodes >= 5 ? 0.35 : 0.25;
                 int valorShield = (int)Math.Ceiling(HpMax * porcentagem);
