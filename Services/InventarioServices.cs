@@ -162,7 +162,7 @@ namespace Task_U.Services
                             break;
 
                         default:
-                            return; 
+                            return;
                     }
                     break;
 
@@ -371,6 +371,24 @@ namespace Task_U.Services
             Console.WriteLine($"────────────");
             Console.WriteLine($"Pressione qualquer tecla para retornar...");
             Console.ReadKey();
+        }
+
+        public void aumentarAmizade(AppDbContext context, User user, PersonagemInventario personagem, int Amizade, int Rarity)
+        {
+            personagem.AmizadeNivel = Math.Min(100, personagem.AmizadeNivel + Amizade);
+            if (personagem.AmizadeNivel >= 100 && !personagem.AmizadeCheck)
+            {
+                if (personagem.Quantidade < 6)
+                {
+                    personagem.Quantidade++;
+                }
+                else
+                {
+                    user.Bits += Rarity >= 4 ? 200 : 25;
+                }
+                personagem.AmizadeCheck = true;
+            }
+            context.SaveChanges();
         }
     }
 }

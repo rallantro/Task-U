@@ -111,7 +111,17 @@ namespace Task_U.Core.Combat
                         context.InventarioItens.Add(reward);
                     }
                 }
-                combateUI.Vitoria(inimigo, item);
+                var rand = new Random();
+                int amizade = inimigo.Rarity * rand.Next(1,6);
+                combateUI.Vitoria(inimigo, item, equipe, amizade, context);
+                foreach (var personagem in equipe)
+                {
+                    var personagemInventario = context.InventarioPersonagens.FirstOrDefault(x => x.PersonagemId == personagem.Id);
+                    if (personagemInventario != null)
+                    {
+                        inventario.aumentarAmizade(context, user, personagemInventario, amizade, personagem.Rarity);   
+                    }
+                }
                 user.DerrotouInimigo = true;
                 adventure.AtualizarInimigo(context);
                 context.SaveChanges();

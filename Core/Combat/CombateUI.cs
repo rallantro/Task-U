@@ -234,7 +234,7 @@ namespace Task_U.Core.Combat
             Console.ResetColor();
         }
 
-        public void Vitoria(InimigoBase inimigo, Item? item)
+        public void Vitoria(InimigoBase inimigo, Item? item, List<PersonagemBase> equipe, int Amizade, AppDbContext context)
         {
             Console.Clear();
             int larguraVitoria = 60;
@@ -271,6 +271,14 @@ namespace Task_U.Core.Combat
                     Console.WriteLine($"  │ {texto.PadRight(larguraTotal - texto.Length)} │");
                 }
                 Console.WriteLine("  └──────────────────────────────────────────────────────────┘");
+            }
+            foreach (var personagem in equipe)
+            {
+                var PersonagemInventario = context.InventarioPersonagens.FirstOrDefault(x => x.PersonagemId == personagem.Id);
+                if (PersonagemInventario != null)
+                {
+                    Console.WriteLine($"> {personagem.Name}: +{Amizade} de amizade ({PersonagemInventario.AmizadeNivel}/100)");    
+                }
             }
             Console.WriteLine("\n [ Pressione qualquer tecla para voltar ao menu... ]");
             Console.ResetColor();
