@@ -1,5 +1,5 @@
 # Task-u
-![Versão](https://img.shields.io/badge/version-1.4.8-blue?style=for-the-badge)
+![Versão](https://img.shields.io/badge/version-1.6.0-blue?style=for-the-badge)
 ![.NET 10](https://img.shields.io/badge/.NET%2010-512BD4?style=for-the-badge&logo=dotnet&logoColor=white)
 ![EF Core](https://img.shields.io/badge/EF%20Core-SQLite-003B57?style=for-the-badge&logo=sqlite&logoColor=white)
 ![Mantido](https://img.shields.io/badge/Mantido-Sim-brightgreen?style=for-the-badge)
