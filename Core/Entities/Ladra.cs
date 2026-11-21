@@ -209,7 +209,7 @@ namespace Task_U.Core.Entities
                     Console.WriteLine($"> {Name}: Nada pessoal, são apenas negócios.");
                     Console.WriteLine($"[ACERTO DE CONTAS] {Name} Expõe um ponto fraco, deixando o inimigo vunerável!");
                     Console.ResetColor();
-                    var debuffRes = new DebuffRes("Exposto", 2, 0.3);
+                    var debuffRes = new DebuffRes("Exposto", 3, 0.3);
                     debuffRes.Aplicar(inimigoAlvo);
                     inimigoAlvo.status.Add(debuffRes);
                 }
